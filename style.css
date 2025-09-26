@@ -119,12 +119,20 @@ img {
 }
 
 .language-selector {
-    margin-left: 1rem;
+    margin: 0;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .language-buttons {
     display: flex;
     gap: 0.3rem;
+    justify-content: center;
+    align-items: center;
 }
 
 .lang-btn {
@@ -556,11 +564,17 @@ img {
     [dir="ltr"] .nav-menu.active { transform: translateX(0); }
     
     .language-selector {
-        margin-left: 0;
-        margin-top: 1rem;
+        position: static;
+        transform: none;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin: 1rem auto 0;
     }
     
     .language-buttons {
+        display: flex;
+        justify-content: center;
         gap: 0.2rem;
     }
     
