@@ -362,10 +362,8 @@ function translatePage(language) {
         document.documentElement.dir = 'ltr';
     }
     
-    // Update page title if available
-    if (translations[language] && translations[language]['page-title']) {
-        document.title = translations[language]['page-title'];
-    }
+    // Always set page title in English regardless of selected language
+    document.title = 'Mama’s Kitchen';
     
     // Translate all elements with data-translate attribute
     const elements = document.querySelectorAll('[data-translate]');
