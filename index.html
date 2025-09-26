@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מטבח של אמא - בישול ביתי אותנטי</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-brand">
+                <img src="images/logo.jpeg" alt="Mama's Kitchen Logo" class="logo-img">
+                <h1 class="logo" data-translate="logo">Mama's Kitchen</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#menu" data-translate="menu">תפריט</a></li>
+                <li><a href="#contact" data-translate="contact">צור קשר</a></li>
+                <li class="language-selector">
+                    <div class="language-buttons">
+                        <button class="lang-btn active" data-lang="he">עב</button>
+                        <button class="lang-btn" data-lang="en">EN</button>
+                        <button class="lang-btn" data-lang="ru">RU</button>
+                        <button class="lang-btn" data-lang="ar">عر</button>
+                    </div>
+                </li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Menu Section -->
+    <section id="menu" class="menu">
+        <div class="container">
+            <h2 class="section-title" data-translate="our-menu">התפריט שלנו</h2>
+            <p class="restaurant-motto" data-translate="restaurant-motto">אוכל מזרחי ביתי</p>
+            <div class="menu-categories">
+                <button class="category-btn active" data-category="all" data-translate="all">הכל</button>
+                <button class="category-btn" data-category="meals" data-translate="meals">ארוחות</button>
+                <button class="category-btn" data-category="additions" data-translate="additions">תוספות</button>
+                <button class="category-btn" data-category="drinks" data-translate="drinks">משקאות</button>
+            </div>
+            
+            <div class="menu-grid">
+                <!-- Meals -->
+                <div class="menu-item" data-category="meals">
+                    <div class="menu-image">
+                        <img src="images/logo.jpeg" alt="200 גרם אורז + בשר + סלט">
+                    </div>
+                    <div class="menu-content">
+                        <h3 data-translate="rice-meat-salad">200 גרם אורז + בשר + סלט</h3>
+                        <p data-translate="rice-meat-salad-desc">ארוחה מלאה עם אורז לבן, בשר טרי וסלט טרי</p>
+                        <span class="price">₪55</span>
+                    </div>
+                </div>
+
+                <div class="menu-item" data-category="meals">
+                    <div class="menu-image">
+                        <img src="images/logo.jpeg" alt="200 גרם אורז עם בשר + בשר + סלט">
+                    </div>
+                    <div class="menu-content">
+                        <h3 data-translate="rice-meat-meat-salad">200 גרם אורז עם בשר + בשר + סלט</h3>
+                        <p data-translate="rice-meat-meat-salad-desc">ארוחה עשירה עם אורז מבושל עם בשר, בשר נוסף וסלט</p>
+                        <span class="price">₪65</span>
+                    </div>
+                </div>
+
+                <!-- Additions -->
+                <div class="menu-item" data-category="additions">
+                    <div class="menu-image">
+                        <img src="images/logo.jpeg" alt="גולש">
+                    </div>
+                    <div class="menu-content">
+                        <h3 data-translate="gulash">גולש 150 גרם</h3>
+                        <p data-translate="gulash-desc">בשר גולש טרי וטעים</p>
+                        <span class="price">₪29.99</span>
+                    </div>
+                </div>
+
+                <div class="menu-item" data-category="additions">
+                    <div class="menu-image">
+                        <img src="images/logo.jpeg" alt="חזה עוף">
+                    </div>
+                    <div class="menu-content">
+                        <h3 data-translate="chicken-breast">חזה עוף 150 גרם</h3>
+                        <p data-translate="chicken-breast-desc">חזה עוף טרי ועסיסי</p>
+                        <span class="price">₪25.00</span>
+                    </div>
+                </div>
+
+                <div class="menu-item" data-category="additions">
+                    <div class="menu-image">
+                        <img src="images/logo.jpeg" alt="ירכי עוף">
+                    </div>
+                    <div class="menu-content">
+                        <h3 data-translate="chicken-thighs">ירכי עוף 150 גרם</h3>
+                        <p data-translate="chicken-thighs-desc">ירכי עוף טריות וטעימות</p>
+                        <span class="price">₪25.00</span>
+                    </div>
+                </div>
+
+                <div class="menu-item" data-category="additions">
+                    <div class="menu-image">
+                        <img src="images/logo.jpeg" alt="מוקפץ פתריות">
+                    </div>
+                    <div class="menu-content">
+                        <h3 data-translate="stir-fried-noodles">מוקפץ פתריות</h3>
+                        <p data-translate="stir-fried-noodles-desc">פתריות מוקפצות עם ירקות טריים</p>
+                        <span class="price">₪25.00</span>
+                    </div>
+                </div>
+
+                <div class="menu-item" data-category="additions">
+                    <div class="menu-image">
+                        <img src="images/logo.jpeg" alt="עלי גפן">
+                    </div>
+                    <div class="menu-content">
+                        <h3 data-translate="grape-leaves">עלי גפן 8 יחידות</h3>
+                        <p data-translate="grape-leaves-desc">עלי גפן ממולאים באורז ועשבי תיבול</p>
+                        <span class="price">₪19.90</span>
+                    </div>
+                </div>
+
+                <div class="menu-item" data-category="additions">
+                    <div class="menu-image">
+                        <img src="images/logo.jpeg" alt="קרוב ממולא">
+                    </div>
+                    <div class="menu-content">
+                        <h3 data-translate="stuffed-cabbage">קרוב ממולא 8 יחידות</h3>
+                        <p data-translate="stuffed-cabbage-desc">קרוב ממולא באורז ותבלינים</p>
+                        <span class="price">₪19.90</span>
+                    </div>
+                </div>
+
+                <div class="menu-item" data-category="additions">
+                    <div class="menu-image">
+                        <img src="images/logo.jpeg" alt="קובה">
+                    </div>
+                    <div class="menu-content">
+                        <h3 data-translate="kubbeh">קובה 2 יחידות</h3>
+                        <p data-translate="kubbeh-desc">קובה טרייה ממולאת בבשר</p>
+                        <span class="price">₪19.90</span>
+                    </div>
+                </div>
+
+                <div class="menu-item" data-category="additions">
+                    <div class="menu-image">
+                        <img src="images/logo.jpeg" alt="מגדרה">
+                    </div>
+                    <div class="menu-content">
+                        <h3 data-translate="mujadara">מגדרה 150 גרם</h3>
+                        <p data-translate="mujadara-desc">מגדרה טרייה וטעימה</p>
+                        <span class="price">₪29.90</span>
+                    </div>
+                </div>
+
+                <div class="menu-item" data-category="additions">
+                    <div class="menu-image">
+                        <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="מרק שעועית">
+                    </div>
+                    <div class="menu-content">
+                        <h3 data-translate="bean-soup">מרק שעועית/תפוח אדמה</h3>
+                        <p data-translate="bean-soup-desc">מרק ביתי טעים וחם</p>
+                        <span class="price">₪10.00</span>
+                    </div>
+                </div>
+
+                <div class="menu-item" data-category="additions">
+                    <div class="menu-image">
+                        <img src="https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="סלט קצוץ">
+                    </div>
+                    <div class="menu-content">
+                        <h3 data-translate="chopped-salad">סלט קצוץ</h3>
+                        <p data-translate="chopped-salad-desc">סלט ירקות טרי קצוץ דק</p>
+                        <span class="price">₪10.00</span>
+                    </div>
+                </div>
+
+                <div class="menu-item" data-category="additions">
+                    <div class="menu-image">
+                        <img src="images/logo.jpeg" alt="סלט טבולה">
+                    </div>
+                    <div class="menu-content">
+                        <h3 data-translate="tabbouleh">סלט טבולה</h3>
+                        <p data-translate="tabbouleh-desc">סלט טבולה מסורתי עם בורגול ועשבי תיבול</p>
+                        <span class="price">₪15.00</span>
+                    </div>
+                </div>
+
+                <div class="menu-item" data-category="additions">
+                    <div class="menu-image">
+                        <img src="images/logo.jpeg" alt="תפוח אדמה">
+                    </div>
+                    <div class="menu-content">
+                        <h3 data-translate="potato">תפוח אדמה/בטטה</h3>
+                        <p data-translate="potato-desc">תפוח אדמה או בטטה צלויים</p>
+                        <span class="price">₪13.90</span>
+                    </div>
+                </div>
+
+                <div class="menu-item" data-category="additions">
+                    <div class="menu-image">
+                        <img src="images/logo.jpeg" alt="אורז לבן">
+                    </div>
+                    <div class="menu-content">
+                        <h3 data-translate="white-rice">אורז לבן 200 גרם</h3>
+                        <p data-translate="white-rice-desc">אורז לבן טרי וטעים</p>
+                        <span class="price">₪25.50</span>
+                    </div>
+                </div>
+
+                <div class="menu-item" data-category="additions">
+                    <div class="menu-image">
+                        <img src="images/logo.jpeg" alt="אורז בשר">
+                    </div>
+                    <div class="menu-content">
+                        <h3 data-translate="meat-rice">אורז בשר 200 גרם</h3>
+                        <p data-translate="meat-rice-desc">אורז מבושל עם בשר טרי</p>
+                        <span class="price">₪32.90</span>
+                    </div>
+                </div>
+
+                <!-- Drinks -->
+                <div class="menu-item" data-category="drinks">
+                    <div class="menu-image">
+                        <img src="images/logo.jpeg" alt="שתיה קלה">
+                    </div>
+                    <div class="menu-content">
+                        <h3 data-translate="soft-drinks">שתיה קלה</h3>
+                        <p data-translate="soft-drinks-desc">מבחר משקאות קלים</p>
+                        <span class="price">₪10.00</span>
+                    </div>
+                </div>
+
+                <div class="menu-item" data-category="drinks">
+                    <div class="menu-image">
+                        <img src="images/logo.jpeg" alt="מים מינרליים">
+                    </div>
+                    <div class="menu-content">
+                        <h3 data-translate="mineral-water">מים מינרליים</h3>
+                        <p data-translate="mineral-water-desc">מים מינרליים טריים</p>
+                        <span class="price">₪8.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2 class="section-title" data-translate="visit-us">בואו לבקר אותנו</h2>
+            
+            <div class="contact-info">
+                <div class="contact-item">
+                    <h3 data-translate="address">כתובת</h3>
+                    <p data-translate="address-text">רחוב הרצל 123<br>תל אביב, ישראל 12345</p>
+                </div>
+                <div class="contact-item">
+                    <h3 data-translate="hours">שעות פעילות</h3>
+                    <p data-translate="hours-text">ראשון - חמישי: 11:00 - 22:00<br>שישי - שבת: 11:00 - 23:00<br>יום ראשון: 12:00 - 21:00</p>
+                </div>
+                <div class="contact-item">
+                    <h3 data-translate="phone">טלפון</h3>
+                    <p>03-123-4567</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Mama's Kitchen. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

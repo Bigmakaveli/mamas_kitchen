@@ -12,6 +12,7 @@ body {
     overflow-x: hidden;
     direction: rtl;
     text-align: right;
+    background-color: white;
 }
 
 .container {
@@ -100,23 +101,40 @@ body {
     margin-left: 1rem;
 }
 
-.language-selector select {
+.language-buttons {
+    display: flex;
+    gap: 0.3rem;
+}
+
+.lang-btn {
     background: white;
     border: 2px solid #d4af37;
-    border-radius: 8px;
-    padding: 0.5rem 0.8rem;
-    font-size: 0.9rem;
+    border-radius: 6px;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
     color: #333;
     cursor: pointer;
     transition: all 0.3s ease;
-    min-width: 100px;
+    font-weight: 600;
+    text-shadow: none;
+    box-shadow: 0 2px 8px rgba(212, 175, 55, 0.2);
+    min-width: 40px;
+    text-align: center;
 }
 
-.language-selector select:hover,
-.language-selector select:focus {
-    border-color: #f4d03f;
-    box-shadow: 0 2px 8px rgba(212, 175, 55, 0.2);
+.lang-btn:hover,
+.lang-btn.active {
+    background: #d4af37;
+    color: white;
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
     outline: none;
+    transform: translateY(-1px);
+}
+
+.lang-btn.active {
+    background: #d4af37;
+    color: white;
+    box-shadow: 0 3px 10px rgba(212, 175, 55, 0.4);
 }
 
 .hamburger {
@@ -144,15 +162,29 @@ body {
     font-size: 3rem;
     text-align: center;
     color: #d4af37;
-    margin-bottom: 3rem;
+    margin-bottom: 1rem;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    display: block;
+    width: 100%;
+}
+
+.restaurant-motto {
+    text-align: center;
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.8rem;
+    color: #d4af37;
+    margin-bottom: 2rem;
+    font-weight: 600;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    display: block;
+    width: 100%;
 }
 
 
 /* Menu Section */
 .menu {
     padding: 3rem 0;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    background: white;
     min-height: 100vh;
 }
 
@@ -226,9 +258,11 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.3s ease, opacity 0.3s ease;
+    transition: transform 0.3s ease;
     background-color: #f8f9fa;
     border-radius: 8px;
+    display: block;
+    opacity: 1;
 }
 
 .menu-image img:not([src]) {
@@ -279,6 +313,157 @@ body {
 .contact {
     padding: 5rem 0;
     background: white;
+}
+
+/* Contact Form */
+.contact-form-container {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-radius: 15px;
+    padding: 2.5rem;
+    margin-bottom: 3rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e9ecef;
+}
+
+.contact-form-container h3 {
+    font-family: 'Dancing Script', cursive;
+    font-size: 2.2rem;
+    color: #d4af37;
+    text-align: center;
+    margin-bottom: 2rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.contact-form {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: 'Heebo', sans-serif;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #d4af37;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+    transform: translateY(-1px);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.submit-btn {
+    background: linear-gradient(135deg, #d4af37, #f4d03f);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+}
+
+.submit-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.form-success {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+.form-success p {
+    margin: 0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive design for contact form */
+@media (max-width: 768px) {
+    .contact-form-container {
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .contact-form-container h3 {
+        font-size: 1.8rem;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        padding: 0.7rem 0.8rem;
+        font-size: 0.95rem;
+    }
+    
+    .submit-btn {
+        padding: 0.9rem 1.5rem;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .contact-form-container {
+        padding: 1rem;
+    }
+    
+    .contact-form-container h3 {
+        font-size: 1.6rem;
+    }
+    
+    .form-group {
+        margin-bottom: 1.2rem;
+    }
+    
+    .form-group label {
+        font-size: 0.9rem;
+    }
 }
 
 .contact-info {
@@ -348,10 +533,14 @@ body {
         margin-top: 1rem;
     }
     
-    .language-selector select {
-        font-size: 0.8rem;
-        padding: 0.4rem 0.6rem;
-        min-width: 80px;
+    .language-buttons {
+        gap: 0.2rem;
+    }
+    
+    .lang-btn {
+        font-size: 0.7rem;
+        padding: 0.3rem 0.4rem;
+        min-width: 35px;
     }
     
     .menu {
@@ -541,22 +730,4 @@ body {
         opacity: 1;
         transform: translateX(0);
     }
-}
-
-/* Image fallback styling */
-img.image-error {
-    object-fit: contain !important;
-    background: linear-gradient(180deg, #fafafa, #f0f0f0);
-    border: 1px dashed rgba(0, 0, 0, 0.1);
-}
-
-.menu-image img.image-error {
-    padding: 12px;
-    border-radius: 8px;
-}
-
-.logo-img.image-error {
-    padding: 6px;
-    border-radius: 8px;
-    background-color: #f8f9fa;
 }

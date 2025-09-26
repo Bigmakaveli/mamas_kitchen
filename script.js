@@ -1,19 +1,115 @@
+// Typing effect for titles
+function typeWriter(element, text, speed = 100) {
+    let i = 0;
+    element.innerHTML = '';
+    
+    function type() {
+        if (i < text.length) {
+            element.innerHTML += text.charAt(i);
+            i++;
+            setTimeout(type, speed);
+        }
+    }
+    
+    type();
+}
+
 // Translation data
 const translations = {
     he: {
         // Navigation
+        'logo': 'מטבח של אמא',
         'menu': 'תפריט',
         'contact': 'צור קשר',
         
         // Menu section
         'our-menu': 'התפריט שלנו',
+        'restaurant-motto': 'אוכל מזרחי ביתי',
         'all': 'הכל',
         'meals': 'ארוחות',
         'additions': 'תוספות',
         'drinks': 'משקאות',
         
+        // Menu items
+        'rice-meat-salad': '200 גרם אורז + בשר + סלט',
+        'rice-meat-salad-desc': 'ארוחה מלאה עם אורז לבן, בשר טרי וסלט טרי',
+        'rice-meat-meat-salad': '200 גרם אורז עם בשר + בשר + סלט',
+        'rice-meat-meat-salad-desc': 'ארוחה עשירה עם אורז מבושל עם בשר, בשר נוסף וסלט',
+        'gulash': 'גולש 150 גרם',
+        'gulash-desc': 'בשר גולש טרי וטעים',
+        'chicken-breast': 'חזה עוף 150 גרם',
+        'chicken-breast-desc': 'חזה עוף טרי ועסיסי',
+        'chicken-thighs': 'ירכי עוף 150 גרם',
+        'chicken-thighs-desc': 'ירכי עוף טריות וטעימות',
+        'stir-fried-noodles': 'מוקפץ פתריות',
+        'stir-fried-noodles-desc': 'פתריות מוקפצות עם ירקות טריים',
+        'grape-leaves': 'עלי גפן 8 יחידות',
+        'grape-leaves-desc': 'עלי גפן ממולאים באורז ועשבי תיבול',
+        'stuffed-cabbage': 'קרוב ממולא 8 יחידות',
+        'stuffed-cabbage-desc': 'קרוב ממולא באורז ותבלינים',
+        'kubbeh': 'קובה 2 יחידות',
+        'kubbeh-desc': 'קובה טרייה ממולאת בבשר',
+        'mujadara': 'מגדרה 150 גרם',
+        'mujadara-desc': 'מגדרה טרייה וטעימה',
+        'bean-soup': 'מרק שעועית/תפוח אדמה',
+        'bean-soup-desc': 'מרק ביתי טעים וחם',
+        'chopped-salad': 'סלט קצוץ',
+        'chopped-salad-desc': 'סלט ירקות טרי קצוץ דק',
+        'tabbouleh': 'סלט טבולה',
+        'tabbouleh-desc': 'סלט טבולה מסורתי עם בורגול ועשבי תיבול',
+        'potato': 'תפוח אדמה/בטטה',
+        'potato-desc': 'תפוח אדמה או בטטה צלויים',
+        'white-rice': 'אורז לבן 200 גרם',
+        'white-rice-desc': 'אורז לבן טרי וטעים',
+        'meat-rice': 'אורז בשר 200 גרם',
+        'meat-rice-desc': 'אורז מבושל עם בשר טרי',
+        'soft-drinks': 'שתיה קלה',
+        'soft-drinks-desc': 'מבחר משקאות קלים',
+        'mineral-water': 'מים מינרליים',
+        'mineral-water-desc': 'מים מינרליים טריים',
+        
         // Contact section
         'visit-us': 'בואו לבקר אותנו',
+        'contact-form-title': 'צרו איתנו קשר',
+        'form-description': 'מלאו את הפרטים הבאים ונחזור אליכם בהקדם',
+        'basic-info-title': 'פרטים בסיסיים',
+        'name-label': 'שם מלא *',
+        'phone-label': 'מספר טלפון *',
+        'request-type-title': 'סוג הבקשה',
+        'subject-label': 'מה אתם רוצים לעשות? *',
+        'select-subject': 'בחרו את סוג הבקשה',
+        'reservation': '🍽️ הזמנת שולחן במסעדה',
+        'delivery': '🚚 הזמנת משלוח הביתה',
+        'job-application': '💼 הגשת מועמדות לעבודה',
+        'complaint': '😞 תלונה או בעיה',
+        'suggestion': '💡 הצעה לשיפור',
+        'other': '❓ משהו אחר',
+        'delivery-details-title': 'פרטי משלוח',
+        'delivery-address-label': 'כתובת למשלוח *',
+        'job-details-title': 'פרטי עבודה',
+        'experience-label': 'שנות ניסיון',
+        'select-experience': 'בחרו שנות ניסיון',
+        'no-experience': 'ללא ניסיון',
+        '1-2-years': '1-2 שנים',
+        '3-5-years': '3-5 שנים',
+        '5-plus-years': '5+ שנים',
+        'position-label': 'תפקיד מבוקש',
+        'select-position': 'בחרו תפקיד',
+        'waiter': 'מלצר/ית',
+        'cook': 'טבח/ית',
+        'cashier': 'קופאי/ת',
+        'manager': 'מנהל/ת',
+        'delivery-person': 'שליח/ה',
+        'availability-label': 'זמינות',
+        'select-availability': 'בחרו זמינות',
+        'full-time': 'משרה מלאה',
+        'part-time': 'משרה חלקית',
+        'weekends': 'סופי שבוע בלבד',
+        'evenings': 'ערבים בלבד',
+        'message-title': 'הודעה',
+        'message-label': 'ספרו לנו מה אתם צריכים *',
+        'send-message': '📤 שלח בקשה',
+        'success-message': 'תודה רבה! הבקשה שלכם נשלחה בהצלחה. נחזור אליכם תוך 24 שעות.',
         'address': 'כתובת',
         'address-text': 'רחוב הרצל 123<br>תל אביב, ישראל 12345',
         'hours': 'שעות פעילות',
@@ -22,18 +118,72 @@ const translations = {
     },
     en: {
         // Navigation
+        'logo': 'Mama\'s Kitchen',
         'menu': 'Menu',
         'contact': 'Contact',
         
         // Menu section
         'our-menu': 'Our Menu',
+        'restaurant-motto': 'Authentic Middle Eastern Home Cooking',
         'all': 'All',
         'meals': 'Meals',
         'additions': 'Additions',
         'drinks': 'Drinks',
         
+        // Menu items
+        'rice-meat-salad': '200g Rice + Meat + Salad',
+        'rice-meat-salad-desc': 'Complete meal with white rice, fresh meat and fresh salad',
+        'rice-meat-meat-salad': '200g Rice with Meat + Meat + Salad',
+        'rice-meat-meat-salad-desc': 'Rich meal with rice cooked with meat, additional meat and salad',
+        'gulash': 'Goulash 150g',
+        'gulash-desc': 'Fresh and tasty goulash meat',
+        'chicken-breast': 'Chicken Breast 150g',
+        'chicken-breast-desc': 'Fresh and juicy chicken breast',
+        'chicken-thighs': 'Chicken Thighs 150g',
+        'chicken-thighs-desc': 'Fresh and tasty chicken thighs',
+        'stir-fried-noodles': 'Stir-fried Noodles',
+        'stir-fried-noodles-desc': 'Stir-fried noodles with fresh vegetables',
+        'grape-leaves': 'Grape Leaves 8 pieces',
+        'grape-leaves-desc': 'Grape leaves stuffed with rice and herbs',
+        'stuffed-cabbage': 'Stuffed Cabbage 8 pieces',
+        'stuffed-cabbage-desc': 'Cabbage stuffed with rice and spices',
+        'kubbeh': 'Kubbeh 2 pieces',
+        'kubbeh-desc': 'Fresh kubbeh stuffed with meat',
+        'mujadara': 'Mujadara 150g',
+        'mujadara-desc': 'Fresh and tasty mujadara',
+        'bean-soup': 'Bean/Potato Soup',
+        'bean-soup-desc': 'Tasty and hot homemade soup',
+        'chopped-salad': 'Chopped Salad',
+        'chopped-salad-desc': 'Fresh vegetables finely chopped',
+        'tabbouleh': 'Tabbouleh Salad',
+        'tabbouleh-desc': 'Traditional tabbouleh with bulgur and herbs',
+        'potato': 'Potato/Sweet Potato',
+        'potato-desc': 'Roasted potato or sweet potato',
+        'white-rice': 'White Rice 200g',
+        'white-rice-desc': 'Fresh and tasty white rice',
+        'meat-rice': 'Meat Rice 200g',
+        'meat-rice-desc': 'Rice cooked with fresh meat',
+        'soft-drinks': 'Soft Drinks',
+        'soft-drinks-desc': 'Selection of soft drinks',
+        'mineral-water': 'Mineral Water',
+        'mineral-water-desc': 'Fresh mineral water',
+        
         // Contact section
         'visit-us': 'Visit Us',
+        'contact-form-title': 'Contact Us',
+        'name-label': 'Full Name:',
+        'phone-label': 'Phone:',
+        'subject-label': 'Subject:',
+        'select-subject': 'Select Subject',
+        'reservation': 'Table Reservation',
+        'delivery': 'Delivery Order',
+        'delivery-address-label': 'Delivery Address:',
+        'complaint': 'Complaint',
+        'suggestion': 'Suggestion',
+        'other': 'Other',
+        'message-label': 'Message:',
+        'send-message': 'Send Message',
+        'success-message': 'Thank you! Your message has been sent successfully. We will get back to you soon.',
         'address': 'Address',
         'address-text': '123 Herzl Street<br>Tel Aviv, Israel 12345',
         'hours': 'Hours',
@@ -42,18 +192,72 @@ const translations = {
     },
     ru: {
         // Navigation
+        'logo': 'Мамина Кухня',
         'menu': 'Меню',
         'contact': 'Контакты',
         
         // Menu section
         'our-menu': 'Наше Меню',
+        'restaurant-motto': 'Аутентичная домашняя ближневосточная кухня',
         'all': 'Все',
         'meals': 'Блюда',
         'additions': 'Дополнения',
         'drinks': 'Напитки',
         
+        // Menu items
+        'rice-meat-salad': '200г Риса + Мясо + Салат',
+        'rice-meat-salad-desc': 'Полная еда с белым рисом, свежим мясом и свежим салатом',
+        'rice-meat-meat-salad': '200г Риса с Мясом + Мясо + Салат',
+        'rice-meat-meat-salad-desc': 'Богатая еда с рисом, приготовленным с мясом, дополнительным мясом и салатом',
+        'gulash': 'Гуляш 150г',
+        'gulash-desc': 'Свежее и вкусное мясо гуляша',
+        'chicken-breast': 'Куриная Грудка 150г',
+        'chicken-breast-desc': 'Свежая и сочная куриная грудка',
+        'chicken-thighs': 'Куриные Бедра 150г',
+        'chicken-thighs-desc': 'Свежие и вкусные куриные бедра',
+        'stir-fried-noodles': 'Жареная Лапша',
+        'stir-fried-noodles-desc': 'Жареная лапша со свежими овощами',
+        'grape-leaves': 'Виноградные Листья 8 штук',
+        'grape-leaves-desc': 'Виноградные листья, фаршированные рисом и травами',
+        'stuffed-cabbage': 'Фаршированная Капуста 8 штук',
+        'stuffed-cabbage-desc': 'Капуста, фаршированная рисом и специями',
+        'kubbeh': 'Куббе 2 штуки',
+        'kubbeh-desc': 'Свежий куббе, фаршированный мясом',
+        'mujadara': 'Муджадара 150г',
+        'mujadara-desc': 'Свежая и вкусная муджадара',
+        'bean-soup': 'Суп из Фасоли/Картофеля',
+        'bean-soup-desc': 'Вкусный и горячий домашний суп',
+        'chopped-salad': 'Нарезанный Салат',
+        'chopped-salad-desc': 'Свежие овощи, мелко нарезанные',
+        'tabbouleh': 'Салат Табуле',
+        'tabbouleh-desc': 'Традиционный табуле с булгуром и травами',
+        'potato': 'Картофель/Батат',
+        'potato-desc': 'Запеченный картофель или батат',
+        'white-rice': 'Белый Рис 200г',
+        'white-rice-desc': 'Свежий и вкусный белый рис',
+        'meat-rice': 'Рис с Мясом 200г',
+        'meat-rice-desc': 'Рис, приготовленный со свежим мясом',
+        'soft-drinks': 'Безалкогольные Напитки',
+        'soft-drinks-desc': 'Выбор безалкогольных напитков',
+        'mineral-water': 'Минеральная Вода',
+        'mineral-water-desc': 'Свежая минеральная вода',
+        
         // Contact section
         'visit-us': 'Посетите Нас',
+        'contact-form-title': 'Свяжитесь с Нами',
+        'name-label': 'Полное Имя:',
+        'phone-label': 'Телефон:',
+        'subject-label': 'Тема:',
+        'select-subject': 'Выберите Тему',
+        'reservation': 'Бронирование Столика',
+        'delivery': 'Заказ Доставки',
+        'delivery-address-label': 'Адрес Доставки:',
+        'complaint': 'Жалоба',
+        'suggestion': 'Предложение',
+        'other': 'Другое',
+        'message-label': 'Сообщение:',
+        'send-message': 'Отправить Сообщение',
+        'success-message': 'Спасибо! Ваше сообщение отправлено успешно. Мы свяжемся с вами в ближайшее время.',
         'address': 'Адрес',
         'address-text': 'ул. Герцль 123<br>Тель-Авив, Израиль 12345',
         'hours': 'Часы Работы',
@@ -62,18 +266,72 @@ const translations = {
     },
     ar: {
         // Navigation
+        'logo': 'مطبخ أمي',
         'menu': 'القائمة',
         'contact': 'اتصل بنا',
         
         // Menu section
         'our-menu': 'قائمتنا',
+        'restaurant-motto': 'طعام شرقي منزلي أصيل',
         'all': 'الكل',
         'meals': 'الوجبات',
         'additions': 'الإضافات',
         'drinks': 'المشروبات',
         
+        // Menu items
+        'rice-meat-salad': '200 جرام أرز + لحم + سلطة',
+        'rice-meat-salad-desc': 'وجبة كاملة مع أرز أبيض ولحم طازج وسلطة طازجة',
+        'rice-meat-meat-salad': '200 جرام أرز مع لحم + لحم + سلطة',
+        'rice-meat-meat-salad-desc': 'وجبة غنية مع أرز مطبوخ مع لحم ولحم إضافي وسلطة',
+        'gulash': 'جولاش 150 جرام',
+        'gulash-desc': 'لحم جولاش طازج ولذيذ',
+        'chicken-breast': 'صدر دجاج 150 جرام',
+        'chicken-breast-desc': 'صدر دجاج طازج وعصير',
+        'chicken-thighs': 'فخذ دجاج 150 جرام',
+        'chicken-thighs-desc': 'فخذ دجاج طازج ولذيذ',
+        'stir-fried-noodles': 'نودلز مقلية',
+        'stir-fried-noodles-desc': 'نودلز مقلية مع خضروات طازجة',
+        'grape-leaves': 'أوراق العنب 8 قطع',
+        'grape-leaves-desc': 'أوراق عنب محشوة بالأرز والأعشاب',
+        'stuffed-cabbage': 'ملفوف محشو 8 قطع',
+        'stuffed-cabbage-desc': 'ملفوف محشو بالأرز والتوابل',
+        'kubbeh': 'كبة 2 قطع',
+        'kubbeh-desc': 'كبة طازجة محشوة باللحم',
+        'mujadara': 'مجدرة 150 جرام',
+        'mujadara-desc': 'مجدرة طازجة ولذيذة',
+        'bean-soup': 'شوربة فاصوليا/بطاطا',
+        'bean-soup-desc': 'شوربة منزلية لذيذة وساخنة',
+        'chopped-salad': 'سلطة مقطعة',
+        'chopped-salad-desc': 'خضروات طازجة مقطعة ناعماً',
+        'tabbouleh': 'سلطة تبولة',
+        'tabbouleh-desc': 'تبولة تقليدية مع البرغل والأعشاب',
+        'potato': 'بطاطا/بطاطا حلوة',
+        'potato-desc': 'بطاطا أو بطاطا حلوة مشوية',
+        'white-rice': 'أرز أبيض 200 جرام',
+        'white-rice-desc': 'أرز أبيض طازج ولذيذ',
+        'meat-rice': 'أرز مع لحم 200 جرام',
+        'meat-rice-desc': 'أرز مطبوخ مع لحم طازج',
+        'soft-drinks': 'مشروبات غازية',
+        'soft-drinks-desc': 'اختيار من المشروبات الغازية',
+        'mineral-water': 'مياه معدنية',
+        'mineral-water-desc': 'مياه معدنية طازجة',
+        
         // Contact section
         'visit-us': 'قم بزيارتنا',
+        'contact-form-title': 'اتصل بنا',
+        'name-label': 'الاسم الكامل:',
+        'phone-label': 'الهاتف:',
+        'subject-label': 'الموضوع:',
+        'select-subject': 'اختر الموضوع',
+        'reservation': 'حجز طاولة',
+        'delivery': 'طلب توصيل',
+        'delivery-address-label': 'عنوان التوصيل:',
+        'complaint': 'شكوى',
+        'suggestion': 'اقتراح',
+        'other': 'أخرى',
+        'message-label': 'الرسالة:',
+        'send-message': 'إرسال الرسالة',
+        'success-message': 'شكراً لك! تم إرسال رسالتك بنجاح. سنتواصل معك قريباً.',
         'address': 'العنوان',
         'address-text': 'شارع هرتسل 123<br>تل أبيب، إسرائيل 12345',
         'hours': 'ساعات العمل',
@@ -114,17 +372,34 @@ function translatePage(language) {
 
 // Language selector event listener
 document.addEventListener('DOMContentLoaded', () => {
-    const languageSelector = document.getElementById('language-selector');
+    const languageButtons = document.querySelectorAll('.lang-btn');
     
-    if (languageSelector) {
+    if (languageButtons.length > 0) {
         // Load saved language preference
         const savedLanguage = localStorage.getItem('selectedLanguage') || 'he';
-        languageSelector.value = savedLanguage;
+        
+        // Set active button
+        languageButtons.forEach(btn => {
+            if (btn.getAttribute('data-lang') === savedLanguage) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+        
         translatePage(savedLanguage);
         
-        // Add change event listener
-        languageSelector.addEventListener('change', (e) => {
-            translatePage(e.target.value);
+        // Add click event listeners
+        languageButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active class from all buttons
+                languageButtons.forEach(b => b.classList.remove('active'));
+                // Add active class to clicked button
+                btn.classList.add('active');
+                
+                const language = btn.getAttribute('data-lang');
+                translatePage(language);
+            });
         });
     }
 });
@@ -315,62 +590,23 @@ window.addEventListener('scroll', () => {
     }
 });
 
- // Add loading animation to images with error handling and retry
-const PLACEHOLDER_SRC = 'images/placeholder.svg';
+// Simple image loading - make images visible immediately
 const images = document.querySelectorAll('img');
 images.forEach(img => {
-    // Native loading/decoding hints
-    if (img.classList.contains('logo-img')) {
-        img.loading = 'eager';
-        img.decoding = 'async';
-        img.setAttribute('fetchpriority', 'high');
-    } else {
-        img.loading = 'lazy';
-        img.decoding = 'async';
-    }
-    
-    // Set initial opacity to 0 for loading effect
-    img.style.opacity = '0';
-    img.style.transition = 'opacity 0.3s ease';
-    
-    // If already loaded from cache, fade-in immediately
-    if (img.complete && img.naturalWidth > 0) {
-        requestAnimationFrame(() => {
-            img.style.opacity = '1';
-        });
-    }
-    
-    img.addEventListener('load', () => {
-        img.classList.remove('image-error');
-        img.style.opacity = '1';
-    });
+    // Make images visible immediately
+    img.style.opacity = '1';
+    img.style.display = 'block';
+    console.log('Image src:', img.src);
     
     img.addEventListener('error', () => {
         console.error('Failed to load image:', img.src);
-        
-        // Retry loading the image once with a cache-busting param
-        if (!img.dataset.retried) {
-            img.dataset.retried = 'true';
-            setTimeout(() => {
-                try {
-                    const url = new URL(img.src, window.location.href);
-                    url.searchParams.set('_', Date.now().toString());
-                    img.src = url.toString();
-                } catch {
-                    // Fallback for invalid URLs
-                    img.src = img.src + (img.src.includes('?') ? '&' : '?') + '_' + Date.now();
-                }
-            }, 500);
-            return;
-        }
-        
-        // After retry, swap to a placeholder (avoid loops)
-        if (!img.src.endsWith(PLACEHOLDER_SRC)) {
-            img.src = PLACEHOLDER_SRC;
-            img.alt = 'Image not available';
-        }
-        img.classList.add('image-error');
-        img.style.opacity = '1';
+        img.style.background = '#f0f0f0';
+        img.style.display = 'flex';
+        img.style.alignItems = 'center';
+        img.style.justifyContent = 'center';
+        img.style.fontSize = '12px';
+        img.style.color = '#666';
+        img.alt = 'תמונה לא זמינה';
     });
 });
 
@@ -473,7 +709,150 @@ document.addEventListener('DOMContentLoaded', () => {
         // Reduce animation complexity on mobile
         document.documentElement.style.setProperty('--animation-duration', '0.3s');
     }
+    
+    // Start typing effects
+    setTimeout(() => {
+        const titleElement = document.querySelector('.section-title');
+        if (titleElement) {
+            const originalText = titleElement.textContent;
+            typeWriter(titleElement, originalText, 150);
+        }
+    }, 500);
+    
+    // Start typing the motto after title is done
+    setTimeout(() => {
+        const mottoElement = document.querySelector('.restaurant-motto');
+        if (mottoElement) {
+            const originalText = mottoElement.textContent;
+            typeWriter(mottoElement, originalText, 120);
+        }
+    }, 4000);
+    
+    // Initialize contact form
+    initializeContactForm();
 });
+
+// Contact Form functionality
+function initializeContactForm() {
+    const contactForm = document.getElementById('contactForm');
+    const formSuccess = document.getElementById('formSuccess');
+    
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(contactForm);
+            const data = {
+                name: formData.get('name'),
+                phone: formData.get('phone'),
+                subject: formData.get('subject'),
+                message: formData.get('message'),
+                deliveryAddress: formData.get('deliveryAddress')
+            };
+            
+            // Validate form
+            if (validateForm(data)) {
+                // Simulate form submission (in real app, send to server)
+                submitForm(data);
+            }
+        });
+    }
+}
+
+function validateForm(data) {
+    const errors = [];
+    
+    if (!data.name || data.name.trim().length < 2) {
+        errors.push('שם מלא חייב להכיל לפחות 2 תווים');
+    }
+    
+    if (!data.phone || data.phone.trim().length < 9) {
+        errors.push('מספר טלפון חייב להכיל לפחות 9 ספרות');
+    }
+    
+    if (!data.subject) {
+        errors.push('יש לבחור נושא');
+    }
+    
+    // If delivery is selected, validate delivery address
+    if (data.subject === 'delivery' && (!data.deliveryAddress || data.deliveryAddress.trim().length < 5)) {
+        errors.push('כתובת למשלוח חייבת להכיל לפחות 5 תווים');
+    }
+    
+    if (!data.message || data.message.trim().length < 10) {
+        errors.push('הודעה חייבת להכיל לפחות 10 תווים');
+    }
+    
+    if (errors.length > 0) {
+        showFormErrors(errors);
+        return false;
+    }
+    
+    return true;
+}
+
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+function showFormErrors(errors) {
+    // Remove existing error messages
+    const existingErrors = document.querySelectorAll('.form-error');
+    existingErrors.forEach(error => error.remove());
+    
+    // Show new error messages
+    errors.forEach(error => {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'form-error';
+        errorDiv.textContent = error;
+        errorDiv.style.color = '#e74c3c';
+        errorDiv.style.fontSize = '0.9rem';
+        errorDiv.style.marginTop = '0.5rem';
+        
+        const submitBtn = document.querySelector('.submit-btn');
+        submitBtn.parentNode.insertBefore(errorDiv, submitBtn);
+    });
+}
+
+function submitForm(data) {
+    // Show loading state
+    const submitBtn = document.querySelector('.submit-btn');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'שולח...';
+    submitBtn.disabled = true;
+    
+    // Simulate API call
+    setTimeout(() => {
+        // Hide form and show success message
+        const contactForm = document.getElementById('contactForm');
+        const formSuccess = document.getElementById('formSuccess');
+        
+        contactForm.style.display = 'none';
+        formSuccess.style.display = 'block';
+        
+        // Reset form for next use
+        contactForm.reset();
+        
+        // Reset button
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        
+        // Scroll to success message
+        formSuccess.scrollIntoView({ behavior: 'smooth' });
+        
+        // Log form data (in real app, send to server)
+        console.log('Form submitted:', data);
+        
+        // Show form again after 5 seconds
+        setTimeout(() => {
+            contactForm.style.display = 'block';
+            formSuccess.style.display = 'none';
+        }, 5000);
+        
+    }, 2000);
+}
 
 // Add keyboard navigation support
 document.addEventListener('keydown', (e) => {
