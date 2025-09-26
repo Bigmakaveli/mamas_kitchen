@@ -315,37 +315,62 @@ window.addEventListener('scroll', () => {
     }
 });
 
-// Add loading animation to images with error handling and retry
+ // Add loading animation to images with error handling and retry
+const PLACEHOLDER_SRC = 'images/placeholder.svg';
 const images = document.querySelectorAll('img');
 images.forEach(img => {
+    // Native loading/decoding hints
+    if (img.classList.contains('logo-img')) {
+        img.loading = 'eager';
+        img.decoding = 'async';
+        img.setAttribute('fetchpriority', 'high');
+    } else {
+        img.loading = 'lazy';
+        img.decoding = 'async';
+    }
+    
     // Set initial opacity to 0 for loading effect
     img.style.opacity = '0';
     img.style.transition = 'opacity 0.3s ease';
     
+    // If already loaded from cache, fade-in immediately
+    if (img.complete && img.naturalWidth > 0) {
+        requestAnimationFrame(() => {
+            img.style.opacity = '1';
+        });
+    }
+    
     img.addEventListener('load', () => {
+        img.classList.remove('image-error');
         img.style.opacity = '1';
     });
     
     img.addEventListener('error', () => {
         console.error('Failed to load image:', img.src);
         
-        // Retry loading the image once
+        // Retry loading the image once with a cache-busting param
         if (!img.dataset.retried) {
             img.dataset.retried = 'true';
             setTimeout(() => {
-                img.src = img.src; // Retry loading
-            }, 1000);
-        } else {
-            // Set a fallback or show a placeholder
-            img.style.opacity = '1';
-            img.style.background = '#f0f0f0';
-            img.style.display = 'flex';
-            img.style.alignItems = 'center';
-            img.style.justifyContent = 'center';
-            img.style.fontSize = '12px';
-            img.style.color = '#666';
+                try {
+                    const url = new URL(img.src, window.location.href);
+                    url.searchParams.set('_', Date.now().toString());
+                    img.src = url.toString();
+                } catch {
+                    // Fallback for invalid URLs
+                    img.src = img.src + (img.src.includes('?') ? '&' : '?') + '_' + Date.now();
+                }
+            }, 500);
+            return;
+        }
+        
+        // After retry, swap to a placeholder (avoid loops)
+        if (!img.src.endsWith(PLACEHOLDER_SRC)) {
+            img.src = PLACEHOLDER_SRC;
             img.alt = 'Image not available';
         }
+        img.classList.add('image-error');
+        img.style.opacity = '1';
     });
 });
 

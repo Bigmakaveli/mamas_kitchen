@@ -542,3 +542,21 @@ body {
         transform: translateX(0);
     }
 }
+
+/* Image fallback styling */
+img.image-error {
+    object-fit: contain !important;
+    background: linear-gradient(180deg, #fafafa, #f0f0f0);
+    border: 1px dashed rgba(0, 0, 0, 0.1);
+}
+
+.menu-image img.image-error {
+    padding: 12px;
+    border-radius: 8px;
+}
+
+.logo-img.image-error {
+    padding: 6px;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+}
