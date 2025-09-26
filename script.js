@@ -22,6 +22,8 @@ const translations = {
         'menu': 'תפריט',
         'contact': 'צור קשר',
         
+        'page-title': 'מטבח של אמא - בישול ביתי אותנטי',
+        
         // Menu section
         'our-menu': 'התפריט שלנו',
         'restaurant-motto': 'אוכל מזרחי ביתי',
@@ -121,6 +123,7 @@ const translations = {
         'logo': 'Mama\'s Kitchen',
         'menu': 'Menu',
         'contact': 'Contact',
+        'page-title': 'Mama\'s Kitchen - Authentic Middle Eastern Home Cooking',
         
         // Menu section
         'our-menu': 'Our Menu',
@@ -195,6 +198,7 @@ const translations = {
         'logo': 'Мамина Кухня',
         'menu': 'Меню',
         'contact': 'Контакты',
+        'page-title': 'Мамина Кухня - Аутентичная домашняя ближневосточная кухня',
         
         // Menu section
         'our-menu': 'Наше Меню',
@@ -269,6 +273,7 @@ const translations = {
         'logo': 'مطبخ أمي',
         'menu': 'القائمة',
         'contact': 'اتصل بنا',
+        'page-title': 'مطبخ أمي - طعام شرقي منزلي أصيل',
         
         // Menu section
         'our-menu': 'قائمتنا',
@@ -355,6 +360,11 @@ function translatePage(language) {
         document.documentElement.dir = 'rtl';
     } else {
         document.documentElement.dir = 'ltr';
+    }
+    
+    // Update page title if available
+    if (translations[language] && translations[language]['page-title']) {
+        document.title = translations[language]['page-title'];
     }
     
     // Translate all elements with data-translate attribute
