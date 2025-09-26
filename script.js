@@ -373,6 +373,12 @@ function translatePage(language) {
             element.innerHTML = translations[language][key];
         }
     });
+
+    // Ensure site brand title (visible logo) stays in English
+    const logoEl = document.querySelector('.logo');
+    if (logoEl) {
+        logoEl.textContent = 'Mama’s Kitchen';
+    }
     
     // Save language preference
     localStorage.setItem('selectedLanguage', language);
