@@ -1,17 +1,54 @@
-// Typing effect for titles
-function typeWriter(element, text, speed = 100) {
+/* Typing effect for titles with cancellation when language changes */
+let languageChangeToken = 0; // incremented on each language change to cancel ongoing typings
+let mottoTimeoutId = null;
+
+function typeWriter(element, text, speed = 100, token = languageChangeToken) {
     let i = 0;
-    element.innerHTML = '';
+    const typeId = String(Date.now() + Math.random());
+    element.dataset.typeId = typeId;
+    element.textContent = '';
     
     function type() {
+        // Abort if language changed or a newer typing session started for this element
+        if (token !== languageChangeToken || element.dataset.typeId !== typeId) return;
         if (i < text.length) {
-            element.innerHTML += text.charAt(i);
+            element.textContent += text.charAt(i);
             i++;
             setTimeout(type, speed);
         }
     }
     
     type();
+}
+
+// Start or restart typing animations for key heading elements
+function startTypingAnimations(lang) {
+    const titleElement = document.querySelector('.section-title');
+    const mottoElement = document.querySelector('.restaurant-motto');
+
+    if (titleElement) {
+        const titleText = (translations[lang] && translations[lang]['our-menu'])
+            ? translations[lang]['our-menu']
+            : titleElement.textContent;
+        typeWriter(titleElement, titleText, 150, languageChangeToken);
+    }
+
+    if (mottoElement) {
+        const mottoText = (translations[lang] && translations[lang]['restaurant-motto'])
+            ? translations[lang]['restaurant-motto']
+            : mottoElement.textContent;
+        const localToken = languageChangeToken;
+        if (mottoTimeoutId) {
+            clearTimeout(mottoTimeoutId);
+            mottoTimeoutId = null;
+        }
+        // Small delay so the motto begins after the title starts
+        mottoTimeoutId = setTimeout(() => {
+            if (localToken === languageChangeToken) {
+                typeWriter(mottoElement, mottoText, 120, localToken);
+            }
+        }, 400);
+    }
 }
 
 // Translation data
@@ -351,6 +388,14 @@ let currentLanguage = 'he';
 // Translation function
 function translatePage(language) {
     currentLanguage = language;
+
+    // Bump token to cancel any ongoing typing when language changes
+    languageChangeToken++;
+    // Clear any pending typing timers
+    if (mottoTimeoutId) {
+        clearTimeout(mottoTimeoutId);
+        mottoTimeoutId = null;
+    }
     
     // Update HTML lang attribute
     document.documentElement.lang = language;
@@ -379,6 +424,9 @@ function translatePage(language) {
     if (logoEl) {
         logoEl.textContent = 'Mama’s Kitchen';
     }
+
+    // Restart typing animations for the new language
+    startTypingAnimations(language);
     
     // Save language preference
     localStorage.setItem('selectedLanguage', language);
@@ -723,24 +771,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Reduce animation complexity on mobile
         document.documentElement.style.setProperty('--animation-duration', '0.3s');
     }
-    
-    // Start typing effects
-    setTimeout(() => {
-        const titleElement = document.querySelector('.section-title');
-        if (titleElement) {
-            const originalText = titleElement.textContent;
-            typeWriter(titleElement, originalText, 150);
-        }
-    }, 500);
-    
-    // Start typing the motto after title is done
-    setTimeout(() => {
-        const mottoElement = document.querySelector('.restaurant-motto');
-        if (mottoElement) {
-            const originalText = mottoElement.textContent;
-            typeWriter(mottoElement, originalText, 120);
-        }
-    }, 4000);
     
     // Initialize contact form
     initializeContactForm();
