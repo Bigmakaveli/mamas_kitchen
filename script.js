@@ -109,7 +109,7 @@ const translations = {
 
         // Promo
         'discount-title': 'מבצע מיוחד',
-        'discount-desc': '10% הנחה לעובדי מדינה או משרתים במדים',
+        'discount-desc': '10% הנחה לעובדי מדינה או לובשי מדים',
         
         // Contact section
         'visit-us': 'בואו לבקר אותנו',
