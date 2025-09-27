@@ -106,6 +106,10 @@ const translations = {
         'soft-drinks-desc': 'מבחר משקאות קלים',
         'mineral-water': 'מים מינרליים',
         'mineral-water-desc': 'מים מינרליים טריים',
+
+        // Promo
+        'discount-title': 'מבצע מיוחד',
+        'discount-desc': '10% הנחה לעובדי מדינה או משרתים במדים',
         
         // Contact section
         'visit-us': 'בואו לבקר אותנו',
@@ -207,6 +211,10 @@ const translations = {
         'soft-drinks-desc': 'Selection of soft drinks',
         'mineral-water': 'Mineral Water',
         'mineral-water-desc': 'Fresh mineral water',
+
+        // Promo
+        'discount-title': 'Special Offer',
+        'discount-desc': '10% discount for state employees or uniformed personnel',
         
         // Contact section
         'visit-us': 'Visit Us',
@@ -282,6 +290,10 @@ const translations = {
         'soft-drinks-desc': 'Выбор безалкогольных напитков',
         'mineral-water': 'Минеральная Вода',
         'mineral-water-desc': 'Свежая минеральная вода',
+
+        // Promo
+        'discount-title': 'Специальное предложение',
+        'discount-desc': 'Скидка 10% для госслужащих или сотрудников в форме',
         
         // Contact section
         'visit-us': 'Посетите Нас',
@@ -357,6 +369,10 @@ const translations = {
         'soft-drinks-desc': 'اختيار من المشروبات الغازية',
         'mineral-water': 'مياه معدنية',
         'mineral-water-desc': 'مياه معدنية طازجة',
+
+        // Promo
+        'discount-title': 'عرض خاص',
+        'discount-desc': 'خصم 10% لموظفي الدولة أو أصحاب الزي الرسمي',
         
         // Contact section
         'visit-us': 'قم بزيارتنا',
@@ -933,3 +949,28 @@ const debouncedScrollHandler = debounce(() => {
 }, 10);
 
 window.addEventListener('scroll', debouncedScrollHandler);
+
+// Discount card logic
+document.addEventListener('DOMContentLoaded', () => {
+    const card = document.getElementById('discount-card');
+    if (!card) return;
+
+    const dismissed = localStorage.getItem('discountCardDismissed') === 'true';
+    if (dismissed) {
+        card.style.display = 'none';
+    } else {
+        card.classList.add('show');
+    }
+
+    const closeBtn = card.querySelector('.discount-close');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            card.classList.remove('show');
+            card.classList.add('hide');
+            localStorage.setItem('discountCardDismissed', 'true');
+            setTimeout(() => {
+                card.style.display = 'none';
+            }, 300);
+        });
+    }
+});

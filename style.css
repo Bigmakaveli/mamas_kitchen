@@ -772,3 +772,87 @@ img {
         transform: translateX(0);
     }
 }
+
+/* Discount promo card */
+.promo {
+    background: transparent;
+    padding: 0.5rem 0 0;
+}
+
+.discount-card {
+    position: relative;
+    background: #d92c2c; /* red card */
+    color: #fff;
+    border-radius: 12px;
+    padding: 1rem 3rem 1rem 1rem;
+    box-shadow: 0 10px 25px rgba(217, 44, 44, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.discount-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at -10% -10%, rgba(255,255,255,0.25), transparent 60%),
+                radial-gradient(circle at 120% 50%, rgba(255,255,255,0.15), transparent 40%);
+    pointer-events: none;
+}
+
+.discount-card.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.discount-card.hide {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+.discount-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 1rem;
+}
+
+.discount-content strong {
+    font-size: 1.1rem;
+}
+
+.discount-close {
+    position: absolute;
+    top: 10px;
+    inset-inline-end: 10px; /* respects RTL/LTR */
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: #fff;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 28px;
+    text-align: center;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.discount-close:hover {
+    background: rgba(255,255,255,0.35);
+    transform: scale(1.05);
+}
+
+@media (max-width: 480px) {
+    .discount-card {
+        padding: 0.8rem 2.5rem 0.8rem 0.8rem;
+    }
+    .discount-content {
+        font-size: 0.95rem;
+    }
+}
