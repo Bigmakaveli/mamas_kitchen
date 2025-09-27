@@ -747,7 +747,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Preload critical images with mobile optimization
     const criticalImages = [
-        'images/logo.jpeg'
+        'images/1758991135427_ub5ndpczg7.jpg'
     ];
     
     criticalImages.forEach(src => {
