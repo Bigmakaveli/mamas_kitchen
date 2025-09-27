@@ -154,7 +154,7 @@ const translations = {
         'send-message': '📤 שלח בקשה',
         'success-message': 'תודה רבה! הבקשה שלכם נשלחה בהצלחה. נחזור אליכם תוך 24 שעות.',
         'address': 'כתובת',
-        'address-text': 'רחוב הרצל 123<br>תל אביב, ישראל 12345',
+        'address-text': 'נתנזן 11 חיפה',
         'hours': 'שעות פעילות',
         'hours-text': 'ראשון - חמישי: 11:00 - 22:00<br>שישי - שבת: 11:00 - 23:00<br>יום ראשון: 12:00 - 21:00',
         'phone': 'טלפון'
