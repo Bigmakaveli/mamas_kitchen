@@ -80,7 +80,7 @@ const translations = {
         'chicken-breast-desc': 'חזה עוף טרי ועסיסי',
         'chicken-thighs': 'כרעיים 150 גרם',
         'chicken-thighs-desc': 'כרעיים טריים וטעימים',
-        'stir-fried-noodles': 'פטריות',
+        'stir-fried-noodles': 'מוקבץ פטריות',
         'stir-fried-noodles-desc': 'פטריות מוקפצות עם ירקות טריים',
         'grape-leaves': 'עלי גפן 8 יחידות',
         'grape-leaves-desc': 'עלי גפן ממולאים באורז ועשבי תיבול',
