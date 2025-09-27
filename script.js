@@ -950,27 +950,25 @@ const debouncedScrollHandler = debounce(() => {
 
 window.addEventListener('scroll', debouncedScrollHandler);
 
-// Discount card logic
+/* Discount card logic - always visible; 'X' triggers a gentle pulse instead of closing */
 document.addEventListener('DOMContentLoaded', () => {
     const card = document.getElementById('discount-card');
     if (!card) return;
 
-    const dismissed = localStorage.getItem('discountCardDismissed') === 'true';
-    if (dismissed) {
-        card.style.display = 'none';
-    } else {
-        card.classList.add('show');
-    }
+    // Always show the banner and ignore any previous dismissal
+    try { localStorage.removeItem('discountCardDismissed'); } catch (e) {}
+    card.style.display = '';
+    card.classList.remove('hide');
+    card.classList.add('show');
 
     const closeBtn = card.querySelector('.discount-close');
     if (closeBtn) {
-        closeBtn.addEventListener('click', () => {
-            card.classList.remove('show');
-            card.classList.add('hide');
-            localStorage.setItem('discountCardDismissed', 'true');
-            setTimeout(() => {
-                card.style.display = 'none';
-            }, 300);
+        closeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Provide a subtle attention animation instead of hiding
+            card.classList.remove('attention'); // reset if already applied
+            void card.offsetWidth; // reflow to restart animation
+            card.classList.add('attention');
         });
     }
 });
