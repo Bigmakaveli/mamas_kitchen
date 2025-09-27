@@ -856,3 +856,47 @@ img {
         font-size: 0.95rem;
     }
 }
+
+/* Floating Instagram Button */
+.instagram-fab {
+    position: fixed;
+    bottom: 16px;
+    right: 16px; /* always bottom-right */
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    z-index: 1200;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    border: 2px solid rgba(255,255,255,0.8);
+}
+
+.instagram-fab:hover,
+.instagram-fab:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px rgba(0,0,0,0.2);
+    outline: none;
+}
+
+.instagram-fab:active {
+    transform: translateY(0);
+}
+
+@media (max-width: 480px) {
+    .instagram-fab {
+        width: 44px;
+        height: 44px;
+        bottom: 12px;
+        right: 12px;
+    }
+    .instagram-fab svg {
+        width: 22px;
+        height: 22px;
+    }
+}
