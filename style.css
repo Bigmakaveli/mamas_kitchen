@@ -935,6 +935,50 @@ img {
     }
 }
 
+/* Floating Waze Button */
+.waze-fab {
+    position: fixed;
+    bottom: 144px; /* stacked above WhatsApp */
+    right: 16px; /* bottom-right with other FABs */
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #05C3DE; /* Waze blue */
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    z-index: 1200;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    border: 2px solid rgba(255,255,255,0.9);
+}
+
+.waze-fab:hover,
+.waze-fab:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px rgba(0,0,0,0.2);
+    outline: none;
+}
+
+.waze-fab:active {
+    transform: translateY(0);
+}
+
+@media (max-width: 480px) {
+    .waze-fab {
+        width: 44px;
+        height: 44px;
+        bottom: 120px; /* stacked above WhatsApp on mobile */
+        right: 12px;
+    }
+    .waze-fab svg {
+        width: 22px;
+        height: 22px;
+    }
+}
+
 /* Floating Call Button */
 .call-fab {
     position: fixed;
