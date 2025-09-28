@@ -156,7 +156,7 @@ const translations = {
         'address': 'כתובת',
         'address-text': 'נתנזן 11 חיפה',
         'hours': 'שעות פעילות',
-        'hours-text': 'שני - שישי: 10:00 - 23:00',
+        'hours-text': 'ראשון - חמישי: 10:00 - 23:00<br>שישי: 10:00 - 12:00<br>שבת: 15:00 - 23:00',
         'phone': 'טלפון'
     },
     en: {
@@ -235,7 +235,7 @@ const translations = {
         'address': 'Address',
         'address-text': '123 Herzl Street<br>Tel Aviv, Israel 12345',
         'hours': 'Hours',
-        'hours-text': 'Monday - Friday: 10:00 AM - 11:00 PM',
+        'hours-text': 'Sunday - Thursday: 10:00 AM - 11:00 PM<br>Friday: 10:00 AM - 12:00 PM<br>Saturday: 3:00 PM - 11:00 PM',
         'phone': 'Phone'
     },
     ru: {
@@ -314,7 +314,7 @@ const translations = {
         'address': 'Адрес',
         'address-text': 'ул. Герцль 123<br>Тель-Авив, Израиль 12345',
         'hours': 'Часы Работы',
-        'hours-text': 'Понедельник - Пятница: 10:00 - 23:00',
+        'hours-text': 'Воскресенье - Четверг: 10:00 - 23:00<br>Пятница: 10:00 - 12:00<br>Суббота: 15:00 - 23:00',
         'phone': 'Телефон'
     },
     ar: {
@@ -393,7 +393,7 @@ const translations = {
         'address': 'العنوان',
         'address-text': 'شارع هرتسل 123<br>تل أبيب، إسرائيل 12345',
         'hours': 'ساعات العمل',
-        'hours-text': 'الاثنين - الجمعة: 10:00 - 23:00',
+        'hours-text': 'الأحد - الخميس: 10:00 - 23:00<br>الجمعة: 10:00 - 12:00<br>السبت: 15:00 - 23:00',
         'phone': 'الهاتف'
     }
 };
