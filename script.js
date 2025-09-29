@@ -698,7 +698,7 @@ function validateForm(form) {
             input.style.borderColor = '#e74c3c';
             isValid = false;
         } else {
-            input.style.borderColor = '#d4af37';
+            input.style.borderColor = '#d32f2f';
         }
     });
     
