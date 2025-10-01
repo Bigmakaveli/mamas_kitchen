@@ -1078,3 +1078,40 @@ img {
         font-size: 14px;
     }
 }
+
+/* Image Lightbox */
+.image-lightbox-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.85);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.15s ease-in-out, visibility 0s linear 0.15s;
+    z-index: 2000; /* above header (1000) and FABs (1200) */
+    cursor: zoom-out;
+}
+
+.image-lightbox-overlay.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition: opacity 0.15s ease-in-out;
+    animation: imageLightboxFade 0.15s ease;
+}
+
+.image-lightbox-img {
+    max-width: 95vw;
+    max-height: 95vh;
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    cursor: zoom-out;
+}
+
+@keyframes imageLightboxFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}

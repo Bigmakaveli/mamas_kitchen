@@ -790,6 +790,72 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Initialize contact form
     initializeContactForm();
+
+    // Image Lightbox: create overlay and wire events
+    (function initImageLightbox() {
+        const overlay = document.createElement('div');
+        overlay.className = 'image-lightbox-overlay';
+        overlay.setAttribute('aria-hidden', 'true');
+        const img = document.createElement('img');
+        img.className = 'image-lightbox-img';
+        img.alt = '';
+        overlay.appendChild(img);
+        document.body.appendChild(overlay);
+
+        let isOpen = false;
+        const openLightbox = (src) => {
+            if (!src) return;
+            img.src = src;
+            overlay.classList.add('active');
+            overlay.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+            isOpen = true;
+        };
+
+        const closeLightbox = () => {
+            if (!isOpen) return;
+            overlay.classList.remove('active');
+            overlay.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+            isOpen = false;
+        };
+
+        // Delegate clicks from menu images
+        document.addEventListener('click', (e) => {
+            const target = e.target;
+            if (!(target instanceof Element)) return;
+            const imageEl = target.closest('.menu-image img');
+            if (imageEl && imageEl instanceof HTMLImageElement) {
+                // Avoid interfering with other handlers
+                // Only left-click without modifier keys
+                if (e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
+                    e.preventDefault();
+                    openLightbox(imageEl.currentSrc || imageEl.src);
+                }
+            }
+        }, true);
+
+        // Close when clicking the overlay background (not the image)
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                closeLightbox();
+            }
+        });
+
+        // Prevent clicks on the image from bubbling to overlay handler
+        img.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+
+        // Close on Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            }
+        });
+
+        // Basic touch support: tap outside closes (handled by overlay click)
+    })();
 });
 
 // Contact Form functionality
