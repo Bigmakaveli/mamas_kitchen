@@ -886,6 +886,54 @@ img {
     }
 }
 
+/* Mini soldiers' deal card */
+.mini-ad-card {
+    margin-top: 0.6rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #ffffff;
+    color: #d32f2f;
+    border: 1.5px solid #d32f2f;
+    border-radius: 10px;
+    padding: 0.5rem 0.75rem;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    font-weight: 600;
+}
+
+.mini-ad-card:hover,
+.mini-ad-card:focus-within {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.1);
+}
+
+.mini-ad-emoji {
+    font-size: 1.1rem;
+    line-height: 1;
+}
+
+.mini-ad-text {
+    font-size: 1rem;
+}
+
+.mini-ad-text strong {
+    font-weight: 800;
+}
+
+@media (max-width: 768px) {
+    .mini-ad-text { font-size: 0.95rem; }
+    .mini-ad-emoji { font-size: 1rem; }
+}
+
+@media (max-width: 480px) {
+    .mini-ad-card {
+        padding: 0.45rem 0.65rem;
+    }
+    .mini-ad-text { font-size: 0.9rem; }
+    .mini-ad-emoji { font-size: 0.95rem; }
+}
+
 /* Floating Instagram Button */
 .instagram-fab {
     position: fixed;

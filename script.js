@@ -233,7 +233,7 @@ const translations = {
         'send-message': 'Send Message',
         'success-message': 'Thank you! Your message has been sent successfully. We will get back to you soon.',
         'address': 'Address',
-        'address-text': '123 Herzl Street<br>Tel Aviv, Israel 12345',
+        'address-text': 'נתנזן 11 חיפה',
         'hours': 'Hours',
         'hours-text': 'Sunday - Thursday: 10:00 AM - 11:00 PM<br>Friday: 10:00 AM - 12:00 PM<br>Saturday: 3:00 PM - 11:00 PM',
         'phone': 'Phone'
@@ -312,7 +312,7 @@ const translations = {
         'send-message': 'Отправить Сообщение',
         'success-message': 'Спасибо! Ваше сообщение отправлено успешно. Мы свяжемся с вами в ближайшее время.',
         'address': 'Адрес',
-        'address-text': 'ул. Герцль 123<br>Тель-Авив, Израиль 12345',
+        'address-text': 'נתנזן 11 חיפה',
         'hours': 'Часы Работы',
         'hours-text': 'Воскресенье - Четверг: 10:00 - 23:00<br>Пятница: 10:00 - 12:00<br>Суббота: 15:00 - 23:00',
         'phone': 'Телефон'
@@ -391,7 +391,7 @@ const translations = {
         'send-message': 'إرسال الرسالة',
         'success-message': 'شكراً لك! تم إرسال رسالتك بنجاح. سنتواصل معك قريباً.',
         'address': 'العنوان',
-        'address-text': 'شارع هرتسل 123<br>تل أبيب، إسرائيل 12345',
+        'address-text': 'נתנזן 11 חיפה',
         'hours': 'ساعات العمل',
         'hours-text': 'الأحد - الخميس: 10:00 - 23:00<br>الجمعة: 10:00 - 12:00<br>السبت: 15:00 - 23:00',
         'phone': 'الهاتف'
@@ -423,8 +423,14 @@ function translatePage(language) {
         document.documentElement.dir = 'ltr';
     }
     
-    // Always set page title in English regardless of selected language
-    document.title = 'Mama’s Kitchen';
+    // Set page title from translations with safe English fallback
+    const translatedTitle = (translations[language] && translations[language]['page-title'])
+        ? translations[language]['page-title']
+        : null;
+    const defaultEnglishTitle = (translations['en'] && translations['en']['page-title'])
+        ? translations['en']['page-title']
+        : document.title;
+    document.title = translatedTitle || defaultEnglishTitle;
     
     // Translate all elements with data-translate attribute
     const elements = document.querySelectorAll('[data-translate]');
@@ -435,11 +441,7 @@ function translatePage(language) {
         }
     });
 
-    // Ensure site brand title (visible logo) stays in English
-    const logoEl = document.querySelector('.logo');
-    if (logoEl) {
-        logoEl.textContent = 'Mama’s Kitchen';
-    }
+    // Allow logo text to be translated via data-translate like other elements
 
     // Restart typing animations for the new language
     startTypingAnimations(language);
