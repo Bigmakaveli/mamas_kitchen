@@ -110,6 +110,7 @@ const translations = {
         // Promo
         'discount-title': 'מבצע מיוחד',
         'discount-desc': '10% הנחה לעובדי מדינה או לובשי מדים',
+        'business_meal_soldiers_40': 'ארוחה עסקית רק לחיילים 40₪ !!!!',
         
         // Contact section
         'visit-us': 'בואו לבקר אותנו',
@@ -215,6 +216,7 @@ const translations = {
         // Promo
         'discount-title': 'Special Offer',
         'discount-desc': '10% discount for state employees or uniformed personnel',
+        'business_meal_soldiers_40': 'Business meal for soldiers only 40₪ !!!!',
         
         // Contact section
         'visit-us': 'Visit Us',
@@ -294,6 +296,7 @@ const translations = {
         // Promo
         'discount-title': 'Специальное предложение',
         'discount-desc': 'Скидка 10% для госслужащих или сотрудников в форме',
+        'business_meal_soldiers_40': 'Бизнес-обед только для солдат 40₪ !!!!',
         
         // Contact section
         'visit-us': 'Посетите Нас',
