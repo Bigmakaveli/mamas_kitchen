@@ -66,6 +66,7 @@ const translations = {
         'restaurant-motto': 'אוכל מזרחי ביתי',
         'all': 'הכל',
         'meals': 'ארוחות',
+        'pitas': 'פיתות',
         'additions': 'תוספות',
         'drinks': 'משקאות',
         
@@ -172,6 +173,7 @@ const translations = {
         'restaurant-motto': 'Authentic Middle Eastern Home Cooking',
         'all': 'All',
         'meals': 'Meals',
+        'pitas': 'Pitas',
         'additions': 'Additions',
         'drinks': 'Drinks',
         
@@ -252,6 +254,7 @@ const translations = {
         'restaurant-motto': 'Аутентичная домашняя ближневосточная кухня',
         'all': 'Все',
         'meals': 'Блюда',
+        'pitas': 'Питы',
         'additions': 'Дополнения',
         'drinks': 'Напитки',
         
@@ -332,6 +335,7 @@ const translations = {
         'restaurant-motto': 'طعام شرقي منزلي أصيل',
         'all': 'الكل',
         'meals': 'الوجبات',
+        'pitas': 'بيتا',
         'additions': 'الإضافات',
         'drinks': 'المشروبات',
         
