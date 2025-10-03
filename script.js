@@ -406,6 +406,45 @@ const translations = {
     }
 };
 
+// Druze Pita dynamic content updater
+function updateDruzePitaContent(language) {
+    const he = {
+        name: 'פיתה דרוזית',
+        desc: 'פיתה דרוזית במילוי לבנה, ירקות טריים ותערובת תבלינים דרוזית.',
+        alt: 'פיתה דרוזית ממולאת בלבנה וירקות',
+        src: 'https://landing-ai-images.s3.amazonaws.com/images/img_l6k37rkc8pl_sbjf9m0sib_1759510787390.jpeg'
+    };
+    const ar = {
+        name: 'فطيرة درزية',
+        desc: 'فطيرة درزية محشوة باللبنة، خضار طازج وتتبيلة درزية مميزة.',
+        alt: 'فطيرة درزية ملفوفة ومحشوة باللبنة والخضار',
+        src: 'https://landing-ai-images.s3.amazonaws.com/images/img_l6k37rkc8pl_sbjf9m0sib_1759510787390.jpeg'
+    };
+
+    const useArabic = language === 'ar';
+    const data = useArabic ? ar : he;
+
+    document.querySelectorAll('[data-dish="druze-pita"]').forEach(card => {
+        const nameEl = card.querySelector('[data-item="name"]');
+        const descEl = card.querySelector('[data-item="desc"]');
+        const imgEl = card.querySelector('.menu-image img');
+        const badgeHe = card.querySelector('[data-item="badge-he"]');
+        const badgeAr = card.querySelector('[data-item="badge-ar"]');
+
+        if (nameEl) nameEl.textContent = data.name;
+        if (descEl) {
+            descEl.textContent = data.desc;
+            descEl.setAttribute('dir', 'rtl');
+        }
+        if (imgEl) {
+            imgEl.setAttribute('src', data.src);
+            imgEl.setAttribute('alt', data.alt);
+        }
+        if (badgeHe) badgeHe.style.display = useArabic ? 'none' : '';
+        if (badgeAr) badgeAr.style.display = useArabic ? '' : 'none';
+    });
+}
+ 
 // Current language (default Hebrew)
 let currentLanguage = 'he';
 
@@ -450,6 +489,9 @@ function translatePage(language) {
     });
 
     // Allow logo text to be translated via data-translate like other elements
+
+    // Update Druze Pita item content (Hebrew by default, Arabic when selected)
+    updateDruzePitaContent(language);
 
     // Restart typing animations for the new language
     startTypingAnimations(language);
