@@ -412,13 +412,13 @@ function updateDruzePitaContent(language) {
         name: 'פיתה דרוזית',
         desc: 'פיתה דרוזית במילוי לבנה, ירקות טריים ותערובת תבלינים דרוזית.',
         alt: 'פיתה דרוזית ממולאת בלבנה וירקות',
-        src: 'https://landing-ai-images.s3.amazonaws.com/images/img_l6k37rkc8pl_sbjf9m0sib_1759510787390.jpeg'
+        src: 'https://landing-ai-images.s3.amazonaws.com/images/img_7vu8vhqnjmq_8s0zho4h9p9_1759525053260.jpeg'
     };
     const ar = {
         name: 'فطيرة درزية',
         desc: 'فطيرة درزية محشوة باللبنة، خضار طازج وتتبيلة درزية مميزة.',
         alt: 'فطيرة درزية ملفوفة ومحشوة باللبنة والخضار',
-        src: 'https://landing-ai-images.s3.amazonaws.com/images/img_l6k37rkc8pl_sbjf9m0sib_1759510787390.jpeg'
+        src: 'https://landing-ai-images.s3.amazonaws.com/images/img_7vu8vhqnjmq_8s0zho4h9p9_1759525053260.jpeg'
     };
 
     const useArabic = language === 'ar';
