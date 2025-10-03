@@ -425,20 +425,13 @@ function updateDruzePitaContent(language) {
     const data = useArabic ? ar : he;
 
     document.querySelectorAll('[data-dish="druze-pita"]').forEach(card => {
-        const nameEl = card.querySelector('[data-item="name"]');
         const descEl = card.querySelector('[data-item="desc"]');
-        const imgEl = card.querySelector('.menu-image img');
         const badgeHe = card.querySelector('[data-item="badge-he"]');
         const badgeAr = card.querySelector('[data-item="badge-ar"]');
 
-        if (nameEl) nameEl.textContent = data.name;
         if (descEl) {
             descEl.textContent = data.desc;
             descEl.setAttribute('dir', 'rtl');
-        }
-        if (imgEl) {
-            imgEl.setAttribute('src', data.src);
-            imgEl.setAttribute('alt', data.alt);
         }
         if (badgeHe) badgeHe.style.display = useArabic ? 'none' : '';
         if (badgeAr) badgeAr.style.display = useArabic ? '' : 'none';
