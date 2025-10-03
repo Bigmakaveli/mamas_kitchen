@@ -406,7 +406,8 @@ const translations = {
     }
 };
 
-// Druze Pita dynamic content updater
+/* Druze Pita dynamic content updater
+   Shows only the active language description while keeping title, badge, price and image intact. */
 function updateDruzePitaContent(language) {
     const he = {
         name: 'פיתה דרוזית',
@@ -426,15 +427,29 @@ function updateDruzePitaContent(language) {
 
     document.querySelectorAll('[data-dish="druze-pita"]').forEach(card => {
         const descEl = card.querySelector('[data-item="desc"]');
+        const heDesc = card.querySelector('[data-item="desc-he"]');
+        const arDesc = card.querySelector('[data-item="desc-ar"]');
         const badgeHe = card.querySelector('[data-item="badge-he"]');
         const badgeAr = card.querySelector('[data-item="badge-ar"]');
 
-        if (descEl) {
+        // Toggle badges
+        if (badgeHe) badgeHe.style.display = useArabic ? 'none' : '';
+        if (badgeAr) badgeAr.style.display = useArabic ? '' : 'none';
+
+        // Handle descriptions: either two separate paragraphs or a single dynamic one
+        if (heDesc || arDesc) {
+            if (heDesc) {
+                heDesc.style.display = useArabic ? 'none' : '';
+                heDesc.setAttribute('dir', 'rtl');
+            }
+            if (arDesc) {
+                arDesc.style.display = useArabic ? '' : 'none';
+                arDesc.setAttribute('dir', 'rtl');
+            }
+        } else if (descEl) {
             descEl.textContent = data.desc;
             descEl.setAttribute('dir', 'rtl');
         }
-        if (badgeHe) badgeHe.style.display = useArabic ? 'none' : '';
-        if (badgeAr) badgeAr.style.display = useArabic ? '' : 'none';
     });
 }
  
