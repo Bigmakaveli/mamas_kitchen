@@ -107,6 +107,8 @@ const translations = {
         'soft-drinks-desc': 'מבחר משקאות קלים',
         'mineral-water': 'מים מינרליים',
         'mineral-water-desc': 'מים מינרליים טריים',
+        'druze-pita': 'פיתה דרוזית',
+        'druze-pita-desc': 'פיתה דרוזית במילוי לבנה, ירקות טריים ותערובת תבלינים דרוזית.',
 
         // Promo
         'discount-title': 'מבצע מיוחד',
@@ -413,13 +415,50 @@ function updateDruzePitaContent(language) {
     const isHebrewChar = (txt) => /[\u0590-\u05FF]/.test(txt || '');
 
     document.querySelectorAll('[data-dish="druze-pita"]').forEach(card => {
-        const paragraphs = Array.from(card.querySelectorAll('.menu-content p'));
+        const contentEl = card.querySelector('.menu-content');
+        const titleEl = contentEl ? contentEl.querySelector('h3') : null;
+        const priceEl = contentEl ? contentEl.querySelector('.price') : null;
+        let paragraphs = Array.from(contentEl ? contentEl.querySelectorAll('p') : []);
 
-        // Detect what variants exist within this specific card
+        // If Hebrew selected, enforce exact Hebrew title/description and hide any Arabic sentences
+        if (language === 'he') {
+            // Update title if translation exists
+            const heTitle = translations.he && translations.he['druze-pita'];
+            if (titleEl && heTitle) {
+                titleEl.textContent = heTitle;
+            }
+
+            // Ensure description matches Hebrew translation
+            const heDesc = translations.he && translations.he['druze-pita-desc'];
+            // Find existing Hebrew paragraph
+            let heP = paragraphs.find(p => isHebrewChar(p.textContent));
+            if (!heP) {
+                heP = document.createElement('p');
+                heP.setAttribute('dir', 'rtl');
+                if (contentEl) {
+                    if (priceEl) {
+                        contentEl.insertBefore(heP, priceEl);
+                    } else {
+                        contentEl.appendChild(heP);
+                    }
+                }
+                paragraphs.push(heP);
+            }
+            if (heDesc) {
+                heP.textContent = heDesc;
+            }
+            // Show only the Hebrew paragraph; hide others
+            paragraphs.forEach(p => {
+                p.style.display = (p === heP) ? '' : 'none';
+                p.setAttribute('dir', 'rtl');
+            });
+            return; // done for Hebrew
+        }
+
+        // Fallback to language-detection visibility for other languages
         const hasArabic = paragraphs.some(p => isArabicChar(p.textContent));
         const hasHebrew = paragraphs.some(p => isHebrewChar(p.textContent));
 
-        // If the card has neither Arabic nor Hebrew detection (unlikely), show all and skip
         if (!hasArabic && !hasHebrew) {
             paragraphs.forEach(p => { p.style.display = ''; p.setAttribute('dir', 'rtl'); });
             return;
@@ -430,18 +469,9 @@ function updateDruzePitaContent(language) {
             const isAr = isArabicChar(text);
             const isHe = isHebrewChar(text);
 
-            // Decide which description(s) to show
             if (language === 'ar') {
-                // If this card has an Arabic variant, show Arabic only; otherwise leave as-is (do not hide Hebrew)
                 if (hasArabic) {
                     p.style.display = isAr ? '' : 'none';
-                } else {
-                    p.style.display = '';
-                }
-            } else if (language === 'he') {
-                // If this card has a Hebrew variant, show Hebrew only; otherwise leave as-is
-                if (hasHebrew) {
-                    p.style.display = isHe ? '' : 'none';
                 } else {
                     p.style.display = '';
                 }
@@ -455,8 +485,6 @@ function updateDruzePitaContent(language) {
                     p.style.display = '';
                 }
             }
-
-            // Ensure RTL direction for these description paragraphs
             p.setAttribute('dir', 'rtl');
         });
     });
