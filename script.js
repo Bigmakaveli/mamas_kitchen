@@ -107,8 +107,9 @@ const translations = {
         'soft-drinks-desc': 'מבחר משקאות קלים',
         'mineral-water': 'מים מינרליים',
         'mineral-water-desc': 'מים מינרליים טריים',
-        'druze-pita': 'פיתה דרוזית',
+        'druze-pita': 'פיתה דרוזיית',
         'druze-pita-desc': 'פיתה דרוזית במילוי לבנה, ירקות טריים ותערובת תבלינים דרוזית.',
+        'badge-new': 'חדש',
 
         // Promo
         'discount-title': 'מבצע מיוחד',
@@ -216,7 +217,10 @@ const translations = {
         'soft-drinks-desc': 'Selection of soft drinks',
         'mineral-water': 'Mineral Water',
         'mineral-water-desc': 'Fresh mineral water',
-
+        'druze-pita': 'Druze Pita',
+        'druze-pita-desc': 'Druze pita filled with labneh, fresh vegetables and a Druze spice mix.',
+        'badge-new': 'New',
+        
         // Promo
         'discount-title': 'Special Offer',
         'discount-desc': '10% discount for state employees or uniformed personnel',
@@ -297,7 +301,10 @@ const translations = {
         'soft-drinks-desc': 'Выбор безалкогольных напитков',
         'mineral-water': 'Минеральная Вода',
         'mineral-water-desc': 'Свежая минеральная вода',
-
+        'druze-pita': 'Друзская пита',
+        'druze-pita-desc': 'Пита по-друзски с лабне, свежими овощами и друзской смесью специй.',
+        'badge-new': 'Новинка',
+        
         // Promo
         'discount-title': 'Специальное предложение',
         'discount-desc': 'Скидка 10% для госслужащих или сотрудников в форме',
@@ -378,7 +385,10 @@ const translations = {
         'soft-drinks-desc': 'اختيار من المشروبات الغازية',
         'mineral-water': 'مياه معدنية',
         'mineral-water-desc': 'مياه معدنية طازجة',
-
+        'druze-pita': 'خبز بيتا دروزي',
+        'druze-pita-desc': 'خبز بيتا دروزي محشو باللبنة، وخضار طازجة ومزيج توابل دروزي.',
+        'badge-new': 'جديد',
+        
         // Promo
         'discount-title': 'عرض خاص',
         'discount-desc': 'خصم 10% لموظفي الدولة أو أصحاب الزي الرسمي',
@@ -409,84 +419,41 @@ const translations = {
 };
 
 /* Druze Pita dynamic content updater
-   Shows only the active language description while keeping title, badge, price and image intact. */
+   Sets the title, description and badge from translations for the active language. */
 function updateDruzePitaContent(language) {
-    const isArabicChar = (txt) => /[\u0600-\u06FF]/.test(txt || '');
-    const isHebrewChar = (txt) => /[\u0590-\u05FF]/.test(txt || '');
-
     document.querySelectorAll('[data-dish="druze-pita"]').forEach(card => {
         const contentEl = card.querySelector('.menu-content');
-        const titleEl = contentEl ? contentEl.querySelector('h3') : null;
-        const priceEl = contentEl ? contentEl.querySelector('.price') : null;
-        let paragraphs = Array.from(contentEl ? contentEl.querySelectorAll('p') : []);
+        if (!contentEl) return;
 
-        // If Hebrew selected, enforce exact Hebrew title/description and hide any Arabic sentences
-        if (language === 'he') {
-            // Update title if translation exists
-            const heTitle = translations.he && translations.he['druze-pita'];
-            if (titleEl && heTitle) {
-                titleEl.textContent = heTitle;
-            }
+        const titleEl = contentEl.querySelector('h3');
+        const priceEl = contentEl.querySelector('.price');
+        let descEl = contentEl.querySelector('p[data-translate="druze-pita-desc"]') || contentEl.querySelector('.menu-content p');
+        const badgeEl = contentEl.querySelector('.badges .item-badge');
 
-            // Ensure description matches Hebrew translation
-            const heDesc = translations.he && translations.he['druze-pita-desc'];
-            // Find existing Hebrew paragraph
-            let heP = paragraphs.find(p => isHebrewChar(p.textContent));
-            if (!heP) {
-                heP = document.createElement('p');
-                heP.setAttribute('dir', 'rtl');
-                if (contentEl) {
-                    if (priceEl) {
-                        contentEl.insertBefore(heP, priceEl);
-                    } else {
-                        contentEl.appendChild(heP);
-                    }
-                }
-                paragraphs.push(heP);
-            }
-            if (heDesc) {
-                heP.textContent = heDesc;
-            }
-            // Show only the Hebrew paragraph; hide others
-            paragraphs.forEach(p => {
-                p.style.display = (p === heP) ? '' : 'none';
-                p.setAttribute('dir', 'rtl');
-            });
-            return; // done for Hebrew
+        const t = translations[language] || translations['he'] || {};
+
+        // Title
+        const titleText = t['druze-pita'] || (translations['he'] && translations['he']['druze-pita']) || (titleEl ? titleEl.textContent : '');
+        if (titleEl) titleEl.textContent = titleText;
+
+        // Description - ensure single paragraph exists
+        if (!descEl) {
+            descEl = document.createElement('p');
+            if (priceEl) contentEl.insertBefore(descEl, priceEl);
+            else contentEl.appendChild(descEl);
+        }
+        const descText = t['druze-pita-desc'] || (translations['he'] && translations['he']['druze-pita-desc']) || '';
+        descEl.textContent = descText;
+
+        // Badge
+        if (badgeEl) {
+            const badgeText = t['badge-new'] || (translations['he'] && translations['he']['badge-new']) || badgeEl.textContent;
+            badgeEl.textContent = badgeText;
         }
 
-        // Fallback to language-detection visibility for other languages
-        const hasArabic = paragraphs.some(p => isArabicChar(p.textContent));
-        const hasHebrew = paragraphs.some(p => isHebrewChar(p.textContent));
-
-        if (!hasArabic && !hasHebrew) {
-            paragraphs.forEach(p => { p.style.display = ''; p.setAttribute('dir', 'rtl'); });
-            return;
-        }
-
-        paragraphs.forEach(p => {
-            const text = p.textContent || '';
-            const isAr = isArabicChar(text);
-            const isHe = isHebrewChar(text);
-
-            if (language === 'ar') {
-                if (hasArabic) {
-                    p.style.display = isAr ? '' : 'none';
-                } else {
-                    p.style.display = '';
-                }
-            } else {
-                // For other languages (en/ru), prefer Hebrew if present, else Arabic
-                if (hasHebrew) {
-                    p.style.display = isHe ? '' : 'none';
-                } else if (hasArabic) {
-                    p.style.display = isAr ? '' : 'none';
-                } else {
-                    p.style.display = '';
-                }
-            }
-            p.setAttribute('dir', 'rtl');
-        });
+        // Direction matches page direction
+        const dir = document.documentElement.dir || (language === 'ar' || language === 'he' ? 'rtl' : 'ltr');
+        descEl.setAttribute('dir', dir);
     });
 }
  
