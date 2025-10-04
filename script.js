@@ -409,47 +409,56 @@ const translations = {
 /* Druze Pita dynamic content updater
    Shows only the active language description while keeping title, badge, price and image intact. */
 function updateDruzePitaContent(language) {
-    const he = {
-        name: 'פיתה דרוזית',
-        desc: 'פיתה דרוזית במילוי לבנה, ירקות טריים ותערובת תבלינים דרוזית.',
-        alt: 'פיתה דרוזית ממולאת בלבנה וירקות',
-        src: 'https://landing-ai-images.s3.amazonaws.com/images/img_7vu8vhqnjmq_8s0zho4h9p9_1759525053260.jpeg'
-    };
-    const ar = {
-        name: 'فطيرة درزية',
-        desc: 'فطيرة درزية محشوة باللبنة، خضار طازج وتتبيلة درزية مميزة.',
-        alt: 'فطيرة درزية ملفوفة ومحشوة باللبنة والخضار',
-        src: 'https://landing-ai-images.s3.amazonaws.com/images/img_7vu8vhqnjmq_8s0zho4h9p9_1759525053260.jpeg'
-    };
-
-    const useArabic = language === 'ar';
-    const data = useArabic ? ar : he;
+    const isArabicChar = (txt) => /[\u0600-\u06FF]/.test(txt || '');
+    const isHebrewChar = (txt) => /[\u0590-\u05FF]/.test(txt || '');
 
     document.querySelectorAll('[data-dish="druze-pita"]').forEach(card => {
-        const descEl = card.querySelector('[data-item="desc"]');
-        const heDesc = card.querySelector('[data-item="desc-he"]');
-        const arDesc = card.querySelector('[data-item="desc-ar"]');
-        const badgeHe = card.querySelector('[data-item="badge-he"]');
-        const badgeAr = card.querySelector('[data-item="badge-ar"]');
+        const paragraphs = Array.from(card.querySelectorAll('.menu-content p'));
 
-        // Toggle badges
-        if (badgeHe) badgeHe.style.display = useArabic ? 'none' : '';
-        if (badgeAr) badgeAr.style.display = useArabic ? '' : 'none';
+        // Detect what variants exist within this specific card
+        const hasArabic = paragraphs.some(p => isArabicChar(p.textContent));
+        const hasHebrew = paragraphs.some(p => isHebrewChar(p.textContent));
 
-        // Handle descriptions: either two separate paragraphs or a single dynamic one
-        if (heDesc || arDesc) {
-            if (heDesc) {
-                heDesc.style.display = useArabic ? 'none' : '';
-                heDesc.setAttribute('dir', 'rtl');
-            }
-            if (arDesc) {
-                arDesc.style.display = useArabic ? '' : 'none';
-                arDesc.setAttribute('dir', 'rtl');
-            }
-        } else if (descEl) {
-            descEl.textContent = data.desc;
-            descEl.setAttribute('dir', 'rtl');
+        // If the card has neither Arabic nor Hebrew detection (unlikely), show all and skip
+        if (!hasArabic && !hasHebrew) {
+            paragraphs.forEach(p => { p.style.display = ''; p.setAttribute('dir', 'rtl'); });
+            return;
         }
+
+        paragraphs.forEach(p => {
+            const text = p.textContent || '';
+            const isAr = isArabicChar(text);
+            const isHe = isHebrewChar(text);
+
+            // Decide which description(s) to show
+            if (language === 'ar') {
+                // If this card has an Arabic variant, show Arabic only; otherwise leave as-is (do not hide Hebrew)
+                if (hasArabic) {
+                    p.style.display = isAr ? '' : 'none';
+                } else {
+                    p.style.display = '';
+                }
+            } else if (language === 'he') {
+                // If this card has a Hebrew variant, show Hebrew only; otherwise leave as-is
+                if (hasHebrew) {
+                    p.style.display = isHe ? '' : 'none';
+                } else {
+                    p.style.display = '';
+                }
+            } else {
+                // For other languages (en/ru), prefer Hebrew if present, else Arabic
+                if (hasHebrew) {
+                    p.style.display = isHe ? '' : 'none';
+                } else if (hasArabic) {
+                    p.style.display = isAr ? '' : 'none';
+                } else {
+                    p.style.display = '';
+                }
+            }
+
+            // Ensure RTL direction for these description paragraphs
+            p.setAttribute('dir', 'rtl');
+        });
     });
 }
  
