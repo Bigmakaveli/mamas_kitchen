@@ -1143,7 +1143,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch {}
         updateBadge();
         if (itemsContainer) renderItems();
-        updateAllAddButtons();
+        syncQtyControls();
     }
 
     function getLang() {
@@ -1476,30 +1476,109 @@ document.addEventListener('DOMContentLoaded', () => {
         true
     );
 
-    // Non-invasive: inject small add buttons into menu cards
+    // Non-invasive: inject quantity controls into menu cards (bottom-left pill)
     function injectMenuAddButtons() {
         document.querySelectorAll('.menu-item').forEach((card) => {
-            if (card.querySelector('.add-to-cart-btn')) return;
+            if (card.querySelector('.qty-control')) return;
             const title = card.querySelector('.menu-content h3');
             if (!title) return;
             const name = title.textContent.trim();
-            const priceEl = card.querySelector('.menu-content .price');
 
-            const btn = document.createElement('button');
-            btn.type = 'button';
-            btn.className = 'add-to-cart-btn';
-            const baseLabel = (typeof currentLanguage === 'string' && translations[currentLanguage] && translations[currentLanguage]['add-to-cart']) || (translations['he'] && translations['he']['add-to-cart']) || (translations['en'] && translations['en']['add-to-cart']) || 'Add to cart';
-            btn.textContent = baseLabel;
-            btn.setAttribute('aria-label', baseLabel);
-            btn.dataset.productName = name;
+            const qc = document.createElement('div');
+            qc.className = 'qty-control';
+            qc.setAttribute('role', 'group');
+            qc.setAttribute('aria-label', `Quantity for ${name}`);
+            qc.dataset.productName = name;
 
-            const content = card.querySelector('.menu-content');
-            if (priceEl && priceEl.parentNode === content) {
-                // place after price
-                priceEl.insertAdjacentElement('afterend', btn);
-            } else if (content) {
-                content.appendChild(btn);
+            const minus = document.createElement('button');
+            minus.type = 'button';
+            minus.className = 'qc-btn qc-minus';
+            minus.setAttribute('aria-label', `Decrease quantity of ${name}`);
+            minus.textContent = '−';
+
+            const value = document.createElement('span');
+            value.className = 'qc-value';
+            value.textContent = '1';
+
+            const plus = document.createElement('button');
+            plus.type = 'button';
+            plus.className = 'qc-btn qc-plus';
+            plus.setAttribute('aria-label', `Increase quantity of ${name}`);
+            plus.textContent = '+';
+
+            const announcer = document.createElement('span');
+            announcer.className = 'qc-announcer';
+            announcer.setAttribute('aria-live', 'polite');
+            announcer.textContent = '';
+
+            // Keyboard support for Space/Enter
+            [minus, plus].forEach((btn) => {
+                btn.addEventListener('keydown', (e) => {
+                    if (e.key === ' ' || e.key === 'Spacebar' || e.key === 'Enter') {
+                        e.preventDefault();
+                        btn.click();
+                    }
+                });
+            });
+
+            let debounceTimer = null;
+            const commit = (qty) => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    setQty(name, qty);
+                }, 100);
+            };
+
+            function setDisplay(q) {
+                value.textContent = String(q);
+                announcer.textContent = `Quantity for ${name}: ${q}`;
             }
+
+            function adjust(delta) {
+                const current = parseInt(value.textContent, 10) || 1;
+                let next = current + delta;
+                if (next < 0) next = 0;
+                if (next === current) return;
+                setDisplay(next);
+                commit(next);
+            }
+
+            minus.addEventListener('click', () => adjust(-1));
+            plus.addEventListener('click', () => adjust(1));
+
+            qc.appendChild(minus);
+            qc.appendChild(value);
+            qc.appendChild(plus);
+            qc.appendChild(announcer);
+
+            // Attach to card root for absolute positioning
+            card.appendChild(qc);
+        });
+    }
+
+    function syncQtyControls() {
+        document.querySelectorAll('.menu-item').forEach((card) => {
+            const title = card.querySelector('.menu-content h3');
+            if (!title) return;
+            const name = title.textContent.trim();
+
+            const qc = card.querySelector('.qty-control');
+            if (!qc) return;
+
+            // Update product name binding and ARIA
+            qc.dataset.productName = name;
+            qc.setAttribute('aria-label', `Quantity for ${name}`);
+
+            const value = qc.querySelector('.qc-value');
+            const announcer = qc.querySelector('.qc-announcer');
+            const minus = qc.querySelector('.qc-minus');
+            const plus = qc.querySelector('.qc-plus');
+
+            const qty = (items && items[name]) != null ? items[name] : 1;
+            if (value) value.textContent = String(qty);
+            if (announcer) announcer.textContent = `Quantity for ${name}: ${qty}`;
+            if (minus) minus.setAttribute('aria-label', `Decrease quantity of ${name}`);
+            if (plus) plus.setAttribute('aria-label', `Increase quantity of ${name}`);
         });
     }
 
@@ -1516,10 +1595,10 @@ document.addEventListener('DOMContentLoaded', () => {
         createCartFab();
         buildModal();
         injectMenuAddButtons();
-        updateAllAddButtons();
+        syncQtyControls();
 
         // Reinjection on DOM/text changes (e.g., language switch modifies titles)
-        const reInject = debounce(() => { injectMenuAddButtons(); updateAllAddButtons(); }, 200);
+        const reInject = debounce(() => { injectMenuAddButtons(); syncQtyControls(); }, 200);
         const observerTarget = document.querySelector('#menu') || document.body;
         const obs = new MutationObserver(() => reInject());
         obs.observe(observerTarget, { childList: true, subtree: true, characterData: true });
@@ -1527,7 +1606,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update direction on open if lang changes
         document.addEventListener('languagechange', () => {
             if (modal) modal.setAttribute('dir', document.documentElement.dir || 'ltr');
-            updateAllAddButtons();
+            syncQtyControls();
         });
 
         // Reflect changes from other tabs
