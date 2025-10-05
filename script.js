@@ -164,7 +164,10 @@ const translations = {
         'address-text': 'נתנזן 11 חיפה',
         'hours': 'שעות פעילות',
         'hours-text': 'ראשון - חמישי: 10:00 - 23:00<br>שישי: 10:00 - 12:00<br>שבת: 15:00 - 23:00',
-        'phone': 'טלפון'
+        'phone': 'טלפון',
+        'cart-title': 'הזמנה',
+        'cart-empty': 'העגלה ריקה',
+        'cart-send-whatsapp': 'שלח בוואטסאפ'
     },
     en: {
         // Navigation
@@ -250,7 +253,10 @@ const translations = {
         'address-text': 'נתנזן 11 חיפה',
         'hours': 'Hours',
         'hours-text': 'Sunday - Thursday: 10:00 AM - 11:00 PM<br>Friday: 10:00 AM - 12:00 PM<br>Saturday: 3:00 PM - 11:00 PM',
-        'phone': 'Phone'
+        'phone': 'Phone',
+        'cart-title': 'Order',
+        'cart-empty': 'Your cart is empty',
+        'cart-send-whatsapp': 'Send via WhatsApp'
     },
     ru: {
         // Navigation
@@ -336,7 +342,10 @@ const translations = {
         'address-text': 'נתנזן 11 חיפה',
         'hours': 'Часы Работы',
         'hours-text': 'Воскресенье - Четверг: 10:00 - 23:00<br>Пятница: 10:00 - 12:00<br>Суббота: 15:00 - 23:00',
-        'phone': 'Телефон'
+        'phone': 'Телефон',
+        'cart-title': 'Заказ',
+        'cart-empty': 'Корзина пуста',
+        'cart-send-whatsapp': 'Отправить через WhatsApp'
     },
     ar: {
         // Navigation
@@ -422,10 +431,56 @@ const translations = {
         'address-text': 'נתנזן 11 חיפה',
         'hours': 'ساعات العمل',
         'hours-text': 'الأحد - الخميس: 10:00 - 23:00<br>الجمعة: 10:00 - 12:00<br>السبت: 15:00 - 23:00',
-        'phone': 'الهاتف'
+        'phone': 'الهاتف',
+        'cart-title': 'الطلب',
+        'cart-empty': 'سلة التسوق فارغة',
+        'cart-send-whatsapp': 'إرسال عبر واتساب'
     }
 };
 
+function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Windows Phone|Mobile|Mobi/i.test(navigator.userAgent || '');
+}
+
+function openWhatsApp(number, text = '') {
+    const num = String(number || '').replace(/[^\d+]/g, '');
+    const msg = encodeURIComponent(text || '');
+    const appUrl = `whatsapp://send?phone=${encodeURIComponent(num)}&text=${msg}`;
+    const webUrl = `https://api.whatsapp.com/send?phone=${encodeURIComponent(num)}&text=${msg}`;
+
+    if (isMobileDevice()) {
+        let didFallback = false;
+        const timer = setTimeout(() => {
+            if (!didFallback) {
+                window.open(webUrl, '_blank');
+            }
+        }, 1200);
+        try {
+            window.location.href = appUrl;
+        } catch (e) {
+            clearTimeout(timer);
+            window.open(webUrl, '_blank');
+            didFallback = true;
+        }
+    } else {
+        window.open(webUrl, '_blank');
+    }
+}
+
+// Intercept floating WhatsApp FAB to open native app on mobile
+document.addEventListener('DOMContentLoaded', () => {
+    const waFab = document.querySelector('.whatsapp-fab');
+    if (waFab) {
+        waFab.addEventListener('click', (e) => {
+            e.preventDefault();
+            const href = waFab.getAttribute('href') || '';
+            const m = href.match(/(?:wa\.me\/|phone=)(\+?\d+)/);
+            const num = (m && (m[1])) ? m[1] : '972549077756';
+            openWhatsApp(num, '');
+        });
+    }
+});
+ 
 /* Druze Pita dynamic content updater
    Sets the title, description and badge from translations for the active language. */
 function updateDruzePitaContent(language) {
@@ -1447,18 +1502,20 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.className = 'cart-modal';
         modal.setAttribute('role', 'dialog');
         modal.setAttribute('aria-modal', 'true');
-        modal.setAttribute('aria-label', 'Cart');
+        const titleText = t('cart-title');
+        const sendText = t('cart-send-whatsapp');
+        modal.setAttribute('aria-label', titleText);
         modal.setAttribute('dir', document.documentElement.dir || 'ltr');
 
         modal.innerHTML = `
             <div class="cart-modal-header">
-                <h3 class="cart-title">Cart</h3>
+                <h3 class="cart-title">${titleText}</h3>
                 <button type="button" class="cart-close" aria-label="Close">×</button>
             </div>
             <div class="cart-items"></div>
             <div class="cart-modal-footer">
                 <div class="cart-total">Total items: <span class="cart-total-qty">0</span></div>
-                <button type="button" class="cart-whatsapp-btn">Send via WhatsApp</button>
+                <button type="button" class="cart-whatsapp-btn">${sendText}</button>
             </div>
         `;
 
@@ -1504,7 +1561,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (ids.length === 0) {
             const empty = document.createElement('div');
             empty.className = 'cart-empty';
-            empty.textContent = 'Your cart is empty';
+            empty.textContent = t('cart-empty');
             itemsContainer.appendChild(empty);
         } else {
             ids.forEach((id) => {
@@ -1556,11 +1613,9 @@ document.addEventListener('DOMContentLoaded', () => {
             closeModal();
             return;
         }
-        const lines = ids.map((id) => `${items[id]}x ${titleForId(id)}`);
-        const text = encodeURIComponent(lines.join('\n'));
+        const lines = ids.map((id) => `${items[id]}x ${titleForId(id)}`).join('\n');
         const num = getWhatsappNumber().replace(/[^\d+]/g, '');
-        const url = `https://api.whatsapp.com/send?phone=${encodeURIComponent(num)}&text=${text}`;
-        window.open(url, '_blank');
+        openWhatsApp(num, lines);
     }
 
     // Click delegation: add-to-cart patterns
@@ -1778,7 +1833,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update direction and titles if lang changes
         document.addEventListener('languagechange', () => {
             buildProductIndex();
-            if (modal) modal.setAttribute('dir', document.documentElement.dir || 'ltr');
+            if (modal) {
+                modal.setAttribute('dir', document.documentElement.dir || 'ltr');
+                modal.setAttribute('aria-label', t('cart-title'));
+                const headerTitle = modal.querySelector('.cart-title');
+                if (headerTitle) headerTitle.textContent = t('cart-title');
+                const sendBtn = modal.querySelector('.cart-whatsapp-btn');
+                if (sendBtn) sendBtn.textContent = t('cart-send-whatsapp');
+            }
             syncQtyControls();
             updateAllAddButtons();
             if (itemsContainer) renderItems();
