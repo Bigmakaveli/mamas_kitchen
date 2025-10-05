@@ -1439,6 +1439,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener(
         'click',
         (e) => {
+            // Prevent add-to-cart handler from firing for clicks inside quantity controls
+            if (e.target && e.target.closest && e.target.closest('.qty-control')) {
+                return;
+            }
             const el = e.target.closest(
                 '[class*="add-to-cart"], [class*="add-to-cart-btn"], [data-product-name], .product .add-to-cart, .product .add-to-cart-btn'
             );
