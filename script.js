@@ -1524,7 +1524,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // No custom key handlers needed to avoid duplicate clicks.
 
             const commit = (qty) => {
-                updateQuantity(name, qty);
+                // Resolve current product name at click time to remain robust to language/title changes
+                const currentCard = qc.closest('.menu-item');
+                const currentTitleEl = currentCard && currentCard.querySelector('.menu-content h3');
+                const currentName = currentTitleEl ? currentTitleEl.textContent.trim() : (qc.dataset.productName || name);
+                updateQuantity(currentName, qty);
             };
 
             function setDisplay(q) {
