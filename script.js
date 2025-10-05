@@ -1121,6 +1121,131 @@ document.addEventListener('DOMContentLoaded', () => {
     const STORAGE_KEY = 'mkCartItems';
     let items = {};
 
+    // Product indexing: stable ids and current titles
+    const productIndex = {
+        byId: new Map(),
+        byTitle: new Map()
+    };
+
+    function simpleUUID() {
+        try {
+            if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+        } catch {}
+        return 'pid-' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+    }
+
+    function slugify(str) {
+        return String(str || '')
+            .toLowerCase()
+            // allow basic Latin, Hebrew, Arabic, digits, underscore and hyphen
+            .replace(/[^a-z0-9_\-\u0590-\u05FF\u0600-\u06FF]+/g, '-')
+            .replace(/-+/g, '-')
+            .replace(/^-|-$/g, '');
+    }
+
+    function computeProductId(card) {
+        if (!card) return null;
+        const existing = card.getAttribute('data-product-id');
+        if (existing) return existing;
+
+        // Prefer a stable translate key on the title
+        const titleEl = card.querySelector('.menu-content h3');
+        const translateKey = titleEl && titleEl.getAttribute('data-translate');
+        if (translateKey) {
+            card.setAttribute('data-product-id', translateKey);
+            return translateKey;
+        }
+
+        // Then use explicit dish key if provided
+        const dish = card.getAttribute('data-dish');
+        if (dish) {
+            card.setAttribute('data-product-id', dish);
+            return dish;
+        }
+
+        // Then fall back to image filename
+        const img = card.querySelector('.menu-image img');
+        if (img && img.getAttribute('src')) {
+            const src = img.getAttribute('src');
+            const base = src.split('/').pop().split('.')[0];
+            const id = slugify(base);
+            if (id) {
+                card.setAttribute('data-product-id', id);
+                return id;
+            }
+        }
+
+        // As a last resort, generate and persist a UUID on the DOM
+        const fallback = simpleUUID();
+        card.setAttribute('data-product-id', fallback);
+        return fallback;
+    }
+
+    function buildProductIndex() {
+        productIndex.byId.clear();
+        productIndex.byTitle.clear();
+
+        document.querySelectorAll('.menu-item').forEach((card) => {
+            const id = computeProductId(card);
+            const titleEl = card.querySelector('.menu-content h3');
+            const title = titleEl ? titleEl.textContent.trim() : id;
+
+            productIndex.byId.set(id, { title, card });
+            productIndex.byTitle.set(title, id);
+
+            const translateKey = titleEl && titleEl.getAttribute('data-translate');
+            if (translateKey && typeof translations === 'object') {
+                Object.keys(translations).forEach((lang) => {
+                    const text = translations[lang] && translations[lang][translateKey];
+                    if (text) {
+                        productIndex.byTitle.set(text, id);
+                    }
+                });
+            }
+        });
+
+        console.log('[Cart] Product index built:', { count: productIndex.byId.size });
+    }
+
+    function titleForId(id) {
+        const entry = productIndex.byId.get(id);
+        return (entry && entry.title) || id;
+    }
+
+    function getIdForElement(el) {
+        const card = el && el.closest && el.closest('.menu-item');
+        return card ? computeProductId(card) : null;
+    }
+
+    function migrateLegacyItems() {
+        let migrated = false;
+        const newItems = {};
+        for (const [k, v] of Object.entries(items || {})) {
+            if (!v) continue;
+            if (productIndex.byId.has(k)) {
+                // already id
+                newItems[k] = (newItems[k] || 0) + v;
+            } else if (productIndex.byTitle.has(k)) {
+                const id = productIndex.byTitle.get(k);
+                newItems[id] = (newItems[id] || 0) + v;
+                migrated = true;
+                console.log('[Cart] Migrated legacy title to id:', k, '->', id);
+            } else {
+                const slug = slugify(k);
+                if (productIndex.byId.has(slug)) {
+                    newItems[slug] = (newItems[slug] || 0) + v;
+                    migrated = true;
+                    console.log('[Cart] Migrated via slug:', k, '->', slug);
+                } else {
+                    newItems[k] = (newItems[k] || 0) + v;
+                    console.warn('[Cart] Could not map legacy cart key:', k);
+                }
+            }
+        }
+        items = newItems;
+        return migrated;
+    }
+
     function load() {
         try {
             const raw = localStorage.getItem(STORAGE_KEY);
@@ -1144,6 +1269,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateBadge();
         if (itemsContainer) renderItems();
         syncQtyControls();
+        updateAllAddButtons();
     }
 
     function getLang() {
@@ -1158,8 +1284,8 @@ document.addEventListener('DOMContentLoaded', () => {
             || key;
     }
 
-    function labelFor(name) {
-        const qty = items[name] || 0;
+    function labelFor(id) {
+        const qty = items[id] || 0;
         const base = t('add-to-cart');
         return qty > 0 ? `${base} • ${qty}` : base;
     }
@@ -1169,9 +1295,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const title = card.querySelector('.menu-content h3');
             const btn = card.querySelector('.add-to-cart-btn');
             if (!title || !btn) return;
-            const name = title.textContent.trim();
-            btn.dataset.productName = name;
-            const label = labelFor(name);
+            const id = computeProductId(card);
+            const label = labelFor(id);
+            // Keep backward data-product-name for legacy code, but prefer productId
+            btn.dataset.productId = id;
+            btn.dataset.productName = title.textContent.trim();
             btn.textContent = label;
             btn.setAttribute('aria-label', label);
         });
@@ -1372,15 +1500,15 @@ document.addEventListener('DOMContentLoaded', () => {
         itemsContainer.innerHTML = '';
         modal.setAttribute('dir', document.documentElement.dir || 'ltr');
 
-        const names = Object.keys(items);
-        if (names.length === 0) {
+        const ids = Object.keys(items);
+        if (ids.length === 0) {
             const empty = document.createElement('div');
             empty.className = 'cart-empty';
             empty.textContent = 'Your cart is empty';
             itemsContainer.appendChild(empty);
         } else {
-            names.forEach((name) => {
-                const qty = items[name];
+            ids.forEach((id) => {
+                const qty = items[id];
                 const row = document.createElement('div');
                 row.className = 'cart-item';
                 row.innerHTML = `
@@ -1392,11 +1520,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         <button type="button" class="remove-btn" aria-label="Remove">×</button>
                     </div>
                 `;
-                row.querySelector('.cart-item-name').textContent = name;
+                row.querySelector('.cart-item-name').textContent = titleForId(id);
                 row.querySelector('.qty-value').textContent = qty;
-                row.querySelector('.qty-btn.minus').addEventListener('click', () => setQty(name, (items[name] || 0) - 1));
-                row.querySelector('.qty-btn.plus').addEventListener('click', () => setQty(name, (items[name] || 0) + 1));
-                row.querySelector('.remove-btn').addEventListener('click', () => removeItem(name));
+                row.querySelector('.qty-btn.minus').addEventListener('click', () => setQty(id, (items[id] || 0) - 1));
+                row.querySelector('.qty-btn.plus').addEventListener('click', () => setQty(id, (items[id] || 0) + 1));
+                row.querySelector('.remove-btn').addEventListener('click', () => removeItem(id));
                 itemsContainer.appendChild(row);
             });
         }
@@ -1423,12 +1551,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function sendViaWhatsApp() {
-        const names = Object.keys(items);
-        if (names.length === 0) {
+        const ids = Object.keys(items);
+        if (ids.length === 0) {
             closeModal();
             return;
         }
-        const lines = names.map((name) => `${items[name]}x ${name}`);
+        const lines = ids.map((id) => `${items[id]}x ${titleForId(id)}`);
         const text = encodeURIComponent(lines.join('\n'));
         const num = getWhatsappNumber().replace(/[^\d+]/g, '');
         const url = `https://api.whatsapp.com/send?phone=${encodeURIComponent(num)}&text=${text}`;
@@ -1448,38 +1576,42 @@ document.addEventListener('DOMContentLoaded', () => {
             );
             if (!el) return;
 
-            let name = el.getAttribute('data-product-name');
+            // Resolve a stable product id for add-to-cart
+            let id = el.getAttribute('data-product-id');
 
-            // Try .menu-item card
-            if (!name) {
-                const card = el.closest('.menu-item');
-                if (card) {
-                    const h3 = card.querySelector('.menu-content h3');
-                    if (h3) name = h3.textContent.trim();
-                }
+            // Prefer the enclosing menu card
+            if (!id) {
+                id = getIdForElement(el);
             }
 
-            // Try generic product container patterns
-            if (!name) {
-                const product = el.closest('[data-product-name], .product');
-                if (product) {
-                    name = product.getAttribute('data-product-name');
-                    if (!name) {
-                        const titleEl = product.querySelector('.product-title, .product-name, h3');
-                        if (titleEl) name = titleEl.textContent.trim();
+            // Legacy: fall back to data-product-name/title text and map to id
+            if (!id) {
+                let legacyName = el.getAttribute('data-product-name');
+                if (!legacyName) {
+                    const product = el.closest('[data-product-name], .product');
+                    if (product) {
+                        legacyName = product.getAttribute('data-product-name');
+                        if (!legacyName) {
+                            const titleEl = product.querySelector('.product-title, .product-name, h3');
+                            if (titleEl) legacyName = titleEl.textContent.trim();
+                        }
                     }
                 }
+                if (legacyName && productIndex.byTitle.has(legacyName)) {
+                    id = productIndex.byTitle.get(legacyName);
+                }
             }
 
-            if (name) {
+            if (id) {
                 e.preventDefault();
-                addItem(name, 1);
+                addItem(id, 1);
 
                 // Small animated affordances
                 animateAddFlow(el, (el.closest('.menu-item') || document).querySelector?.('.menu-image img'));
 
                 // Accessible toast confirmation
-                showToast(t('toast-added').replace('{qty}', '1').replace('{name}', name));
+                const displayName = titleForId(id);
+                showToast(t('toast-added').replace('{qty}', '1').replace('{name}', displayName));
             }
         },
         true
@@ -1492,12 +1624,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const title = card.querySelector('.menu-content h3');
             if (!title) return;
             const name = title.textContent.trim();
+            const id = computeProductId(card);
 
             const qc = document.createElement('div');
             qc.className = 'qty-control';
             qc.setAttribute('role', 'group');
             qc.setAttribute('aria-label', `Quantity for ${name}`);
             qc.dataset.productName = name;
+            qc.dataset.productId = id;
 
             const minus = document.createElement('button');
             minus.type = 'button';
@@ -1524,11 +1658,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // No custom key handlers needed to avoid duplicate clicks.
 
             const commit = (qty) => {
-                // Resolve current product name at click time to remain robust to language/title changes
                 const currentCard = qc.closest('.menu-item');
-                const currentTitleEl = currentCard && currentCard.querySelector('.menu-content h3');
-                const currentName = currentTitleEl ? currentTitleEl.textContent.trim() : (qc.dataset.productName || name);
-                updateQuantity(currentName, qty);
+                const currentId = currentCard ? computeProductId(currentCard) : (qc.dataset.productId || id);
+                updateQuantity(currentId, qty);
             };
 
             function setDisplay(q) {
@@ -1577,8 +1709,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const title = card.querySelector('.menu-content h3');
             if (!title) return;
             const name = title.textContent.trim();
+            const id = computeProductId(card);
 
-            const qty = (items && items[name]) != null ? Math.max(0, items[name]) : 0;
+            const qty = (items && items[id]) != null ? Math.max(0, items[id]) : 0;
 
             // Toggle visual marker when quantity > 0
             if (qty > 0) {
@@ -1590,8 +1723,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const qc = card.querySelector('.qty-control');
             if (!qc) return;
 
-            // Update product name binding and ARIA
+            // Update product id/name binding and ARIA
             qc.dataset.productName = name;
+            qc.dataset.productId = id;
             qc.setAttribute('aria-label', `Quantity for ${name}`);
 
             const value = qc.querySelector('.qc-value');
@@ -1615,22 +1749,40 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function init() {
+        // Build index before loading to enable legacy migration
+        buildProductIndex();
         load();
+        const didMigrate = migrateLegacyItems();
+        if (didMigrate) {
+            // Persist migrated structure
+            save();
+        }
+
         createCartFab();
         buildModal();
         injectMenuAddButtons();
         syncQtyControls();
+        updateAllAddButtons();
 
         // Reinjection on DOM/text changes (e.g., language switch modifies titles)
-        const reInject = debounce(() => { injectMenuAddButtons(); syncQtyControls(); }, 200);
+        const reInject = debounce(() => {
+            buildProductIndex();
+            injectMenuAddButtons();
+            syncQtyControls();
+            updateAllAddButtons();
+        }, 200);
         const observerTarget = document.querySelector('#menu') || document.body;
         const obs = new MutationObserver(() => reInject());
         obs.observe(observerTarget, { childList: true, subtree: true, characterData: true });
 
-        // Update direction on open if lang changes
+        // Update direction and titles if lang changes
         document.addEventListener('languagechange', () => {
+            buildProductIndex();
             if (modal) modal.setAttribute('dir', document.documentElement.dir || 'ltr');
             syncQtyControls();
+            updateAllAddButtons();
+            if (itemsContainer) renderItems();
+            console.log('[Cart] Language changed, refreshed titles and controls');
         });
 
         // Reflect changes from other tabs
@@ -1639,6 +1791,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 load();
                 updateBadge();
                 if (itemsContainer) renderItems();
+                syncQtyControls();
+                updateAllAddButtons();
             }
         });
     }
