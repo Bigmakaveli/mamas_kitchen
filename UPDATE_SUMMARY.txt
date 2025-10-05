@@ -1,0 +1,3 @@
+Updated files:
+- script.js
+- style.css

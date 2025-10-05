@@ -381,6 +381,12 @@ img {
     color: #d32f2f;
 }
 
+/* Mark product card when it has quantity */
+.menu-item.has-quantity {
+    border: 2px solid #e3342f;
+    border-radius: 16px;
+}
+
 /* Contact Section */
 .contact {
     padding: 5rem 0;
@@ -1196,8 +1202,8 @@ img {
     width: 52px;
     height: 52px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #d32f2f, #ef5350);
-    color: #fff;
+    background: #fff;
+    color: #d32f2f;
     display: inline-flex;
     align-items: center;
     justify-content: center;

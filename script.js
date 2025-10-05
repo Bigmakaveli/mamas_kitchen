@@ -1574,6 +1574,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!title) return;
             const name = title.textContent.trim();
 
+            const qty = (items && items[name]) != null ? Math.max(0, items[name]) : 0;
+
+            // Toggle visual marker when quantity > 0
+            if (qty > 0) {
+                card.classList.add('has-quantity');
+            } else {
+                card.classList.remove('has-quantity');
+            }
+
             const qc = card.querySelector('.qty-control');
             if (!qc) return;
 
@@ -1586,7 +1595,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const minus = qc.querySelector('.qc-minus');
             const plus = qc.querySelector('.qc-plus');
 
-            const qty = (items && items[name]) != null ? Math.max(0, items[name]) : 0;
             if (value) value.textContent = String(qty);
             if (announcer) announcer.textContent = `Quantity for ${name}: ${qty}`;
             if (minus) minus.setAttribute('aria-label', `Decrease quantity of ${name}`);
