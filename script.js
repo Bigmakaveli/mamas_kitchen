@@ -1503,7 +1503,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const value = document.createElement('span');
             value.className = 'qc-value';
-            value.textContent = '1';
+            value.textContent = '0';
 
             const plus = document.createElement('button');
             plus.type = 'button';
@@ -1516,22 +1516,11 @@ document.addEventListener('DOMContentLoaded', () => {
             announcer.setAttribute('aria-live', 'polite');
             announcer.textContent = '';
 
-            // Keyboard support for Space/Enter
-            [minus, plus].forEach((btn) => {
-                btn.addEventListener('keydown', (e) => {
-                    if (e.key === ' ' || e.key === 'Spacebar' || e.key === 'Enter') {
-                        e.preventDefault();
-                        btn.click();
-                    }
-                });
-            });
+            // Native keyboard interactions on <button> provide accessibility (Enter/Space).
+            // No custom key handlers needed to avoid duplicate clicks.
 
-            let debounceTimer = null;
             const commit = (qty) => {
-                clearTimeout(debounceTimer);
-                debounceTimer = setTimeout(() => {
-                    updateQuantity(name, qty);
-                }, 100);
+                updateQuantity(name, qty);
             };
 
             function setDisplay(q) {
@@ -1540,9 +1529,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             function adjust(delta) {
-                const current = parseInt(value.textContent, 10) || 1;
+                const current = parseInt(value.textContent, 10) || 0;
                 let next = current + delta;
-                if (next < 1) next = 1;
+                if (next < 0) next = 0;
                 if (next === current) return;
                 setDisplay(next);
                 commit(next);
@@ -1593,7 +1582,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const minus = qc.querySelector('.qc-minus');
             const plus = qc.querySelector('.qc-plus');
 
-            const qty = (items && items[name]) != null ? Math.max(1, items[name]) : 1;
+            const qty = (items && items[name]) != null ? Math.max(0, items[name]) : 0;
             if (value) value.textContent = String(qty);
             if (announcer) announcer.textContent = `Quantity for ${name}: ${qty}`;
             if (minus) minus.setAttribute('aria-label', `Decrease quantity of ${name}`);
