@@ -334,6 +334,13 @@ img {
     background-color: #f8f9fa;
 }
 
+/* Scale the specific header image to 80% while keeping it responsive and centered visually */
+.nav-brand img.logo-img[src="https://landing-ai-images.s3.amazonaws.com/images/img_wm5jzcc7jk7_1qd62kdfmzqj_1759664982319.jpeg"] {
+    max-width: 100%;
+    transform: scale(0.8);
+    transform-origin: center;
+}
+
 .menu-item:hover .menu-image img {
     transform: scale(1.1);
 }
