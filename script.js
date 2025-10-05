@@ -439,14 +439,19 @@ const translations = {
 };
 
 function isMobileDevice() {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Windows Phone|Mobile|Mobi/i.test(navigator.userAgent || '');
+    const ua = navigator.userAgent || '';
+    // Mobile-first detection: explicitly detect Android or iPhone/iPad
+    return /Android|iPhone|iPad/i.test(ua);
 }
 
 function openWhatsApp(number, text = '') {
-    const num = String(number || '').replace(/[^\d+]/g, '');
+    const raw = String(number || '');
+    // wa.me requires digits only; keep exact number value but strip non-digits for the path
+    const numDigits = raw.replace(/\D/g, '');
     const msg = encodeURIComponent(text || '');
-    const appUrl = `whatsapp://send?phone=${encodeURIComponent(num)}&text=${msg}`;
-    const webUrl = `https://api.whatsapp.com/send?phone=${encodeURIComponent(num)}&text=${msg}`;
+
+    const appUrl = `whatsapp://send?phone=${numDigits}&text=${msg}`;
+    const webUrl = `https://wa.me/${numDigits}?text=${msg}`;
 
     if (isMobileDevice()) {
         let didFallback = false;
