@@ -1102,3 +1102,317 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+/* Lightweight Cart Feature (non-invasive, vanilla JS) */
+(function () {
+    'use strict';
+
+    const STORAGE_KEY = 'mkCartItems';
+    let items = {};
+
+    function load() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            items = raw ? JSON.parse(raw) : {};
+        } catch {
+            items = {};
+        }
+    }
+
+    function totalQty() {
+        return Object.values(items).reduce((a, b) => a + b, 0);
+    }
+
+    // UI elements
+    let cartFab, countBadge, overlay, modal, itemsContainer, totalEl;
+
+    function save() {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+        } catch {}
+        updateBadge();
+        if (itemsContainer) renderItems();
+    }
+
+    function addItem(name, qty = 1) {
+        if (!name) return;
+        items[name] = (items[name] || 0) + qty;
+        save();
+    }
+
+    function removeItem(name) {
+        if (!name) return;
+        delete items[name];
+        save();
+    }
+
+    function setQty(name, qty) {
+        if (!name) return;
+        if (qty <= 0) {
+            removeItem(name);
+        } else {
+            items[name] = qty;
+            save();
+        }
+    }
+
+    function createCartFab() {
+        if (cartFab) return;
+        cartFab = document.createElement('button');
+        cartFab.className = 'cart-fab';
+        cartFab.type = 'button';
+        cartFab.setAttribute('aria-label', 'Open cart');
+        cartFab.innerHTML = '<span class="cart-icon" aria-hidden="true">🛒</span>';
+        countBadge = document.createElement('span');
+        countBadge.className = 'cart-count-badge';
+        cartFab.appendChild(countBadge);
+        cartFab.addEventListener('click', openModal);
+        document.body.appendChild(cartFab);
+        updateBadge();
+    }
+
+    function updateBadge() {
+        if (!countBadge) return;
+        const n = totalQty();
+        countBadge.textContent = n;
+        countBadge.style.display = n > 0 ? 'inline-flex' : 'none';
+    }
+
+    function buildModal() {
+        if (overlay) return;
+
+        overlay = document.createElement('div');
+        overlay.className = 'cart-modal-overlay';
+        overlay.setAttribute('aria-hidden', 'true');
+
+        modal = document.createElement('div');
+        modal.className = 'cart-modal';
+        modal.setAttribute('role', 'dialog');
+        modal.setAttribute('aria-modal', 'true');
+        modal.setAttribute('aria-label', 'Cart');
+        modal.setAttribute('dir', document.documentElement.dir || 'ltr');
+
+        modal.innerHTML = `
+            <div class="cart-modal-header">
+                <h3 class="cart-title">Cart</h3>
+                <button type="button" class="cart-close" aria-label="Close">×</button>
+            </div>
+            <div class="cart-items"></div>
+            <div class="cart-modal-footer">
+                <div class="cart-total">Total items: <span class="cart-total-qty">0</span></div>
+                <button type="button" class="cart-whatsapp-btn">Send via WhatsApp</button>
+            </div>
+        `;
+
+        itemsContainer = modal.querySelector('.cart-items');
+        totalEl = modal.querySelector('.cart-total-qty');
+
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) closeModal();
+        });
+        modal.querySelector('.cart-close').addEventListener('click', closeModal);
+        modal.querySelector('.cart-whatsapp-btn').addEventListener('click', sendViaWhatsApp);
+        document.addEventListener('keydown', escCloseHandler);
+    }
+
+    function escCloseHandler(e) {
+        if (e.key === 'Escape') closeModal();
+    }
+
+    function openModal() {
+        buildModal();
+        renderItems();
+        overlay.classList.add('active');
+        overlay.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        if (!overlay) return;
+        overlay.classList.remove('active');
+        overlay.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+    }
+
+    function renderItems() {
+        if (!itemsContainer) return;
+        itemsContainer.innerHTML = '';
+        modal.setAttribute('dir', document.documentElement.dir || 'ltr');
+
+        const names = Object.keys(items);
+        if (names.length === 0) {
+            const empty = document.createElement('div');
+            empty.className = 'cart-empty';
+            empty.textContent = 'Your cart is empty';
+            itemsContainer.appendChild(empty);
+        } else {
+            names.forEach((name) => {
+                const qty = items[name];
+                const row = document.createElement('div');
+                row.className = 'cart-item';
+                row.innerHTML = `
+                    <span class="cart-item-name"></span>
+                    <div class="cart-item-controls">
+                        <button type="button" class="qty-btn minus" aria-label="Decrease">−</button>
+                        <span class="qty-value"></span>
+                        <button type="button" class="qty-btn plus" aria-label="Increase">+</button>
+                        <button type="button" class="remove-btn" aria-label="Remove">×</button>
+                    </div>
+                `;
+                row.querySelector('.cart-item-name').textContent = name;
+                row.querySelector('.qty-value').textContent = qty;
+                row.querySelector('.qty-btn.minus').addEventListener('click', () => setQty(name, (items[name] || 0) - 1));
+                row.querySelector('.qty-btn.plus').addEventListener('click', () => setQty(name, (items[name] || 0) + 1));
+                row.querySelector('.remove-btn').addEventListener('click', () => removeItem(name));
+                itemsContainer.appendChild(row);
+            });
+        }
+        totalEl.textContent = String(totalQty());
+    }
+
+    function getWhatsappNumber() {
+        // Attribute override
+        const attrEl = document.querySelector('[data-whatsapp-number]');
+        if (attrEl && attrEl.getAttribute('data-whatsapp-number')) {
+            return attrEl.getAttribute('data-whatsapp-number');
+        }
+
+        // Existing links on page
+        const a = document.querySelector('a[href*="wa.me"], a[href*="api.whatsapp.com"]');
+        if (a) {
+            const href = a.getAttribute('href') || '';
+            const m = href.match(/(?:wa\.me\/|phone=)(\+?\d+)/);
+            if (m && m[1]) return m[1];
+        }
+
+        // Fallback placeholder for devs to replace
+        return '+1234567890';
+    }
+
+    function sendViaWhatsApp() {
+        const names = Object.keys(items);
+        if (names.length === 0) {
+            closeModal();
+            return;
+        }
+        const lines = names.map((name) => `${items[name]}x ${name}`);
+        const text = encodeURIComponent(lines.join('\n'));
+        const num = getWhatsappNumber().replace(/[^\d+]/g, '');
+        const url = `https://api.whatsapp.com/send?phone=${encodeURIComponent(num)}&text=${text}`;
+        window.open(url, '_blank');
+    }
+
+    // Click delegation: add-to-cart patterns
+    document.addEventListener(
+        'click',
+        (e) => {
+            const el = e.target.closest(
+                '[class*="add-to-cart"], [class*="add-to-cart-btn"], [data-product-name], .product .add-to-cart, .product .add-to-cart-btn'
+            );
+            if (!el) return;
+
+            let name = el.getAttribute('data-product-name');
+
+            // Try .menu-item card
+            if (!name) {
+                const card = el.closest('.menu-item');
+                if (card) {
+                    const h3 = card.querySelector('.menu-content h3');
+                    if (h3) name = h3.textContent.trim();
+                }
+            }
+
+            // Try generic product container patterns
+            if (!name) {
+                const product = el.closest('[data-product-name], .product');
+                if (product) {
+                    name = product.getAttribute('data-product-name');
+                    if (!name) {
+                        const titleEl = product.querySelector('.product-title, .product-name, h3');
+                        if (titleEl) name = titleEl.textContent.trim();
+                    }
+                }
+            }
+
+            if (name) {
+                e.preventDefault();
+                addItem(name, 1);
+                if (countBadge) {
+                    countBadge.classList.add('bump');
+                    setTimeout(() => countBadge.classList.remove('bump'), 300);
+                }
+            }
+        },
+        true
+    );
+
+    // Non-invasive: inject small add buttons into menu cards
+    function injectMenuAddButtons() {
+        document.querySelectorAll('.menu-item').forEach((card) => {
+            if (card.querySelector('.add-to-cart-btn')) return;
+            const title = card.querySelector('.menu-content h3');
+            if (!title) return;
+            const name = title.textContent.trim();
+            const priceEl = card.querySelector('.menu-content .price');
+
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'add-to-cart-btn';
+            btn.textContent = '+';
+            btn.setAttribute('aria-label', 'Add to cart');
+            btn.dataset.productName = name;
+
+            const content = card.querySelector('.menu-content');
+            if (priceEl && priceEl.parentNode === content) {
+                // place after price
+                priceEl.insertAdjacentElement('afterend', btn);
+            } else if (content) {
+                content.appendChild(btn);
+            }
+        });
+    }
+
+    function debounce(func, wait) {
+        let timeout;
+        return (...args) => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func(...args), wait);
+        };
+    }
+
+    function init() {
+        load();
+        createCartFab();
+        buildModal();
+        injectMenuAddButtons();
+
+        // Reinjection on DOM/text changes (e.g., language switch modifies titles)
+        const reInject = debounce(() => injectMenuAddButtons(), 200);
+        const observerTarget = document.querySelector('#menu') || document.body;
+        const obs = new MutationObserver(() => reInject());
+        obs.observe(observerTarget, { childList: true, subtree: true, characterData: true });
+
+        // Update direction on open if lang changes
+        document.addEventListener('languagechange', () => {
+            if (modal) modal.setAttribute('dir', document.documentElement.dir || 'ltr');
+        });
+
+        // Reflect changes from other tabs
+        window.addEventListener('storage', (e) => {
+            if (e.key === STORAGE_KEY) {
+                load();
+                updateBadge();
+                if (itemsContainer) renderItems();
+            }
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
