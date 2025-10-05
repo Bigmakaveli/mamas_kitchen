@@ -110,6 +110,8 @@ const translations = {
         'druze-pita': 'פיתה דרוזיית',
         'druze-pita-desc': 'פיתה דרוזית במילוי לבנה, ירקות טריים ותערובת תבלינים דרוזית.',
         'badge-new': 'חדש',
+        'add-to-cart': 'הוסף לעגלה',
+        'toast-added': 'נוסף לעגלה: {name} × {qty}',
 
         // Promo
         'discount-title': 'מבצע מיוחד',
@@ -220,6 +222,8 @@ const translations = {
         'druze-pita': 'Druze Pita',
         'druze-pita-desc': 'Druze pita filled with labneh, fresh vegetables and a Druze spice mix.',
         'badge-new': 'New',
+        'add-to-cart': 'Add to cart',
+        'toast-added': 'Added {qty}× {name} to cart',
         
         // Promo
         'discount-title': 'Special Offer',
@@ -304,6 +308,8 @@ const translations = {
         'druze-pita': 'Друзская пита',
         'druze-pita-desc': 'Пита по-друзски с лабне, свежими овощами и друзской смесью специй.',
         'badge-new': 'Новинка',
+        'add-to-cart': 'Добавить в корзину',
+        'toast-added': 'Добавлено {qty}× {name} в корзину',
         
         // Promo
         'discount-title': 'Специальное предложение',
@@ -388,6 +394,8 @@ const translations = {
         'druze-pita': 'خبز بيتا دروزي',
         'druze-pita-desc': 'خبز بيتا دروزي محشو باللبنة، وخضار طازجة ومزيج توابل دروزي.',
         'badge-new': 'جديد',
+        'add-to-cart': 'أضف إلى السلة',
+        'toast-added': 'تمت إضافة {qty}× {name} إلى السلة',
         
         // Promo
         'discount-title': 'عرض خاص',
@@ -507,6 +515,9 @@ function translatePage(language) {
 
     // Restart typing animations for the new language
     startTypingAnimations(language);
+
+    // Notify listeners that language changed (for cart UI etc.)
+    document.dispatchEvent(new Event('languagechange'));
     
     // Save language preference
     localStorage.setItem('selectedLanguage', language);
@@ -1124,7 +1135,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // UI elements
-    let cartFab, countBadge, overlay, modal, itemsContainer, totalEl;
+    let cartFab, countBadge, overlay, modal, itemsContainer, totalEl, toastEl, toastTimer;
 
     function save() {
         try {
@@ -1132,6 +1143,118 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch {}
         updateBadge();
         if (itemsContainer) renderItems();
+        updateAllAddButtons();
+    }
+
+    function getLang() {
+        return (typeof currentLanguage === 'string' && currentLanguage) ? currentLanguage : 'he';
+    }
+
+    function t(key) {
+        const lang = getLang();
+        return (translations[lang] && translations[lang][key])
+            || (translations['he'] && translations['he'][key])
+            || (translations['en'] && translations['en'][key])
+            || key;
+    }
+
+    function labelFor(name) {
+        const qty = items[name] || 0;
+        const base = t('add-to-cart');
+        return qty > 0 ? `${base} • ${qty}` : base;
+    }
+
+    function updateAllAddButtons() {
+        document.querySelectorAll('.menu-item').forEach((card) => {
+            const title = card.querySelector('.menu-content h3');
+            const btn = card.querySelector('.add-to-cart-btn');
+            if (!title || !btn) return;
+            const name = title.textContent.trim();
+            btn.dataset.productName = name;
+            const label = labelFor(name);
+            btn.textContent = label;
+            btn.setAttribute('aria-label', label);
+        });
+    }
+
+    function showToast(message) {
+        if (!message) return;
+        if (!toastEl) {
+            toastEl = document.createElement('div');
+            toastEl.className = 'mk-toast';
+            toastEl.setAttribute('role', 'status');
+            toastEl.setAttribute('aria-live', 'polite');
+            document.body.appendChild(toastEl);
+        }
+        if (toastTimer) {
+            clearTimeout(toastTimer);
+            toastTimer = null;
+        }
+        toastEl.textContent = message;
+        toastEl.classList.add('show');
+        toastTimer = setTimeout(() => {
+            toastEl.classList.remove('show');
+        }, 2500);
+    }
+
+    function animateButtonPulse(btn) {
+        if (!btn) return;
+        btn.classList.add('pulsing');
+        setTimeout(() => btn.classList.remove('pulsing'), 500);
+    }
+
+    function showPlusOneBubble(btn) {
+        try {
+            const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (reduce) return;
+            const rect = btn.getBoundingClientRect();
+            const bubble = document.createElement('div');
+            bubble.className = 'add-bubble';
+            bubble.textContent = '+1';
+            bubble.style.top = `${rect.top + window.scrollY - 6}px`;
+            bubble.style.left = `${rect.left + window.scrollX + rect.width - 10}px`;
+            document.body.appendChild(bubble);
+            // Force reflow then animate
+            void bubble.offsetWidth;
+            bubble.classList.add('show');
+            setTimeout(() => bubble.remove(), 700);
+        } catch {}
+    }
+
+    function flyThumbToCart(imgEl) {
+        try {
+            if (!imgEl || !cartFab) return;
+            const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (reduce) return;
+
+            const imgRect = imgEl.getBoundingClientRect();
+            const cartRect = cartFab.getBoundingClientRect();
+
+            const clone = imgEl.cloneNode(true);
+            clone.className = 'flying-thumb';
+            clone.style.top = `${imgRect.top + window.scrollY + imgRect.height / 2 - 24}px`;
+            clone.style.left = `${imgRect.left + window.scrollX + imgRect.width / 2 - 24}px`;
+            clone.style.transform = 'translate(0, 0) scale(1)';
+            document.body.appendChild(clone);
+
+            // Next frame, move towards cart
+            requestAnimationFrame(() => {
+                const targetX = cartRect.left + window.scrollX + cartRect.width / 2 - (imgRect.left + window.scrollX + imgRect.width / 2);
+                const targetY = cartRect.top + window.scrollY + cartRect.height / 2 - (imgRect.top + window.scrollY + imgRect.height / 2);
+                clone.style.transform = `translate(${targetX}px, ${targetY}px) scale(0.2)`;
+                clone.style.opacity = '0.6';
+            });
+
+            setTimeout(() => {
+                clone.remove();
+            }, 650);
+        } catch {}
+    }
+
+    function animateAddFlow(triggerEl, imgEl) {
+        animateButtonPulse(triggerEl);
+        showPlusOneBubble(triggerEl);
+        flyThumbToCart(imgEl);
     }
 
     function addItem(name, qty = 1) {
@@ -1176,6 +1299,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const n = totalQty();
         countBadge.textContent = n;
         countBadge.style.display = n > 0 ? 'inline-flex' : 'none';
+        countBadge.classList.add('bump');
+        setTimeout(() => countBadge.classList.remove('bump'), 300);
     }
 
     function buildModal() {
@@ -1340,10 +1465,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (name) {
                 e.preventDefault();
                 addItem(name, 1);
-                if (countBadge) {
-                    countBadge.classList.add('bump');
-                    setTimeout(() => countBadge.classList.remove('bump'), 300);
-                }
+
+                // Small animated affordances
+                animateAddFlow(el, (el.closest('.menu-item') || document).querySelector?.('.menu-image img'));
+
+                // Accessible toast confirmation
+                showToast(t('toast-added').replace('{qty}', '1').replace('{name}', name));
             }
         },
         true
@@ -1361,8 +1488,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const btn = document.createElement('button');
             btn.type = 'button';
             btn.className = 'add-to-cart-btn';
-            btn.textContent = '+';
-            btn.setAttribute('aria-label', 'Add to cart');
+            const baseLabel = (typeof currentLanguage === 'string' && translations[currentLanguage] && translations[currentLanguage]['add-to-cart']) || (translations['he'] && translations['he']['add-to-cart']) || (translations['en'] && translations['en']['add-to-cart']) || 'Add to cart';
+            btn.textContent = baseLabel;
+            btn.setAttribute('aria-label', baseLabel);
             btn.dataset.productName = name;
 
             const content = card.querySelector('.menu-content');
@@ -1390,7 +1518,7 @@ document.addEventListener('DOMContentLoaded', () => {
         injectMenuAddButtons();
 
         // Reinjection on DOM/text changes (e.g., language switch modifies titles)
-        const reInject = debounce(() => injectMenuAddButtons(), 200);
+        const reInject = debounce(() => { injectMenuAddButtons(); updateAllAddButtons(); }, 200);
         const observerTarget = document.querySelector('#menu') || document.body;
         const obs = new MutationObserver(() => reInject());
         obs.observe(observerTarget, { childList: true, subtree: true, characterData: true });
@@ -1398,6 +1526,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update direction on open if lang changes
         document.addEventListener('languagechange', () => {
             if (modal) modal.setAttribute('dir', document.documentElement.dir || 'ltr');
+            updateAllAddButtons();
         });
 
         // Reflect changes from other tabs
