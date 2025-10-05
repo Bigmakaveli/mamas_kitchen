@@ -1279,6 +1279,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Consolidated cart update function to avoid duplicate updates
+    function updateQuantity(productId, qty) {
+        setQty(productId, qty);
+    }
+
     function createCartFab() {
         if (cartFab) return;
         cartFab = document.createElement('button');
@@ -1525,7 +1530,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const commit = (qty) => {
                 clearTimeout(debounceTimer);
                 debounceTimer = setTimeout(() => {
-                    setQty(name, qty);
+                    updateQuantity(name, qty);
                 }, 100);
             };
 
@@ -1537,14 +1542,28 @@ document.addEventListener('DOMContentLoaded', () => {
             function adjust(delta) {
                 const current = parseInt(value.textContent, 10) || 1;
                 let next = current + delta;
-                if (next < 0) next = 0;
+                if (next < 1) next = 1;
                 if (next === current) return;
                 setDisplay(next);
                 commit(next);
             }
 
-            minus.addEventListener('click', () => adjust(-1));
-            plus.addEventListener('click', () => adjust(1));
+            // Prevent delegated add-to-cart handlers from firing when using the qty control
+            qc.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            });
+
+            minus.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                adjust(-1);
+            });
+            plus.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                adjust(1);
+            });
 
             qc.appendChild(minus);
             qc.appendChild(value);
@@ -1574,7 +1593,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const minus = qc.querySelector('.qc-minus');
             const plus = qc.querySelector('.qc-plus');
 
-            const qty = (items && items[name]) != null ? items[name] : 1;
+            const qty = (items && items[name]) != null ? Math.max(1, items[name]) : 1;
             if (value) value.textContent = String(qty);
             if (announcer) announcer.textContent = `Quantity for ${name}: ${qty}`;
             if (minus) minus.setAttribute('aria-label', `Decrease quantity of ${name}`);

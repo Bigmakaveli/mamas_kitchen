@@ -1460,7 +1460,7 @@ img {
     position: absolute;
     bottom: 12px;
     left: 12px;
-    z-index: 2;
+    z-index: 3;
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -1471,6 +1471,7 @@ img {
     padding: 6px 8px;
     box-shadow: 0 8px 18px rgba(211, 47, 47, 0.25);
     max-width: calc(100% - 24px);
+    pointer-events: auto;
 }
 
 .qty-control:focus-within {
