@@ -1516,6 +1516,7 @@ document.addEventListener('DOMContentLoaded', () => {
         createCartFab();
         buildModal();
         injectMenuAddButtons();
+        updateAllAddButtons();
 
         // Reinjection on DOM/text changes (e.g., language switch modifies titles)
         const reInject = debounce(() => { injectMenuAddButtons(); updateAllAddButtons(); }, 200);
