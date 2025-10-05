@@ -1479,6 +1479,9 @@ img {
     max-width: calc(100% - 24px);
     pointer-events: auto;
 }
+/* Position quantity control per document direction */
+[dir="ltr"] .qty-control { right: 12px; left: auto; }
+[dir="rtl"] .qty-control { left: 12px; right: auto; }
 
 .qty-control:focus-within {
     box-shadow: 0 10px 22px rgba(211, 47, 47, 0.35);
