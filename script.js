@@ -438,50 +438,69 @@ const translations = {
     }
 };
 
-function isMobileDevice() {
+function isAndroid() {
     const ua = navigator.userAgent || '';
-    // Mobile-first detection: explicitly detect Android or iPhone/iPad
-    return /Android|iPhone|iPad/i.test(ua);
+    return /Android/i.test(ua);
+}
+function isIOS() {
+    const ua = navigator.userAgent || '';
+    return /iPhone|iPad/i.test(ua);
+}
+function isMobileDevice() {
+    return isAndroid() || isIOS();
 }
 
 function openWhatsApp(number, text = '') {
     const raw = String(number || '');
-    // wa.me requires digits only; keep exact number value but strip non-digits for the path
-    const numDigits = raw.replace(/\D/g, '');
+    const numDigits = raw.replace(/\D/g, ''); // wa.me requires digits only
     const msg = encodeURIComponent(text || '');
 
-    const appUrl = `whatsapp://send?phone=${numDigits}&text=${msg}`;
+    const iosUrl = `whatsapp://send?phone=${numDigits}&text=${msg}`;
+    const androidIntent = `intent://send/?phone=${numDigits}&text=${msg}#Intent;scheme=whatsapp;package=com.whatsapp;end`;
     const webUrl = `https://wa.me/${numDigits}?text=${msg}`;
 
-    if (isMobileDevice()) {
-        let didFallback = false;
+    if (isAndroid()) {
         const timer = setTimeout(() => {
-            if (!didFallback) {
-                window.open(webUrl, '_blank');
-            }
+            window.location.href = webUrl;
         }, 1200);
         try {
-            window.location.href = appUrl;
+            window.location.href = androidIntent;
         } catch (e) {
             clearTimeout(timer);
-            window.open(webUrl, '_blank');
-            didFallback = true;
+            window.location.href = webUrl;
         }
-    } else {
-        window.open(webUrl, '_blank');
+        return;
     }
+
+    if (isIOS()) {
+        const timer = setTimeout(() => {
+            window.location.href = webUrl;
+        }, 1200);
+        try {
+            window.location.href = iosUrl;
+        } catch (e) {
+            clearTimeout(timer);
+            window.location.href = webUrl;
+        }
+        return;
+    }
+
+    // Desktop fallback
+    window.location.href = webUrl;
 }
 
-// Intercept floating WhatsApp FAB to open native app on mobile
+ // Intercept floating WhatsApp FAB to open native app on mobile; allow default on desktop
 document.addEventListener('DOMContentLoaded', () => {
     const waFab = document.querySelector('.whatsapp-fab');
     if (waFab) {
         waFab.addEventListener('click', (e) => {
-            e.preventDefault();
             const href = waFab.getAttribute('href') || '';
             const m = href.match(/(?:wa\.me\/|phone=)(\+?\d+)/);
-            const num = (m && (m[1])) ? m[1] : '972549077756';
-            openWhatsApp(num, '');
+            const num = (m && m[1]) ? m[1] : '972549077756';
+            if (isMobileDevice()) {
+                e.preventDefault();
+                openWhatsApp(num, '');
+            }
         });
     }
 });
