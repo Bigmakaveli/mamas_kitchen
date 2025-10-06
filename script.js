@@ -1889,3 +1889,76 @@ document.addEventListener('DOMContentLoaded', () => {
         init();
     }
 })();
+
+// Build Arabic WhatsApp order message from page fields or nearest product card
+function buildArabicOrderMessage(contextEl) {
+    const closestCard = (contextEl && contextEl.closest) ? contextEl.closest('.menu-item') : null;
+
+    // Product name
+    let productName = '';
+    if (closestCard) {
+        const titleEl = closestCard.querySelector('.menu-content h3');
+        if (titleEl) productName = (titleEl.textContent || '').trim();
+    }
+    if (!productName) {
+        const selectedTitle = document.querySelector('.menu-item.has-quantity .menu-content h3');
+        if (selectedTitle) productName = (selectedTitle.textContent || '').trim();
+    }
+    if (!productName) {
+        const anyTitle = document.querySelector('.menu-item .menu-content h3');
+        if (anyTitle) productName = (anyTitle.textContent || '').trim();
+    }
+
+    // Quantity
+    let quantity = '';
+    if (closestCard) {
+        const qEl = closestCard.querySelector('.qty-control .qc-value');
+        if (qEl) quantity = (qEl.textContent || '').trim();
+    }
+    if (!quantity) {
+        const qField = document.querySelector('input[name="quantity"], select[name="quantity"]');
+        if (qField) quantity = (qField.value || '').trim();
+    }
+
+    // Customer fields
+    const customerName =
+        (document.querySelector('input[name="name"], input[name="customerName"], #name')?.value || '').trim();
+    const phone =
+        (document.querySelector('input[name="phone"], input[type="tel"], #phone')?.value || '').trim();
+    const address =
+        (document.querySelector('input[name="deliveryAddress"], input[name="address"], #deliveryAddress, #address')?.value || '').trim();
+    const notes =
+        (document.querySelector('textarea[name="message"], textarea[name="notes"], #message, #notes')?.value || '').trim();
+
+    // Exact Arabic template required
+    const message =
+`مرحباً، أود طلبية:
+• المنتج: ${productName}
+• الكمية: ${quantity}
+• الاسم: ${customerName}
+• رقم الهاتف: ${phone}
+• العنوان: ${address}
+ملاحظات: ${notes}
+شكراً`;
+
+    return message;
+}
+
+// Open WhatsApp QR link with the message as ?text=...
+function openWhatsappQrWithMessage(message) {
+    const base = 'https://wa.me/qr/WVTPHTOPJZT7B1';
+    const url = `${base}?text=${encodeURIComponent(message || '')}`;
+    window.location.href = url;
+}
+
+// Delegate click for an order button with exact Arabic label "اطلب"
+document.addEventListener('click', (e) => {
+    const btn = e.target && e.target.closest ? e.target.closest('button, a, [role="button"]') : null;
+    if (!btn) return;
+    const label = (btn.textContent || '').trim();
+    if (label === 'اطلب') {
+        e.preventDefault();
+        const msg = buildArabicOrderMessage(btn);
+        openWhatsappQrWithMessage(msg);
+    }
+});
