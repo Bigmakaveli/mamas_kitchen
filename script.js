@@ -112,6 +112,13 @@ const translations = {
         'badge-new': 'חדש',
         'add-to-cart': 'הוסף לעגלה',
         'toast-added': 'נוסף לעגלה: {name} × {qty}',
+        'meat-select-title': 'בחר סוג בשר',
+        'meat-option-goulash': 'גולש',
+        'meat-option-thighs': 'כרעיים',
+        'meat-option-veal': 'בשר עגל',
+        'meat-option-kebab': 'קבב',
+        'confirm': 'אישור',
+        'cancel': 'ביטול',
 
         // Promo
         'discount-title': 'מבצע מיוחד',
@@ -227,6 +234,13 @@ const translations = {
         'badge-new': 'New',
         'add-to-cart': 'Add to cart',
         'toast-added': 'Added {qty}× {name} to cart',
+        'meat-select-title': 'Choose meat type',
+        'meat-option-goulash': 'Goulash',
+        'meat-option-thighs': 'Chicken thighs',
+        'meat-option-veal': 'Veal',
+        'meat-option-kebab': 'Kebab',
+        'confirm': 'Confirm',
+        'cancel': 'Cancel',
         
         // Promo
         'discount-title': 'Special Offer',
@@ -316,6 +330,13 @@ const translations = {
         'badge-new': 'Новинка',
         'add-to-cart': 'Добавить в корзину',
         'toast-added': 'Добавлено {qty}× {name} в корзину',
+        'meat-select-title': 'Выберите тип мяса',
+        'meat-option-goulash': 'Гуляш',
+        'meat-option-thighs': 'Куриные бедра',
+        'meat-option-veal': 'Телятина',
+        'meat-option-kebab': 'Кебаб',
+        'confirm': 'Подтвердить',
+        'cancel': 'Отмена',
         
         // Promo
         'discount-title': 'Специальное предложение',
@@ -405,6 +426,13 @@ const translations = {
         'badge-new': 'جديد',
         'add-to-cart': 'أضف إلى السلة',
         'toast-added': 'تمت إضافة {qty}× {name} إلى السلة',
+        'meat-select-title': 'اختر نوع اللحم',
+        'meat-option-goulash': 'جولاش',
+        'meat-option-thighs': 'أفخاذ',
+        'meat-option-veal': 'לحم عجل',
+        'meat-option-kebab': 'كباب',
+        'confirm': 'تأكيد',
+        'cancel': 'إلغاء',
         
         // Promo
         'discount-title': 'عرض خاص',
@@ -1199,6 +1227,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const STORAGE_KEY = 'mkCartItems';
     let items = {};
+    const STORAGE_META_KEY = 'mkCartItemMeta';
+    let itemMeta = {};
 
     // Product indexing: stable ids and current titles
     const productIndex = {
@@ -1332,6 +1362,12 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch {
             items = {};
         }
+        try {
+            const rawMeta = localStorage.getItem(STORAGE_META_KEY);
+            itemMeta = rawMeta ? JSON.parse(rawMeta) : {};
+        } catch {
+            itemMeta = {};
+        }
     }
 
     function totalQty() {
@@ -1341,9 +1377,124 @@ document.addEventListener('DOMContentLoaded', () => {
     // UI elements
     let cartFab, countBadge, overlay, modal, itemsContainer, totalEl, toastEl, toastTimer;
 
+    // Meat selection modal helpers
+    const MEAT_OPTIONS = [
+        { code: 'goulash', key: 'meat-option-goulash' },
+        { code: 'thighs', key: 'meat-option-thighs' },
+        { code: 'veal', key: 'meat-option-veal' },
+        { code: 'kebab', key: 'meat-option-kebab' }
+    ];
+    let meatOverlay, meatModal, meatOpen = false;
+
+    function getMeatLabel(code) {
+        const k = 'meat-option-' + String(code || '');
+        return t(k) || String(code || '');
+    }
+
+    function buildMeatModal() {
+        if (meatOverlay) return;
+        meatOverlay = document.createElement('div');
+        meatOverlay.className = 'meat-modal-overlay';
+        meatOverlay.setAttribute('aria-hidden', 'true');
+
+        meatModal = document.createElement('div');
+        meatModal.className = 'meat-modal';
+        meatModal.setAttribute('role', 'dialog');
+        meatModal.setAttribute('aria-modal', 'true');
+
+        meatOverlay.appendChild(meatModal);
+        document.body.appendChild(meatOverlay);
+
+        meatOverlay.addEventListener('click', (e) => {
+            if (e.target === meatOverlay) {
+                closeMeatModal();
+            }
+        });
+        document.addEventListener('keydown', (e) => {
+            if (meatOpen && e.key === 'Escape') closeMeatModal();
+        });
+    }
+
+    function renderMeatModal() {
+        if (!meatModal) return;
+        const dir = document.documentElement.dir || 'rtl';
+        meatModal.setAttribute('dir', dir);
+        const title = t('meat-select-title');
+        const cancelText = t('cancel');
+        const confirmText = t('confirm');
+
+        const optionsHtml = MEAT_OPTIONS.map((opt, idx) => {
+            const id = `meat-opt-${opt.code}`;
+            const requiredAttr = idx === 0 ? 'required' : '';
+            const label = getMeatLabel(opt.code);
+            return `
+                <div class="meat-option">
+                    <input type="radio" id="${id}" name="meat-type" value="${opt.code}" ${requiredAttr}>
+                    <label for="${id}">${label}</label>
+                </div>
+            `;
+        }).join('');
+
+        meatModal.innerHTML = `
+            <div class="meat-modal-header">
+                <h3 class="meat-title">${title}</h3>
+                <button type="button" class="meat-close" aria-label="Close">×</button>
+            </div>
+            <form class="meat-form">
+                <fieldset class="meat-options">
+                    ${optionsHtml}
+                </fieldset>
+                <div class="meat-actions">
+                    <button type="button" class="btn cancel">${cancelText}</button>
+                    <button type="submit" class="btn confirm">${confirmText}</button>
+                </div>
+            </form>
+        `;
+
+        const closeBtn = meatModal.querySelector('.meat-close');
+        const cancelBtn = meatModal.querySelector('.btn.cancel');
+        closeBtn && closeBtn.addEventListener('click', closeMeatModal);
+        cancelBtn && cancelBtn.addEventListener('click', closeMeatModal);
+    }
+
+    function openMeatSelection() {
+        buildMeatModal();
+        renderMeatModal();
+        return new Promise((resolve) => {
+            const form = meatModal.querySelector('.meat-form');
+            if (form) {
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const checked = meatModal.querySelector('input[name="meat-type"]:checked');
+                    if (!checked) return; // required attribute should prevent this
+                    const code = checked.value;
+                    closeMeatModal();
+                    resolve(code);
+                }, { once: true });
+            } else {
+                resolve(null);
+            }
+            meatOverlay.classList.add('active');
+            meatOverlay.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+            meatOpen = true;
+        });
+    }
+
+    function closeMeatModal() {
+        if (!meatOverlay || !meatOpen) return;
+        meatOverlay.classList.remove('active');
+        meatOverlay.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        meatOpen = false;
+    }
+
     function save() {
         try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+        } catch {}
+        try {
+            localStorage.setItem(STORAGE_META_KEY, JSON.stringify(itemMeta || {}));
         } catch {}
         updateBadge();
         if (itemsContainer) renderItems();
@@ -1473,6 +1624,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function removeItem(name) {
         if (!name) return;
         delete items[name];
+        if (itemMeta && itemMeta[name]) {
+            delete itemMeta[name];
+        }
         save();
     }
 
@@ -1601,7 +1755,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         <button type="button" class="remove-btn" aria-label="Remove">×</button>
                     </div>
                 `;
-                row.querySelector('.cart-item-name').textContent = titleForId(id);
+                const nameEl = row.querySelector('.cart-item-name');
+                nameEl.textContent = titleForId(id);
+                // Show selected meat type, if any
+                if (itemMeta[id] && itemMeta[id].meat_type) {
+                    const metaEl = document.createElement('span');
+                    metaEl.className = 'cart-item-meta';
+                    metaEl.textContent = getMeatLabel(itemMeta[id].meat_type);
+                    nameEl.appendChild(metaEl);
+                    row.setAttribute('data-meat_type', itemMeta[id].meat_type);
+                }
                 row.querySelector('.qty-value').textContent = qty;
                 row.querySelector('.qty-btn.minus').addEventListener('click', () => setQty(id, (items[id] || 0) - 1));
                 row.querySelector('.qty-btn.plus').addEventListener('click', () => setQty(id, (items[id] || 0) + 1));
@@ -1637,7 +1800,11 @@ document.addEventListener('DOMContentLoaded', () => {
             closeModal();
             return;
         }
-        const lines = ids.map((id) => `${items[id]}x ${titleForId(id)}`).join('\n');
+        const lines = ids.map((id) => {
+            const base = `${items[id]}x ${titleForId(id)}`;
+            const meat = itemMeta[id] && itemMeta[id].meat_type ? ` [meat_type: ${getMeatLabel(itemMeta[id].meat_type)}]` : '';
+            return base + meat;
+        }).join('\n');
         const num = getWhatsappNumber().replace(/[^\d+]/g, '');
         openWhatsApp(num, lines);
     }
@@ -1683,14 +1850,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (id) {
                 e.preventDefault();
-                addItem(id, 1);
+                const card = el.closest('.menu-item');
+                const requiresMeat = card && card.getAttribute('data-has-meat') === 'true';
 
-                // Small animated affordances
-                animateAddFlow(el, (el.closest('.menu-item') || document).querySelector?.('.menu-image img'));
+                const proceedAdd = (meatCode) => {
+                    if (meatCode) {
+                        itemMeta[id] = Object.assign({}, itemMeta[id], { meat_type: meatCode });
+                    }
+                    addItem(id, 1);
 
-                // Accessible toast confirmation
-                const displayName = titleForId(id);
-                showToast(t('toast-added').replace('{qty}', '1').replace('{name}', displayName));
+                    // Small animated affordances
+                    animateAddFlow(el, (el.closest('.menu-item') || document).querySelector?.('.menu-image img'));
+
+                    // Accessible toast confirmation
+                    const displayName = titleForId(id);
+                    showToast(t('toast-added').replace('{qty}', '1').replace('{name}', displayName));
+                };
+
+                if (requiresMeat && !(itemMeta && itemMeta[id] && itemMeta[id].meat_type)) {
+                    openMeatSelection().then((code) => {
+                        if (!code) return; // user canceled
+                        proceedAdd(code);
+                    });
+                } else {
+                    proceedAdd(null);
+                }
             }
         },
         true
@@ -1770,7 +1954,26 @@ document.addEventListener('DOMContentLoaded', () => {
             plus.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                adjust(1);
+                const cardEl = qc.closest('.menu-item');
+                const requiresMeat = cardEl && cardEl.getAttribute('data-has-meat') === 'true';
+                const current = parseInt(value.textContent, 10) || 0;
+
+                const doIncrease = (meatCode) => {
+                    if (meatCode) {
+                        itemMeta[id] = Object.assign({}, itemMeta[id], { meat_type: meatCode });
+                        save();
+                    }
+                    adjust(1);
+                };
+
+                if (requiresMeat && current === 0 && !(itemMeta && itemMeta[id] && itemMeta[id].meat_type)) {
+                    openMeatSelection().then((code) => {
+                        if (!code) return; // canceled
+                        doIncrease(code);
+                    });
+                } else {
+                    doIncrease(null);
+                }
             });
 
             qc.appendChild(minus);

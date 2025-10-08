@@ -1399,6 +1399,107 @@ img {
     outline: none;
 }
 
+/* Meat Selection Modal */
+.meat-modal-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.6);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.15s ease-in-out, visibility 0s linear 0.15s;
+    z-index: 2000;
+}
+.meat-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition: opacity 0.15s ease-in-out;
+}
+.meat-modal {
+    width: 92vw;
+    max-width: 420px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+    overflow: hidden;
+}
+.meat-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid #eee;
+}
+.meat-title {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #d32f2f;
+    font-weight: 700;
+}
+.meat-close {
+    background: transparent;
+    border: none;
+    font-size: 1.4rem;
+    cursor: pointer;
+    line-height: 1;
+}
+.meat-form {
+    padding: 0.9rem 1rem 1rem;
+}
+.meat-options {
+    border: 0;
+    margin: 0 0 0.6rem 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+}
+.meat-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.meat-option input[type="radio"] {
+    accent-color: #d32f2f;
+}
+.meat-actions {
+    display: flex;
+    gap: 0.6rem;
+    justify-content: flex-end;
+}
+.meat-actions .btn {
+    border: none;
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+.meat-actions .btn.cancel {
+    background: #f1f1f1;
+    color: #333;
+}
+.meat-actions .btn.confirm {
+    background: #d32f2f;
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(211, 47, 47, 0.25);
+}
+
+/* Cart item meta badge */
+.cart-item-name .cart-item-meta {
+    display: inline-block;
+    margin-inline-start: 6px;
+    padding: 2px 6px;
+    background: #fff5f5;
+    border: 1px solid #ffe3e3;
+    border-radius: 999px;
+    color: #d32f2f;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
 /* Add-to-Cart button (redesigned, accessible, lightweight) */
 .add-to-cart-btn {
     display: inline-flex;
