@@ -1415,7 +1415,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function renderMeatModal() {
+    function renderMeatModal(defaultCode) {
         if (!meatModal) return;
         const dir = document.documentElement.dir || 'rtl';
         meatModal.setAttribute('dir', dir);
@@ -1426,10 +1426,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const optionsHtml = MEAT_OPTIONS.map((opt, idx) => {
             const id = `meat-opt-${opt.code}`;
             const requiredAttr = idx === 0 ? 'required' : '';
+            const checkedAttr = defaultCode && defaultCode === opt.code ? 'checked' : '';
             const label = getMeatLabel(opt.code);
             return `
                 <div class="meat-option">
-                    <input type="radio" id="${id}" name="meat-type" value="${opt.code}" ${requiredAttr}>
+                    <input type="radio" id="${id}" name="meat-type" value="${opt.code}" ${requiredAttr} ${checkedAttr}>
                     <label for="${id}">${label}</label>
                 </div>
             `;
