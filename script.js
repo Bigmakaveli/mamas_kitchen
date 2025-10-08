@@ -1457,23 +1457,47 @@ document.addEventListener('DOMContentLoaded', () => {
         cancelBtn && cancelBtn.addEventListener('click', closeMeatModal);
     }
 
-    function openMeatSelection() {
+    function openMeatSelection(defaultCode) {
         buildMeatModal();
-        renderMeatModal();
+        renderMeatModal(defaultCode);
         return new Promise((resolve) => {
             const form = meatModal.querySelector('.meat-form');
-            if (form) {
-                form.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    const checked = meatModal.querySelector('input[name="meat-type"]:checked');
-                    if (!checked) return; // required attribute should prevent this
-                    const code = checked.value;
-                    closeMeatModal();
-                    resolve(code);
-                }, { once: true });
-            } else {
+            const closeBtn = meatModal.querySelector('.meat-close');
+            const cancelBtn = meatModal.querySelector('.btn.cancel');
+
+            const onCancel = () => {
+                closeMeatModal();
+                cleanup();
                 resolve(null);
-            }
+            };
+            const onOverlayCancel = (e) => {
+                if (e.target === meatOverlay) {
+                    closeMeatModal();
+                    cleanup();
+                    resolve(null);
+                }
+            };
+            const onSubmit = (e) => {
+                e.preventDefault();
+                const checked = meatModal.querySelector('input[name="meat-type"]:checked');
+                if (!checked) return;
+                const code = checked.value;
+                closeMeatModal();
+                cleanup();
+                resolve(code);
+            };
+            const cleanup = () => {
+                form && form.removeEventListener('submit', onSubmit);
+                closeBtn && closeBtn.removeEventListener('click', onCancel);
+                cancelBtn && cancelBtn.removeEventListener('click', onCancel);
+                meatOverlay && meatOverlay.removeEventListener('click', onOverlayCancel);
+            };
+
+            if (form) form.addEventListener('submit', onSubmit, { once: true });
+            if (closeBtn) closeBtn.addEventListener('click', onCancel, { once: true });
+            if (cancelBtn) cancelBtn.addEventListener('click', onCancel, { once: true });
+            if (meatOverlay) meatOverlay.addEventListener('click', onOverlayCancel, { once: true });
+
             meatOverlay.classList.add('active');
             meatOverlay.setAttribute('aria-hidden', 'false');
             document.body.style.overflow = 'hidden';
@@ -1636,6 +1660,17 @@ document.addEventListener('DOMContentLoaded', () => {
             removeItem(name);
         } else {
             items[name] = qty;
+            // Keep per-unit meat selections in sync with quantity
+            if (itemMeta && itemMeta[name]) {
+                const meats = Array.isArray(itemMeta[name].meats) ? itemMeta[name].meats : [];
+                if (meats.length > qty) {
+                    itemMeta[name].meats = meats.slice(0, qty);
+                }
+                // Maintain legacy single meat_type as the first selection if present
+                if (Array.isArray(itemMeta[name].meats) && itemMeta[name].meats.length > 0) {
+                    itemMeta[name].meat_type = itemMeta[name].meats[0];
+                }
+            }
             save();
         }
     }
@@ -1757,14 +1792,33 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
                 const nameEl = row.querySelector('.cart-item-name');
                 nameEl.textContent = titleForId(id);
-                // Show selected meat type, if any
-                if (itemMeta[id] && itemMeta[id].meat_type) {
-                    const metaEl = document.createElement('span');
-                    metaEl.className = 'cart-item-meta';
-                    metaEl.textContent = getMeatLabel(itemMeta[id].meat_type);
-                    nameEl.appendChild(metaEl);
-                    row.setAttribute('data-meat_type', itemMeta[id].meat_type);
+
+                // Show selected meat types summary, if any (per unit)
+                if (itemMeta[id]) {
+                    const meats = Array.isArray(itemMeta[id].meats) ? itemMeta[id].meats.slice(0, qty) : [];
+                    if (meats.length > 0) {
+                        const counts = meats.reduce((acc, code) => {
+                            acc[code] = (acc[code] || 0) + 1;
+                            return acc;
+                        }, {});
+                        const summary = Object.keys(counts)
+                            .map(code => `${getMeatLabel(code)}×${counts[code]}`)
+                            .join(', ');
+                        const metaEl = document.createElement('span');
+                        metaEl.className = 'cart-item-meta';
+                        metaEl.textContent = summary;
+                        nameEl.appendChild(metaEl);
+                        row.setAttribute('data-meats', summary);
+                    } else if (itemMeta[id].meat_type) {
+                        // Legacy single selection fallback
+                        const metaEl = document.createElement('span');
+                        metaEl.className = 'cart-item-meta';
+                        metaEl.textContent = getMeatLabel(itemMeta[id].meat_type);
+                        nameEl.appendChild(metaEl);
+                        row.setAttribute('data-meat_type', itemMeta[id].meat_type);
+                    }
                 }
+
                 row.querySelector('.qty-value').textContent = qty;
                 row.querySelector('.qty-btn.minus').addEventListener('click', () => setQty(id, (items[id] || 0) - 1));
                 row.querySelector('.qty-btn.plus').addEventListener('click', () => setQty(id, (items[id] || 0) + 1));
@@ -1801,9 +1855,25 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         const lines = ids.map((id) => {
-            const base = `${items[id]}x ${titleForId(id)}`;
-            const meat = itemMeta[id] && itemMeta[id].meat_type ? ` [meat_type: ${getMeatLabel(itemMeta[id].meat_type)}]` : '';
-            return base + meat;
+            const qty = items[id];
+            const base = `${qty}x ${titleForId(id)}`;
+            let meatInfo = '';
+            if (itemMeta[id]) {
+                const meats = Array.isArray(itemMeta[id].meats) ? itemMeta[id].meats.slice(0, qty) : [];
+                if (meats.length > 0) {
+                    const counts = meats.reduce((acc, code) => {
+                        acc[code] = (acc[code] || 0) + 1;
+                        return acc;
+                    }, {});
+                    const summary = Object.keys(counts)
+                        .map(code => `${getMeatLabel(code)}×${counts[code]}`)
+                        .join(', ');
+                    meatInfo = ` [meat: ${summary}]`;
+                } else if (itemMeta[id].meat_type) {
+                    meatInfo = ` [meat: ${getMeatLabel(itemMeta[id].meat_type)}]`;
+                }
+            }
+            return base + meatInfo;
         }).join('\n');
         const num = getWhatsappNumber().replace(/[^\d+]/g, '');
         openWhatsApp(num, lines);
@@ -1853,10 +1923,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 const card = el.closest('.menu-item');
                 const requiresMeat = card && card.getAttribute('data-has-meat') === 'true';
 
-                const proceedAdd = (meatCode) => {
-                    if (meatCode) {
-                        itemMeta[id] = Object.assign({}, itemMeta[id], { meat_type: meatCode });
-                    }
+                const addWithMeat = (meatCode) => {
+                    // Ensure per-unit meats array exists
+                    itemMeta[id] = Object.assign({}, itemMeta[id]);
+                    if (!Array.isArray(itemMeta[id].meats)) itemMeta[id].meats = [];
+                    if (meatCode) itemMeta[id].meats.push(meatCode);
+                    // Maintain legacy single meat_type for backward compatibility
+                    itemMeta[id].meat_type = itemMeta[id].meats[0] || meatCode || itemMeta[id].meat_type || null;
+
                     addItem(id, 1);
 
                     // Small animated affordances
@@ -1867,13 +1941,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     showToast(t('toast-added').replace('{qty}', '1').replace('{name}', displayName));
                 };
 
-                if (requiresMeat && !(itemMeta && itemMeta[id] && itemMeta[id].meat_type)) {
-                    openMeatSelection().then((code) => {
+                if (requiresMeat) {
+                    // Default to last chosen meat for this product if available
+                    let defaultCode = null;
+                    if (itemMeta && itemMeta[id]) {
+                        if (Array.isArray(itemMeta[id].meats) && itemMeta[id].meats.length > 0) {
+                            defaultCode = itemMeta[id].meats[itemMeta[id].meats.length - 1];
+                        } else if (itemMeta[id].meat_type) {
+                            defaultCode = itemMeta[id].meat_type;
+                        }
+                    }
+                    openMeatSelection(defaultCode).then((code) => {
                         if (!code) return; // user canceled
-                        proceedAdd(code);
+                        addWithMeat(code);
                     });
                 } else {
-                    proceedAdd(null);
+                    addItem(id, 1);
+                    animateAddFlow(el, (el.closest('.menu-item') || document).querySelector?.('.menu-image img'));
+                    const displayName = titleForId(id);
+                    showToast(t('toast-added').replace('{qty}', '1').replace('{name}', displayName));
                 }
             }
         },
@@ -1956,24 +2042,34 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.stopPropagation();
                 const cardEl = qc.closest('.menu-item');
                 const requiresMeat = cardEl && cardEl.getAttribute('data-has-meat') === 'true';
-                const current = parseInt(value.textContent, 10) || 0;
 
-                const doIncrease = (meatCode) => {
-                    if (meatCode) {
-                        itemMeta[id] = Object.assign({}, itemMeta[id], { meat_type: meatCode });
-                        save();
-                    }
+                if (!requiresMeat) {
                     adjust(1);
-                };
-
-                if (requiresMeat && current === 0 && !(itemMeta && itemMeta[id] && itemMeta[id].meat_type)) {
-                    openMeatSelection().then((code) => {
-                        if (!code) return; // canceled
-                        doIncrease(code);
-                    });
-                } else {
-                    doIncrease(null);
+                    return;
                 }
+
+                // For meals requiring meat, prompt on every increase and default to the last choice
+                let defaultCode = null;
+                const meta = itemMeta && itemMeta[id] ? itemMeta[id] : null;
+                if (meta) {
+                    if (Array.isArray(meta.meats) && meta.meats.length > 0) {
+                        defaultCode = meta.meats[meta.meats.length - 1];
+                    } else if (meta.meat_type) {
+                        defaultCode = meta.meat_type;
+                    }
+                }
+
+                openMeatSelection(defaultCode).then((code) => {
+                    if (!code) return; // user canceled: do not increase
+                    itemMeta[id] = Object.assign({}, itemMeta[id]);
+                    if (!Array.isArray(itemMeta[id].meats)) itemMeta[id].meats = [];
+                    itemMeta[id].meats.push(code);
+                    // Keep legacy single selection in sync
+                    itemMeta[id].meat_type = itemMeta[id].meats[0] || code;
+
+                    save();
+                    adjust(1);
+                });
             });
 
             qc.appendChild(minus);
