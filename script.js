@@ -1423,18 +1423,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const cancelText = t('cancel');
         const confirmText = t('confirm');
 
-        const optionsHtml = MEAT_OPTIONS.map((opt, idx) => {
-            const id = `meat-opt-${opt.code}`;
-            const requiredAttr = idx === 0 ? 'required' : '';
-            const checkedAttr = defaultCode && defaultCode === opt.code ? 'checked' : '';
-            const label = getMeatLabel(opt.code);
-            return `
-                <div class="meat-option">
-                    <input type="radio" id="${id}" name="meat-type" value="${opt.code}" ${requiredAttr} ${checkedAttr}>
-                    <label for="${id}">${label}</label>
-                </div>
-            `;
-        }).join('');
+        const optionsHtml = MEAT_OPTIONS
+            // Exclude only the recommendation item whose label equals "בשר עגל"
+            .filter(opt => getMeatLabel(opt.code) !== 'בשר עגל')
+            .map((opt, idx) => {
+                const id = `meat-opt-${opt.code}`;
+                const requiredAttr = idx === 0 ? 'required' : '';
+                const checkedAttr = defaultCode && defaultCode === opt.code ? 'checked' : '';
+                const label = getMeatLabel(opt.code);
+                return `
+                    <div class="meat-option">
+                        <input type="radio" id="${id}" name="meat-type" value="${opt.code}" ${requiredAttr} ${checkedAttr}>
+                        <label for="${id}">${label}</label>
+                    </div>
+                `;
+            }).join('');
 
         meatModal.innerHTML = `
             <div class="meat-modal-header">

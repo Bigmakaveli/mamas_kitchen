@@ -1,0 +1,4 @@
+Modified files:
+- script.js
+
+Summary: Filtered out the 'בשר עגל' (veal) option from the meat-type radio list rendered in the meal recommendation modal only, leaving global data and other screens unchanged.
