@@ -436,7 +436,7 @@ const translations = {
         
         // Promo
         'discount-title': 'عرض خاص',
-        'discount-desc': 'خصم 10% لموظفي الدولة أو أصحاب الزي الرسمي',
+        'discount-desc': 'خصم 7% لزبائن المطعم',
         'business_meal_soldiers_40': 'وجبة عمل فقط للجنود 40₪ !!!!',
         
         // Contact section
