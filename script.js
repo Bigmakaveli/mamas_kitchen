@@ -122,7 +122,7 @@ const translations = {
 
         // Promo
         'discount-title': 'מבצע מיוחד',
-        'discount-desc': '10% הנחה לעובדי מדינה או לובשי מדים',
+        'discount-desc': '7% הנחה לעובדי מדינה או לובשי מדים',
         'business_meal_soldiers_40': 'ארוחה עסקית רק לחיילים 40₪ !!!!',
         
         // Contact section
