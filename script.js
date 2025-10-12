@@ -71,7 +71,7 @@ const translations = {
         'drinks': 'משקאות',
         
         // Menu items
-        'rice-meat-salad': '200 גרם אורז + בשר + סלט',
+        'rice-meat-salad': 'ארוחה עסקית',
         'rice-meat-salad-desc': 'ארוחה מלאה עם אורז לבן, בשר טרי וסלט טרי',
         'rice-meat-meat-salad': '200 גרם אורז עם בשר + בשר + סלט',
         'rice-meat-meat-salad-desc': 'ארוחה עשירה עם אורז מבושל עם בשר, בשר נוסף וסלט',
