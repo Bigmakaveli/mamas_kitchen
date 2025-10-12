@@ -1,4 +1,4 @@
 Modified files:
-- script.js
+- index.html
 
-Summary: Filtered out the 'בשר עגל' (veal) option from the meat-type radio list rendered in the meal recommendation modal only, leaving global data and other screens unchanged.
+Summary: Updated the displayed price for the 'ארוחה עסקית' card from ₪55 to ₪62 (visible label only), preserving RTL and styling.
