@@ -436,7 +436,7 @@ const translations = {
         
         // Promo
         'discount-title': 'عرض خاص',
-        'discount-desc': 'خصم 7% لزبائن المطعم',
+        'discount-desc': 'מבצע מיוחד\n7% הנחה ארוחה מסעדה',
         'business_meal_soldiers_40': 'وجبة عمل فقط للجنود 40₪ !!!!',
         
         // Contact section
