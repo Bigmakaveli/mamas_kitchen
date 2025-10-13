@@ -244,7 +244,7 @@ const translations = {
         
         // Promo
         'discount-title': 'Special Offer',
-        'discount-desc': '10% discount for state employees or uniformed personnel',
+        'discount-desc': '7% discount for restaurant guests',
         'business_meal_soldiers_40': 'Business meal for soldiers only 40₪ !!!!',
         
         // Contact section
@@ -340,7 +340,7 @@ const translations = {
         
         // Promo
         'discount-title': 'Специальное предложение',
-        'discount-desc': 'Скидка 10% для госслужащих или сотрудников в форме',
+        'discount-desc': 'Скидка 7% для гостей ресторана',
         'business_meal_soldiers_40': 'Бизнес-обед только для солдат 40₪ !!!!',
         
         // Contact section
@@ -436,7 +436,7 @@ const translations = {
         
         // Promo
         'discount-title': 'عرض خاص',
-        'discount-desc': 'מבצע מיוחד\nהנחה 7% לאורחי המסעדה',
+        'discount-desc': 'خصم 7% لزبائن المطعم',
         'business_meal_soldiers_40': 'وجبة عمل فقط للجنود 40₪ !!!!',
         
         // Contact section
