@@ -122,7 +122,7 @@ const translations = {
 
         // Promo
         'discount-title': 'מבצע מיוחד',
-        'discount-desc': 'הנחה 7 % לאורחי המסעדה',
+        'discount-desc': 'הנחה 7% לאורחי המסעדה',
         'business_meal_soldiers_40': 'ארוחה עסקית רק לחיילים 40₪ !!!!',
         
         // Contact section
@@ -436,7 +436,7 @@ const translations = {
         
         // Promo
         'discount-title': 'عرض خاص',
-        'discount-desc': 'מבצע מיוחד\nהנחה 7 % לאורחי המסעדה',
+        'discount-desc': 'מבצע מיוחד\nהנחה 7% לאורחי המסעדה',
         'business_meal_soldiers_40': 'وجبة عمل فقط للجنود 40₪ !!!!',
         
         // Contact section
