@@ -2131,21 +2131,23 @@ document.addEventListener('click', (e) => {
 
     function ensureBadgeElForItem(itemEl) {
         if (!itemEl) return null;
-        const priceEl = itemEl.querySelector('.item-price');
-        const fallbackEl = itemEl.querySelector('.menu-content h3') || itemEl.querySelector('.item-name');
-        const target = priceEl || fallbackEl || itemEl;
+        // Place the badge inline at the very end of the meal title text
+        const titleEl = itemEl.querySelector('.item-name') || itemEl.querySelector('.menu-content h3');
+        const target = titleEl || itemEl;
 
         // Prefer an existing badge anywhere in the item to avoid duplicates
         let badge = itemEl.querySelector('.added-badge');
         if (!badge) {
             badge = document.createElement('span');
             badge.className = 'added-badge';
-            badge.setAttribute('role', 'img');
+            // Make it keyboard-focusable and operable
+            badge.setAttribute('role', 'button');
+            badge.setAttribute('tabindex', '0');
             badge.setAttribute('aria-label', 'Added');
             badge.textContent = '+';
             target.appendChild(badge);
         } else if (badge.parentElement !== target) {
-            // Move badge to the end (price field / last field)
+            // Move badge to the end of the title text
             target.appendChild(badge);
         }
         return badge;
@@ -2255,24 +2257,38 @@ document.addEventListener('click', (e) => {
             const name = normalizeName(nameNode ? nameNode.textContent : '');
             if (!name) return;
             addToCart(name, 1);
+            // If the order modal is open for this item, sync its quantity field
+            const newQty = qtyForName(name);
+            if (window.smartOrderModal
+                && typeof window.smartOrderModal.isOpen === 'function'
+                && window.smartOrderModal.isOpen()
+                && typeof window.smartOrderModal.getItemName === 'function'
+                && window.smartOrderModal.getItemName() === name
+                && typeof window.smartOrderModal.setQty === 'function') {
+                window.smartOrderModal.setQty(newQty);
+            }
             return;
         }
 
-        // On first tap/click on the item: add +1 and show badge
+        // Clicking an item: ensure +1 on first click and open the modal
         const li = e.target && e.target.closest ? e.target.closest('.menu-section .menu-item') : null;
         if (!li) return;
         const nameNode = li.querySelector('.item-name, .menu-content h3');
         if (!nameNode) return;
         const name = normalizeName(nameNode.textContent);
         if (!name) return;
-        const currentQty = qtyForName(name);
 
-        if (currentQty === 0) {
+        let qty = qtyForName(name);
+        if (qty === 0) {
+            // First interaction: add +1 and reveal small badge
             addToCart(name, 1);
-        } else if (window.smartOrderModal && typeof window.smartOrderModal.show === 'function') {
-            // If already has quantity, open small modal to edit quantity
+            qty = qtyForName(name);
+        }
+
+        // Always open the small order modal to let user adjust quantity
+        if (window.smartOrderModal && typeof window.smartOrderModal.show === 'function') {
             window.smartOrderModal.show(name, {
-                initialQty: currentQty,
+                initialQty: qty,
                 onConfirm: (newQty) => setQtyByName(name, newQty)
             });
         }
@@ -2296,6 +2312,29 @@ document.addEventListener('click', (e) => {
     ['pointerup','pointercancel','pointerleave','scroll'].forEach(evt => {
         document.addEventListener(evt, mkClearLp, true);
     });
+
+    // Keyboard support for badge: Enter/Space increments
+    document.addEventListener('keydown', (e) => {
+        const badge = e.target && e.target.closest ? e.target.closest('.menu-section .menu-item .added-badge') : null;
+        if (!badge) return;
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            const li = badge.closest('.menu-section .menu-item');
+            const nameNode = li && li.querySelector('.item-name, .menu-content h3');
+            const name = normalizeName(nameNode ? nameNode.textContent : '');
+            if (!name) return;
+            addToCart(name, 1);
+            const newQty = qtyForName(name);
+            if (window.smartOrderModal
+                && typeof window.smartOrderModal.isOpen === 'function'
+                && window.smartOrderModal.isOpen()
+                && typeof window.smartOrderModal.getItemName === 'function'
+                && window.smartOrderModal.getItemName() === name
+                && typeof window.smartOrderModal.setQty === 'function') {
+                window.smartOrderModal.setQty(newQty);
+            }
+        }
+    }, true);
 
     // Generic add-to-cart buttons support (+1 per click)
     document.addEventListener('click', (e) => {
@@ -2324,7 +2363,7 @@ document.addEventListener('click', (e) => {
 
 /* Smart order modal for recommendation items */
 document.addEventListener('DOMContentLoaded', () => {
-    let backdrop, modal, titleEl, qtyInput, btnWhatsApp, btnCart, closeBtn;
+    let backdrop, modal, titleEl, qtyInput, btnWhatsApp, btnCart, closeBtn, currentItemName = null;
     let escHandlerBound = null;
 
     function ensureModal() {
@@ -2412,7 +2451,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function showModal(itemName, opts = {}) {
         ensureModal();
-        titleEl.textContent = itemName || '';
+        currentItemName = itemName || '';
+        titleEl.textContent = currentItemName;
         const initQty = Math.max(1, parseInt((opts && opts.initialQty) || '1', 10) || 1);
         qtyInput.value = String(initQty);
         backdrop.classList.add('is-open');
@@ -2460,10 +2500,19 @@ document.addEventListener('DOMContentLoaded', () => {
             document.removeEventListener('keydown', escHandlerBound);
             escHandlerBound = null;
         }
+        currentItemName = null;
     }
 
     // Expose lightweight API for other modules
-    window.smartOrderModal = { show: showModal };
+    window.smartOrderModal = {
+        show: showModal,
+        isOpen: () => !!(backdrop && backdrop.classList.contains('is-open')),
+        getItemName: () => currentItemName,
+        setQty: (qty) => {
+            const n = Math.max(1, parseInt(qty, 10) || 1);
+            if (qtyInput) qtyInput.value = String(n);
+        }
+    };
 
     // Delegate clicks on recommendation items (support multiple unobtrusive markers)
     document.addEventListener('click', (e) => {
