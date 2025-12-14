@@ -1113,6 +1113,72 @@ img {
     }
 }
 
+/* Floating Cart Button */
+.cart-fab {
+    position: fixed;
+    bottom: 144px; /* stacked above WhatsApp */
+    right: 16px; /* bottom-right with other FABs */
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff6b6b, #ee5253);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    z-index: 1200;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    border: 2px solid rgba(255,255,255,0.9);
+    cursor: pointer;
+}
+.cart-fab:hover,
+.cart-fab:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px rgba(0,0,0,0.2);
+    outline: none;
+}
+.cart-fab:active {
+    transform: translateY(0);
+}
+.cart-fab svg {
+    width: 24px;
+    height: 24px;
+    display: block;
+}
+.cart-fab .mini-cart-count {
+    position: absolute;
+    top: -4px;
+    inset-inline-end: -6px;
+    background: #ff4757;
+    color: #fff;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 0 2px rgba(0,0,0,0.15);
+}
+
+@media (max-width: 480px) {
+    .cart-fab {
+        width: 44px;
+        height: 44px;
+        bottom: 120px; /* stacked above WhatsApp on mobile */
+        right: 12px;
+    }
+    .cart-fab svg {
+        width: 22px;
+        height: 22px;
+    }
+}
+
 /* Floating WhatsApp Button */
 .whatsapp-fab {
     position: fixed;
@@ -1160,7 +1226,7 @@ img {
 /* Floating Waze Button */
 .waze-fab {
     position: fixed;
-    bottom: 144px; /* stacked above WhatsApp */
+    bottom: 208px; /* stacked above Cart */
     right: 16px; /* bottom-right with other FABs */
     width: 52px;
     height: 52px;
@@ -1192,7 +1258,7 @@ img {
     .waze-fab {
         width: 44px;
         height: 44px;
-        bottom: 120px; /* stacked above WhatsApp on mobile */
+        bottom: 174px; /* stacked above Cart on mobile */
         right: 12px;
     }
     .waze-fab svg {

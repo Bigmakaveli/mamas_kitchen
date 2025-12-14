@@ -2678,6 +2678,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function bindTriggers() {
+        document.querySelectorAll('.cart-fab').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                showOverlay();
+            });
+        });
         document.querySelectorAll('.fab-mini-cart').forEach(mini => {
             mini.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -2688,14 +2695,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function init() {
-        // Inject into additional FABs (Instagram, Waze, Call). Ensure WhatsApp has it too.
-        ['.instagram-fab', '.waze-fab', '.call-fab'].forEach(sel => {
-            const el = document.querySelector(sel);
-            if (el) injectMiniInto(el);
-        });
-        const wa = document.querySelector('.whatsapp-fab');
-        if (wa) injectMiniInto(wa);
-
+        // Bind cart button trigger and update badge
         bindTriggers();
         updateBadges();
 
