@@ -895,6 +895,9 @@ img {
     text-align: right; /* keep price aligned to the outer edge in RTL */
     white-space: nowrap;
     min-width: 4ch;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem; /* space between price and added badge */
 }
 .menu-section .separators {
     border: 0;

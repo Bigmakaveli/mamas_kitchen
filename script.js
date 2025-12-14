@@ -2131,16 +2131,22 @@ document.addEventListener('click', (e) => {
 
     function ensureBadgeElForItem(itemEl) {
         if (!itemEl) return null;
-        const nameEl = itemEl.querySelector('.item-name') || itemEl.querySelector('.menu-content h3');
-        if (!nameEl) return null;
-        let badge = nameEl.querySelector('.added-badge');
+        const priceEl = itemEl.querySelector('.item-price');
+        const fallbackEl = itemEl.querySelector('.menu-content h3') || itemEl.querySelector('.item-name');
+        const target = priceEl || fallbackEl || itemEl;
+
+        // Prefer an existing badge anywhere in the item to avoid duplicates
+        let badge = itemEl.querySelector('.added-badge');
         if (!badge) {
             badge = document.createElement('span');
             badge.className = 'added-badge';
             badge.setAttribute('role', 'img');
             badge.setAttribute('aria-label', 'Added');
-            badge.textContent = '✓';
-            nameEl.appendChild(badge);
+            badge.textContent = '+';
+            target.appendChild(badge);
+        } else if (badge.parentElement !== target) {
+            // Move badge to the end (price field / last field)
+            target.appendChild(badge);
         }
         return badge;
     }
@@ -2160,9 +2166,19 @@ document.addEventListener('click', (e) => {
 
     function setAddedStateByName(name, qty) {
         const itemEl = findItemElByName(name);
-        const added = (parseInt(qty, 10) || 0) > 0;
         if (!itemEl) return;
-        ensureBadgeElForItem(itemEl);
+        const n = parseInt(qty, 10) || 0;
+        const added = n > 0;
+        const badge = ensureBadgeElForItem(itemEl);
+        if (badge) {
+            if (added) {
+                badge.textContent = n > 1 ? `+${n}` : '+';
+                badge.setAttribute('aria-label', `Added ${n}`);
+            } else {
+                badge.textContent = '+';
+                badge.setAttribute('aria-label', 'Not in cart');
+            }
+        }
         itemEl.classList.toggle('has-added', added);
         if (added) {
             itemEl.setAttribute('data-added', 'true');
