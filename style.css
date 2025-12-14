@@ -842,6 +842,108 @@ img {
     }
 }
 
+/* Structured Menu (text) section) */
+.menu-section {
+    padding: 3rem 0;
+    background: white;
+}
+.menu-section .section-title {
+    margin-bottom: 1.25rem;
+}
+.menu-section .menu-category {
+    background: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 14px;
+    padding: 1.2rem 1.4rem;
+    margin-bottom: 1.25rem;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+}
+.menu-section .menu-category h3 {
+    font-size: 1.35rem;
+    color: #d32f2f;
+    margin-bottom: 0.75rem;
+}
+.menu-section .menu-items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.menu-section .menu-item {
+    /* Override global .menu-item card styles inside text menu */
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+    transform: none;
+    opacity: 1;
+    display: grid;
+    grid-template-columns: 1fr auto; /* left: name, right: price */
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+.menu-section .menu-item:last-child {
+    border-bottom: none;
+}
+.menu-section .item-name {
+    font-weight: 600;
+    color: #333;
+}
+.menu-section .item-price {
+    font-weight: 700;
+    color: #d32f2f;
+    text-align: right; /* keep price aligned to the outer edge in RTL */
+    white-space: nowrap;
+    min-width: 4ch;
+}
+.menu-section .separators {
+    border: 0;
+    border-top: 1px solid rgba(0,0,0,0.08);
+    margin: 1.5rem 0;
+}
+
+/* Ensure correct alignment when forced LTR somewhere */
+.menu-section[dir="rtl"] .item-name { text-align: right; }
+.menu-section[dir="rtl"] .item-price { text-align: right; }
+
+@media (max-width: 768px) {
+    .menu-section {
+        padding: 2rem 0;
+    }
+    .menu-section .menu-category {
+        padding: 1rem 1.1rem;
+        border-radius: 12px;
+    }
+    .menu-section .menu-category h3 {
+        font-size: 1.2rem;
+        margin-bottom: 0.6rem;
+    }
+    .menu-section .menu-item {
+        grid-template-columns: 1fr; /* stack name and price */
+        gap: 0.3rem;
+        padding: 0.55rem 0;
+    }
+    .menu-section .item-price {
+        font-size: 1.05rem;
+        justify-self: start; /* below name, aligned with text */
+    }
+}
+
+@media (max-width: 480px) {
+    .menu-section .menu-category {
+        padding: 0.9rem;
+    }
+    .menu-section .menu-category h3 {
+        font-size: 1.1rem;
+    }
+    .menu-section .item-name {
+        font-size: 0.95rem;
+    }
+    .menu-section .item-price {
+        font-size: 1rem;
+    }
+}
+
 /* Discount promo card */
 .promo {
     background: transparent;
