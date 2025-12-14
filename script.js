@@ -2236,10 +2236,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Delegate clicks on recommendation items
+    // Delegate clicks on recommendation items (support multiple unobtrusive markers)
     document.addEventListener('click', (e) => {
         const trigger = e.target && e.target.closest
-            ? e.target.closest('.recommendation-item, [data-recommendation]')
+            ? e.target.closest('.recommendation-item, .recommended-item, .is-recommended, [data-recommendation], [data-recommended]')
             : null;
         if (!trigger) return;
 

@@ -1375,4 +1375,11 @@ img {
         font-size: 1.05rem;
         margin-bottom: 0.6rem;
     }
+    /* Stack actions and make buttons full-width on narrow screens */
+    .smart-order-modal__actions {
+        flex-direction: column;
+    }
+    .smart-order-modal__action {
+        width: 100%;
+    }
 }
