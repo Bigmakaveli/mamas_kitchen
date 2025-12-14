@@ -2099,6 +2099,139 @@ document.addEventListener('click', (e) => {
     }
 });
 
+/* Added badge manager: lightweight cart sync and UI badge */
+(function () {
+    'use strict';
+
+    function normalizeName(n) {
+        return String(n || '').trim();
+    }
+
+    function getCart() {
+        try {
+            const raw = localStorage.getItem('cart');
+            const arr = raw ? JSON.parse(raw) : [];
+            return Array.isArray(arr) ? arr : [];
+        } catch {
+            return [];
+        }
+    }
+
+    function setCart(arr) {
+        try {
+            localStorage.setItem('cart', JSON.stringify(arr || []));
+        } catch {}
+    }
+
+    function qtyForName(name) {
+        const arr = getCart();
+        const idx = arr.findIndex(x => x && x.name === name);
+        return idx >= 0 ? (parseInt(arr[idx].qty, 10) || 0) : 0;
+    }
+
+    function ensureBadgeElForItem(itemEl) {
+        if (!itemEl) return null;
+        const nameEl = itemEl.querySelector('.item-name') || itemEl.querySelector('.menu-content h3');
+        if (!nameEl) return null;
+        let badge = nameEl.querySelector('.added-badge');
+        if (!badge) {
+            badge = document.createElement('span');
+            badge.className = 'added-badge';
+            badge.setAttribute('role', 'img');
+            badge.setAttribute('aria-label', 'Added');
+            badge.textContent = '✓';
+            nameEl.appendChild(badge);
+        }
+        return badge;
+    }
+
+    function findItemElByName(name) {
+        const wanted = normalizeName(name);
+        if (!wanted) return null;
+        const nodes = document.querySelectorAll('.menu-section .menu-item .item-name, .menu-item .menu-content h3');
+        for (const node of nodes) {
+            const text = normalizeName(node.textContent);
+            if (text === wanted) {
+                return node.closest('.menu-item');
+            }
+        }
+        return null;
+    }
+
+    function setAddedStateByName(name, qty) {
+        const itemEl = findItemElByName(name);
+        const added = (parseInt(qty, 10) || 0) > 0;
+        if (!itemEl) return;
+        ensureBadgeElForItem(itemEl);
+        itemEl.classList.toggle('has-added', added);
+        if (added) {
+            itemEl.setAttribute('data-added', 'true');
+        } else {
+            itemEl.removeAttribute('data-added');
+        }
+    }
+
+    function addToCart(name, qty = 1) {
+        const n = normalizeName(name);
+        const q = Math.max(1, parseInt(qty, 10) || 1);
+        const arr = getCart();
+        const idx = arr.findIndex(x => x && x.name === n);
+        if (idx >= 0) {
+            arr[idx].qty = (parseInt(arr[idx].qty, 10) || 0) + q;
+        } else {
+            arr.push({ name: n, qty: q });
+        }
+        setCart(arr);
+        setAddedStateByName(n, qtyForName(n));
+    }
+
+    function removeFromCart(name) {
+        const n = normalizeName(name);
+        const arr = getCart().filter(x => x && x.name !== n);
+        setCart(arr);
+        setAddedStateByName(n, 0);
+    }
+
+    function reflectCartBadges() {
+        const arr = getCart();
+        arr.forEach(item => {
+            if (!item) return;
+            setAddedStateByName(item.name, item.qty);
+        });
+    }
+
+    // Expose minimal API for other modules (e.g., recommendation modal)
+    if (typeof window.addToCart !== 'function') {
+        window.addToCart = addToCart;
+    }
+    if (typeof window.removeFromCart !== 'function') {
+        window.removeFromCart = removeFromCart;
+    }
+    window.mkUpdateAddedBadgeByName = setAddedStateByName;
+
+    // Click toggle on structured menu items
+    document.addEventListener('click', (e) => {
+        const li = e.target && e.target.closest ? e.target.closest('.menu-section .menu-item') : null;
+        if (!li) return;
+        const nameNode = li.querySelector('.item-name, .menu-content h3');
+        if (!nameNode) return;
+        const name = normalizeName(nameNode.textContent);
+        if (!name) return;
+        const currentQty = qtyForName(name);
+        if (currentQty > 0) {
+            removeFromCart(name);
+        } else {
+            addToCart(name, 1);
+        }
+    }, true);
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', reflectCartBadges);
+    } else {
+        reflectCartBadges();
+    }
+})();
+
 /* Smart order modal for recommendation items */
 document.addEventListener('DOMContentLoaded', () => {
     let backdrop, modal, titleEl, qtyInput, btnWhatsApp, btnCart, closeBtn;

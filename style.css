@@ -1383,3 +1383,54 @@ img {
         width: 100%;
     }
 }
+
+/* Added badge styles (lightweight, unobtrusive) */
+.menu-section .menu-item {
+    cursor: pointer; /* allow toggling by tapping the row */
+}
+
+.menu-section .menu-item .item-name,
+.menu-item .menu-content h3 {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.added-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #25D366; /* WhatsApp green to indicate added */
+    color: #fff;
+    font-weight: 800;
+    font-size: 12px;
+    line-height: 1;
+    opacity: 0;
+    transform: scale(0.7);
+    transition: opacity 160ms ease, transform 160ms ease;
+    will-change: opacity, transform;
+}
+
+.menu-item.has-added .added-badge {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Optional overlay position for card layouts */
+.menu-item .added-badge.is-overlay {
+    position: absolute;
+    top: 8px;
+    inset-inline-end: 8px; /* RTL/LTR aware */
+    box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+}
+
+@media (max-width: 480px) {
+    .added-badge {
+        width: 16px;
+        height: 16px;
+        font-size: 11px;
+    }
+}
