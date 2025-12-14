@@ -2563,6 +2563,43 @@ document.addEventListener('DOMContentLoaded', () => {
         return Math.max(a, b);
     }
 
+    function openWaWithText(message) {
+        const base = 'https://wa.me/qr/WVTPHTOPJZT7B1';
+        const url = `${base}?text=${encodeURIComponent(message || '')}`;
+        try {
+            window.open(url, '_blank', 'noopener');
+        } catch {
+            window.location.href = url;
+        }
+    }
+
+    function buildCartMessage(arr) {
+        if (!Array.isArray(arr) || arr.length === 0) return '';
+        const lines = arr
+            .filter(it => it && it.name)
+            .map(it => {
+                const n = (it.name || '').toString();
+                const q = Math.max(1, parseInt(it.qty, 10) || 1);
+                return `• ${n} × ${q}`;
+            });
+        return lines.join('\n');
+    }
+
+    function sendCartWhatsApp() {
+        const arr = parseJson('cart', []);
+        const msg = buildCartMessage(arr);
+        if (!msg) return;
+        openWaWithText(msg);
+    }
+
+    function sendItemWhatsApp(name, qty) {
+        const n = (name || '').toString();
+        const q = Math.max(1, parseInt(qty, 10) || 1);
+        if (!n) return;
+        const msg = `• ${n} × ${q}`;
+        openWaWithText(msg);
+    }
+
     function ensureOverlay() {
         let overlay = document.querySelector('.mini-cart-overlay');
         if (overlay) return overlay;
@@ -2575,7 +2612,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h3 id="mini-cart-title" class="mini-cart-title">السلة</h3>
                     <button type="button" class="mini-cart-close" aria-label="إغلاق">×</button>
                 </div>
+                <div class="mini-cart-actions-top">
+                    <button type="button" class="mini-cart-wa-btn mini-cart-wa-top" disabled>طلب عبر واتساب</button>
+                </div>
                 <ul class="mini-cart-list"></ul>
+                <div class="mini-cart-footer">
+                    <button type="button" class="mini-cart-wa-btn mini-cart-wa-bottom" disabled>طلب عبر واتساب</button>
+                </div>
             </div>
         `;
         document.body.appendChild(overlay);
@@ -2589,6 +2632,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         const closeBtn = overlay.querySelector('.mini-cart-close');
         closeBtn && closeBtn.addEventListener('click', hideOverlay);
+        const waTop = overlay.querySelector('.mini-cart-wa-top');
+        const waBottom = overlay.querySelector('.mini-cart-wa-bottom');
+        [waTop, waBottom].forEach(btn => {
+            if (!btn) return;
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                sendCartWhatsApp();
+            });
+        });
 
         document.addEventListener('keydown', (e) => {
             if (overlay.classList.contains('active') && e.key === 'Escape') hideOverlay();
@@ -2607,6 +2660,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const arr = parseJson('cart', []);
         if (Array.isArray(arr) && arr.length) {
+            const waTopBtn = overlay.querySelector('.mini-cart-wa-top');
+            const waBottomBtn = overlay.querySelector('.mini-cart-wa-bottom');
+            [waTopBtn, waBottomBtn].forEach(btn => btn && (btn.disabled = false));
+
             arr.forEach(it => {
                 if (!it) return;
                 const li = document.createElement('li');
@@ -2619,6 +2676,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
                 li.querySelector('.mini-cart-item-name').textContent = n;
                 li.querySelector('.mini-cart-item-qty').textContent = '× ' + q;
+
+                // زر "اطلب التوصية عبر واتساب" لكل صنف
+                const recoBtn = document.createElement('button');
+                recoBtn.type = 'button';
+                recoBtn.className = 'mini-cart-reco-btn';
+                recoBtn.textContent = 'اطلب التوصية عبر واتساب';
+                recoBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    sendItemWhatsApp(n, Math.max(1, q));
+                });
+                li.appendChild(recoBtn);
+
                 list.appendChild(li);
             });
         } else {
@@ -2629,6 +2699,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 (translations && translations[lang] && translations[lang]['cart-empty']) ||
                 'السلة فارغة';
             li.textContent = empty;
+            const waTopBtn = overlay.querySelector('.mini-cart-wa-top');
+            const waBottomBtn = overlay.querySelector('.mini-cart-wa-bottom');
+            [waTopBtn, waBottomBtn].forEach(btn => btn && (btn.disabled = true));
             list.appendChild(li);
         }
     }
