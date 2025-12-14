@@ -2208,6 +2208,24 @@ document.addEventListener('click', (e) => {
         setAddedStateByName(n, 0);
     }
 
+    function setQtyByName(name, qty) {
+        const n = normalizeName(name);
+        const q = Math.max(0, parseInt(qty, 10) || 0);
+        const arr = getCart();
+        const idx = arr.findIndex(x => x && x.name === n);
+        if (q <= 0) {
+            if (idx >= 0) arr.splice(idx, 1);
+        } else {
+            if (idx >= 0) {
+                arr[idx].qty = q;
+            } else {
+                arr.push({ name: n, qty: q });
+            }
+        }
+        setCart(arr);
+        setAddedStateByName(n, qtyForName(n));
+    }
+
     function reflectCartBadges() {
         const arr = getCart();
         arr.forEach(item => {
@@ -2225,8 +2243,22 @@ document.addEventListener('click', (e) => {
     }
     window.mkUpdateAddedBadgeByName = setAddedStateByName;
 
-    // Click toggle on structured menu items
+    // Quantity badge behavior +N on structured menu items
     document.addEventListener('click', (e) => {
+        // Increment when clicking the badge itself
+        const badge = e.target && e.target.closest ? e.target.closest('.menu-section .menu-item .added-badge') : null;
+        if (badge) {
+            e.preventDefault();
+            e.stopPropagation();
+            const li = badge.closest('.menu-section .menu-item');
+            const nameNode = li && li.querySelector('.item-name, .menu-content h3');
+            const name = normalizeName(nameNode ? nameNode.textContent : '');
+            if (!name) return;
+            addToCart(name, 1);
+            return;
+        }
+
+        // On first tap/click on the item: add +1 and show badge
         const li = e.target && e.target.closest ? e.target.closest('.menu-section .menu-item') : null;
         if (!li) return;
         const nameNode = li.querySelector('.item-name, .menu-content h3');
@@ -2234,11 +2266,53 @@ document.addEventListener('click', (e) => {
         const name = normalizeName(nameNode.textContent);
         if (!name) return;
         const currentQty = qtyForName(name);
-        if (currentQty > 0) {
-            removeFromCart(name);
-        } else {
+
+        if (currentQty === 0) {
             addToCart(name, 1);
+        } else if (window.smartOrderModal && typeof window.smartOrderModal.show === 'function') {
+            // If already has quantity, open small modal to edit quantity
+            window.smartOrderModal.show(name, {
+                initialQty: currentQty,
+                onConfirm: (newQty) => setQtyByName(name, newQty)
+            });
         }
+    }, true);
+
+    // Long-press removal on the quantity badge (+N)
+    let mkLpTimer = null;
+    function mkClearLp() { if (mkLpTimer) { clearTimeout(mkLpTimer); mkLpTimer = null; } }
+    document.addEventListener('pointerdown', (e) => {
+        const badge = e.target && e.target.closest ? e.target.closest('.menu-section .menu-item .added-badge') : null;
+        if (!badge) return;
+        const li = badge.closest('.menu-section .menu-item');
+        const nameNode = li && li.querySelector('.item-name, .menu-content h3');
+        const name = normalizeName(nameNode ? nameNode.textContent : '');
+        mkClearLp();
+        mkLpTimer = setTimeout(() => {
+            removeFromCart(name);
+            mkClearLp();
+        }, 550);
+    }, true);
+    ['pointerup','pointercancel','pointerleave','scroll'].forEach(evt => {
+        document.addEventListener(evt, mkClearLp, true);
+    });
+
+    // Generic add-to-cart buttons support (+1 per click)
+    document.addEventListener('click', (e) => {
+        const addBtn = e.target && e.target.closest ? e.target.closest('[class*="add-to-cart"]') : null;
+        if (!addBtn) return;
+        let name = addBtn.getAttribute('data-name') || addBtn.getAttribute('data-product-name') || '';
+        if (!name) {
+            const li = addBtn.closest('.menu-section .menu-item') || addBtn.closest('.menu-item');
+            const node = li && li.querySelector('.item-name, .menu-content h3, .product-title, .product-name');
+            if (node) name = normalizeName(node.textContent);
+        } else {
+            name = normalizeName(name);
+        }
+        if (!name) return;
+        e.preventDefault();
+        e.stopPropagation();
+        addToCart(name, 1);
     }, true);
 
     if (document.readyState === 'loading') {
@@ -2336,10 +2410,11 @@ document.addEventListener('DOMContentLoaded', () => {
         setCartArray(arr);
     }
 
-    function showModal(itemName) {
+    function showModal(itemName, opts = {}) {
         ensureModal();
         titleEl.textContent = itemName || '';
-        qtyInput.value = '1';
+        const initQty = Math.max(1, parseInt((opts && opts.initialQty) || '1', 10) || 1);
+        qtyInput.value = String(initQty);
         backdrop.classList.add('is-open');
         backdrop.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
@@ -2356,7 +2431,9 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         btnCart.onclick = () => {
             const qty = sanitizeQty(qtyInput.value);
-            if (typeof window.addToCart === 'function') {
+            if (opts && typeof opts.onConfirm === 'function') {
+                try { opts.onConfirm(qty); } catch {}
+            } else if (typeof window.addToCart === 'function') {
                 try { window.addToCart(itemName, qty); } catch {}
             } else {
                 addToCartFallback(itemName, qty);
@@ -2384,6 +2461,9 @@ document.addEventListener('DOMContentLoaded', () => {
             escHandlerBound = null;
         }
     }
+
+    // Expose lightweight API for other modules
+    window.smartOrderModal = { show: showModal };
 
     // Delegate clicks on recommendation items (support multiple unobtrusive markers)
     document.addEventListener('click', (e) => {
