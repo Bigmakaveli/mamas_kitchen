@@ -1073,7 +1073,7 @@ img {
 .instagram-fab {
     position: fixed;
     bottom: 16px;
-    right: 16px; /* always bottom-right */
+    left: 16px; /* always bottom-left */
     width: 52px;
     height: 52px;
     border-radius: 50%;
@@ -1105,7 +1105,7 @@ img {
         width: 44px;
         height: 44px;
         bottom: 12px;
-        right: 12px;
+        left: 12px;
     }
     .instagram-fab svg {
         width: 22px;
@@ -1117,7 +1117,7 @@ img {
 .cart-fab {
     position: fixed;
     bottom: 144px; /* stacked above WhatsApp */
-    right: 16px; /* bottom-right with other FABs */
+    left: 16px; /* bottom-left with other FABs */
     width: 52px;
     height: 52px;
     border-radius: 50%;
@@ -1150,7 +1150,7 @@ img {
 .cart-fab .mini-cart-count {
     position: absolute;
     top: -4px;
-    inset-inline-end: -6px;
+    right: -6px;
     background: #ff4757;
     color: #fff;
     min-width: 16px;
@@ -1171,7 +1171,7 @@ img {
         width: 44px;
         height: 44px;
         bottom: 120px; /* stacked above WhatsApp on mobile */
-        right: 12px;
+        left: 12px;
     }
     .cart-fab svg {
         width: 22px;
@@ -1183,7 +1183,7 @@ img {
 .whatsapp-fab {
     position: fixed;
     bottom: 80px; /* stacked above Instagram */
-    right: 16px; /* always bottom-right */
+    left: 16px; /* always bottom-left */
     width: 52px;
     height: 52px;
     border-radius: 50%;
@@ -1215,7 +1215,7 @@ img {
         width: 44px;
         height: 44px;
         bottom: 66px; /* 12px + 44px + 10px gap */
-        right: 12px;
+        left: 12px;
     }
     .whatsapp-fab svg {
         width: 22px;
@@ -1227,7 +1227,7 @@ img {
 .waze-fab {
     position: fixed;
     bottom: 208px; /* stacked above Cart */
-    right: 16px; /* bottom-right with other FABs */
+    left: 16px; /* bottom-left with other FABs */
     width: 52px;
     height: 52px;
     border-radius: 50%;
@@ -1259,7 +1259,7 @@ img {
         width: 44px;
         height: 44px;
         bottom: 174px; /* stacked above Cart on mobile */
-        right: 12px;
+        left: 12px;
     }
     .waze-fab svg {
         width: 22px;
@@ -1530,7 +1530,7 @@ img {
 .fab-mini-cart .mini-cart-count {
     position: absolute;
     top: -4px;
-    inset-inline-end: -6px;
+    right: -6px;
     background: #ff4757;
     color: #fff;
     min-width: 16px;
