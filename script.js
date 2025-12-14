@@ -533,45 +533,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
  
-/* Druze Pita dynamic content updater
-   Sets the title, description and badge from translations for the active language. */
-function updateDruzePitaContent(language) {
-    document.querySelectorAll('[data-dish="druze-pita"]').forEach(card => {
-        const contentEl = card.querySelector('.menu-content');
-        if (!contentEl) return;
-
-        const titleEl = contentEl.querySelector('h3');
-        const priceEl = contentEl.querySelector('.price');
-        let descEl = contentEl.querySelector('p[data-translate="druze-pita-desc"]') || contentEl.querySelector('.menu-content p');
-        const badgeEl = contentEl.querySelector('.badges .item-badge');
-
-        const t = translations[language] || translations['he'] || {};
-
-        // Title
-        const titleText = t['druze-pita'] || (translations['he'] && translations['he']['druze-pita']) || (titleEl ? titleEl.textContent : '');
-        if (titleEl) titleEl.textContent = titleText;
-
-        // Description - ensure single paragraph exists
-        if (!descEl) {
-            descEl = document.createElement('p');
-            if (priceEl) contentEl.insertBefore(descEl, priceEl);
-            else contentEl.appendChild(descEl);
-        }
-        const descText = t['druze-pita-desc'] || (translations['he'] && translations['he']['druze-pita-desc']) || '';
-        descEl.textContent = descText;
-
-        // Badge
-        if (badgeEl) {
-            const badgeText = t['badge-new'] || (translations['he'] && translations['he']['badge-new']) || badgeEl.textContent;
-            badgeEl.textContent = badgeText;
-        }
-
-        // Direction matches page direction
-        const dir = document.documentElement.dir || (language === 'ar' || language === 'he' ? 'rtl' : 'ltr');
-        descEl.setAttribute('dir', dir);
-    });
-}
- 
 // Current language (default Hebrew)
 let currentLanguage = 'he';
 
@@ -616,9 +577,6 @@ function translatePage(language) {
     });
 
     // Allow logo text to be translated via data-translate like other elements
-
-    // Update Druze Pita item content (Hebrew by default, Arabic when selected)
-    updateDruzePitaContent(language);
 
     // Restart typing animations for the new language
     startTypingAnimations(language);
@@ -667,8 +625,6 @@ document.addEventListener('DOMContentLoaded', () => {
 // DOM Elements
 const hamburger = document.querySelector('.hamburger');
 const navMenu = document.querySelector('.nav-menu');
-const categoryBtns = document.querySelectorAll('.category-btn');
-const menuItems = document.querySelectorAll('.menu-item');
 const navLinks = document.querySelectorAll('.nav-menu a');
 
 // Mobile Navigation Toggle
@@ -736,55 +692,6 @@ navLinks.forEach(link => {
     });
 });
 
-// Menu Category Filtering with mobile optimization
-categoryBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-        // Remove active class from all buttons
-        categoryBtns.forEach(b => b.classList.remove('active'));
-        // Add active class to clicked button
-        btn.classList.add('active');
-        
-        const category = btn.getAttribute('data-category');
-        console.log('Selected category:', category);
-        
-        // Filter menu items with mobile-friendly animations
-        menuItems.forEach((item, index) => {
-            const itemCategory = item.getAttribute('data-category');
-            console.log('Item category:', itemCategory, 'Match:', category === 'all' || itemCategory === category);
-            
-            if (category === 'all' || itemCategory === category) {
-                item.classList.remove('hidden');
-                // Staggered animation for better mobile experience
-                setTimeout(() => {
-                    item.style.opacity = '1';
-                    item.style.transform = 'scale(1)';
-                    item.style.display = 'block';
-                }, index * 50); // Reduced delay for mobile
-            } else {
-                item.style.opacity = '0';
-                item.style.transform = 'scale(0.8)';
-                setTimeout(() => {
-                    item.classList.add('hidden');
-                    item.style.display = 'none';
-                }, 200); // Reduced delay for mobile
-            }
-        });
-        
-        // Scroll to menu section on mobile after filtering
-        if (window.innerWidth <= 768) {
-            setTimeout(() => {
-                const menuSection = document.querySelector('#menu');
-                if (menuSection) {
-                    const offsetTop = menuSection.offsetTop;
-                    window.scrollTo({
-                        top: offsetTop,
-                        behavior: 'smooth'
-                    });
-                }
-            }, 300);
-        }
-    });
-});
 
 // Intersection Observer for animations
 const observerOptions = {
@@ -801,7 +708,7 @@ const observer = new IntersectionObserver((entries) => {
 }, observerOptions);
 
 // Observe elements for animation
-const animatedElements = document.querySelectorAll('.menu-item, .contact-item, .about-text');
+const animatedElements = document.querySelectorAll('.contact-item, .about-text');
 animatedElements.forEach(el => {
     observer.observe(el);
 });
@@ -818,16 +725,6 @@ window.addEventListener('scroll', () => {
     }
 });
 
-// Menu item hover effects
-menuItems.forEach(item => {
-    item.addEventListener('mouseenter', () => {
-        item.style.transform = 'translateY(-5px)';
-    });
-    
-    item.addEventListener('mouseleave', () => {
-        item.style.transform = 'translateY(0)';
-    });
-});
 
 // Mobile-optimized scroll effects
 let ticking = false;
@@ -972,72 +869,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Initialize contact form
     initializeContactForm();
-
-    // Image Lightbox: create overlay and wire events
-    (function initImageLightbox() {
-        const overlay = document.createElement('div');
-        overlay.className = 'image-lightbox-overlay';
-        overlay.setAttribute('aria-hidden', 'true');
-        const img = document.createElement('img');
-        img.className = 'image-lightbox-img';
-        img.alt = '';
-        overlay.appendChild(img);
-        document.body.appendChild(overlay);
-
-        let isOpen = false;
-        const openLightbox = (src) => {
-            if (!src) return;
-            img.src = src;
-            overlay.classList.add('active');
-            overlay.setAttribute('aria-hidden', 'false');
-            document.body.style.overflow = 'hidden';
-            isOpen = true;
-        };
-
-        const closeLightbox = () => {
-            if (!isOpen) return;
-            overlay.classList.remove('active');
-            overlay.setAttribute('aria-hidden', 'true');
-            document.body.style.overflow = '';
-            isOpen = false;
-        };
-
-        // Delegate clicks from menu images
-        document.addEventListener('click', (e) => {
-            const target = e.target;
-            if (!(target instanceof Element)) return;
-            const imageEl = target.closest('.menu-image img');
-            if (imageEl && imageEl instanceof HTMLImageElement) {
-                // Avoid interfering with other handlers
-                // Only left-click without modifier keys
-                if (e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
-                    e.preventDefault();
-                    openLightbox(imageEl.currentSrc || imageEl.src);
-                }
-            }
-        }, true);
-
-        // Close when clicking the overlay background (not the image)
-        overlay.addEventListener('click', (e) => {
-            if (e.target === overlay) {
-                closeLightbox();
-            }
-        });
-
-        // Prevent clicks on the image from bubbling to overlay handler
-        img.addEventListener('click', (e) => {
-            e.stopPropagation();
-        });
-
-        // Close on Escape
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeLightbox();
-            }
-        });
-
-        // Basic touch support: tap outside closes (handled by overlay click)
-    })();
 });
 
 // Contact Form functionality
@@ -1224,6 +1055,8 @@ document.addEventListener('DOMContentLoaded', () => {
 /* Lightweight Cart Feature (non-invasive, vanilla JS) */
 (function () {
     'use strict';
+    // Disabled: menu and card/cart features removed from landing page
+    return;
 
     const STORAGE_KEY = 'mkCartItems';
     let items = {};
