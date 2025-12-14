@@ -2143,8 +2143,8 @@ document.addEventListener('click', (e) => {
             // Make it keyboard-focusable and operable
             badge.setAttribute('role', 'button');
             badge.setAttribute('tabindex', '0');
-            badge.setAttribute('aria-label', 'Added');
-            badge.textContent = '+';
+            badge.setAttribute('aria-label', 'Added 0');
+            badge.textContent = '+0';
             target.appendChild(badge);
         } else if (badge.parentElement !== target) {
             // Move badge to the end of the title text
@@ -2173,13 +2173,8 @@ document.addEventListener('click', (e) => {
         const added = n > 0;
         const badge = ensureBadgeElForItem(itemEl);
         if (badge) {
-            if (added) {
-                badge.textContent = n > 1 ? `+${n}` : '+';
-                badge.setAttribute('aria-label', `Added ${n}`);
-            } else {
-                badge.textContent = '+';
-                badge.setAttribute('aria-label', 'Not in cart');
-            }
+            badge.textContent = `+${n}`;
+            badge.setAttribute('aria-label', `Added ${n}`);
         }
         itemEl.classList.toggle('has-added', added);
         if (added) {
@@ -2191,7 +2186,7 @@ document.addEventListener('click', (e) => {
 
     function addToCart(name, qty = 1) {
         const n = normalizeName(name);
-        const q = Math.max(1, parseInt(qty, 10) || 1);
+        const q = Math.max(0, parseInt(qty, 10) || 0);
         const arr = getCart();
         const idx = arr.findIndex(x => x && x.name === n);
         if (idx >= 0) {
@@ -2205,7 +2200,13 @@ document.addEventListener('click', (e) => {
 
     function removeFromCart(name) {
         const n = normalizeName(name);
-        const arr = getCart().filter(x => x && x.name !== n);
+        const arr = getCart();
+        const idx = arr.findIndex(x => x && x.name === n);
+        if (idx >= 0) {
+            arr[idx].qty = 0;
+        } else {
+            arr.push({ name: n, qty: 0 });
+        }
         setCart(arr);
         setAddedStateByName(n, 0);
     }
@@ -2215,24 +2216,23 @@ document.addEventListener('click', (e) => {
         const q = Math.max(0, parseInt(qty, 10) || 0);
         const arr = getCart();
         const idx = arr.findIndex(x => x && x.name === n);
-        if (q <= 0) {
-            if (idx >= 0) arr.splice(idx, 1);
+        if (idx >= 0) {
+            arr[idx].qty = q;
         } else {
-            if (idx >= 0) {
-                arr[idx].qty = q;
-            } else {
-                arr.push({ name: n, qty: q });
-            }
+            arr.push({ name: n, qty: q });
         }
         setCart(arr);
         setAddedStateByName(n, qtyForName(n));
     }
 
     function reflectCartBadges() {
-        const arr = getCart();
-        arr.forEach(item => {
-            if (!item) return;
-            setAddedStateByName(item.name, item.qty);
+        // Ensure every item shows a badge with current quantity (default 0)
+        const nodes = document.querySelectorAll('.menu-section .menu-item .item-name, .menu-item .menu-content h3');
+        nodes.forEach(node => {
+            const name = normalizeName(node.textContent);
+            if (!name) return;
+            const qty = qtyForName(name);
+            setAddedStateByName(name, qty);
         });
     }
 
@@ -2270,7 +2270,7 @@ document.addEventListener('click', (e) => {
             return;
         }
 
-        // Clicking an item: ensure +1 on first click and open the modal
+        // Clicking an item: open the modal with current quantity (default 0) without auto-increment
         const li = e.target && e.target.closest ? e.target.closest('.menu-section .menu-item') : null;
         if (!li) return;
         const nameNode = li.querySelector('.item-name, .menu-content h3');
@@ -2278,12 +2278,7 @@ document.addEventListener('click', (e) => {
         const name = normalizeName(nameNode.textContent);
         if (!name) return;
 
-        let qty = qtyForName(name);
-        if (qty === 0) {
-            // First interaction: add +1 and reveal small badge
-            addToCart(name, 1);
-            qty = qtyForName(name);
-        }
+        const qty = qtyForName(name);
 
         // Always open the small order modal to let user adjust quantity
         if (window.smartOrderModal && typeof window.smartOrderModal.show === 'function') {
@@ -2384,7 +2379,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <h3 id="smart-order-title" class="smart-order-modal__title"></h3>
             <div class="smart-order-modal__field">
                 <label for="smart-order-qty" class="smart-order-modal__qty-label">الكمية</label>
-                <input id="smart-order-qty" class="smart-order-modal__qty-input" type="number" min="1" value="1" inputmode="numeric">
+                <input id="smart-order-qty" class="smart-order-modal__qty-input" type="number" min="0" value="0" inputmode="numeric">
             </div>
             <div class="smart-order-modal__actions">
                 <button type="button" class="smart-order-modal__action smart-order-modal__action--whatsapp">طلب عبر واتساب</button>
@@ -2409,7 +2404,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function sanitizeQty(v) {
         const n = parseInt(v, 10);
-        return Number.isFinite(n) && n > 0 ? n : 1;
+        return Number.isFinite(n) && n >= 0 ? n : 0;
     }
 
     function openWhatsappQrNewTab(message) {
@@ -2453,7 +2448,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ensureModal();
         currentItemName = itemName || '';
         titleEl.textContent = currentItemName;
-        const initQty = Math.max(1, parseInt((opts && opts.initialQty) || '1', 10) || 1);
+        const initQty = Math.max(0, parseInt((opts && opts.initialQty) || '0', 10) || 0);
         qtyInput.value = String(initQty);
         backdrop.classList.add('is-open');
         backdrop.setAttribute('aria-hidden', 'false');
@@ -2465,6 +2460,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Wire actions
         btnWhatsApp.onclick = () => {
             const qty = sanitizeQty(qtyInput.value);
+            if (qty <= 0) return; // do not send if quantity is 0
             const msg = `أريد طلب: ${itemName} — الكمية: ${qty}`;
             openWhatsappQrNewTab(msg);
             hideModal();
@@ -2647,13 +2643,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!Array.isArray(arr) || arr.length === 0) return '';
         const lines = [];
         let total = 0;
-        arr.filter(it => it && it.name).forEach(it => {
-            const n = (it.name || '').toString();
-            const q = Math.max(1, parseInt(it.qty, 10) || 1);
-            const { value: unitPrice } = findPriceForName(n);
-            total += (unitPrice || 0) * q;
-            lines.push(`• ${n} × ${q}`);
-        });
+        let included = 0;
+        arr
+            .filter(it => it && it.name && (parseInt(it.qty, 10) || 0) > 0)
+            .forEach(it => {
+                const n = (it.name || '').toString();
+                const q = Math.max(0, parseInt(it.qty, 10) || 0);
+                if (q <= 0) return;
+                const { value: unitPrice } = findPriceForName(n);
+                total += (unitPrice || 0) * q;
+                lines.push(`• ${n} × ${q}`);
+                included++;
+            });
+        if (included === 0) return '';
         lines.push(`الإجمالي: ${currency(total)}`);
         return lines.join('\n');
     }
@@ -2762,12 +2764,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const arr = getCartArray();
         let grandTotal = 0;
+        let any = false;
 
         if (Array.isArray(arr) && arr.length) {
             arr.forEach(it => {
                 if (!it) return;
                 const name = normalizeText(it.name);
-                const qty = Math.max(1, parseInt(it.qty, 10) || 1);
+                const qty = Math.max(0, parseInt(it.qty, 10) || 0);
+                if (qty <= 0) return; // skip zero-quantity items
                 const { value: unitPrice, display: displayPrice } = findPriceForName(name);
                 const lineTotal = unitPrice * qty;
                 grandTotal += lineTotal;
@@ -2799,22 +2803,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 const del = li.querySelector('.mini-cart-delete');
 
                 const applyQty = (newQty) => {
+                    const q = Math.max(0, newQty);
                     const cart = getCartArray();
                     const idx = cart.findIndex(x => x && normalizeText(x.name) === name);
                     if (idx >= 0) {
-                        if (newQty <= 0) {
-                            cart.splice(idx, 1);
-                        } else {
-                            cart[idx].qty = newQty;
-                        }
-                        setCartArray(cart);
-                        // Update badges across UI
-                        if (typeof window.mkUpdateAddedBadgeByName === 'function') {
-                            try { window.mkUpdateAddedBadgeByName(name, newQty); } catch {}
-                        }
-                        updateBadges();
-                        renderOverlay();
+                        cart[idx].qty = q;
+                    } else {
+                        cart.push({ name, qty: q });
                     }
+                    setCartArray(cart);
+                    // Update badges across UI
+                    if (typeof window.mkUpdateAddedBadgeByName === 'function') {
+                        try { window.mkUpdateAddedBadgeByName(name, q); } catch {}
+                    }
+                    updateBadges();
+                    renderOverlay();
                 };
 
                 minus.addEventListener('click', (e) => {
@@ -2834,10 +2837,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 list.appendChild(li);
+                any = true;
             });
 
-            if (totalEl) totalEl.textContent = currency(grandTotal);
-            if (waIcon) waIcon.disabled = false;
+            if (any) {
+                if (totalEl) totalEl.textContent = currency(grandTotal);
+                if (waIcon) waIcon.disabled = false;
+            } else {
+                const li = document.createElement('li');
+                li.className = 'mini-cart-item mini-cart-empty';
+                const lang = (typeof currentLanguage === 'string' && currentLanguage) || (document.documentElement.lang || 'he');
+                const empty =
+                    (translations && translations[lang] && translations[lang]['cart-empty']) ||
+                    'السلة فارغة';
+                li.textContent = empty;
+                list.appendChild(li);
+                if (totalEl) totalEl.textContent = currency(0);
+                if (waIcon) waIcon.disabled = true;
+            }
         } else {
             const li = document.createElement('li');
             li.className = 'mini-cart-item mini-cart-empty';
