@@ -2611,6 +2611,32 @@ document.addEventListener('DOMContentLoaded', () => {
         return `₪${v}`;
     }
 
+    function currencyPrecise(amount) {
+        const n = Number(amount) || 0;
+        const rounded = Math.round(n * 100) / 100;
+        return '₪' + (Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(2));
+    }
+
+    // Calculate and update the mini-cart order total (₪) from current cart items.
+    // Sums unit price (parsed from DOM/menu) * quantity for each item.
+    function calculateCartTotal() {
+        const arr = getCartArray();
+        let sum = 0;
+        if (Array.isArray(arr)) {
+            arr.forEach(it => {
+                if (!it || !it.name) return;
+                const qty = Math.max(0, parseInt(it.qty, 10) || 0);
+                if (qty <= 0) return;
+                const { value: unitPrice } = findPriceForName(it.name);
+                sum += (unitPrice || 0) * qty;
+            });
+        }
+        // Update displayed total if present
+        const totalEl = document.querySelector('.mini-cart-total-value');
+        if (totalEl) totalEl.textContent = currencyPrecise(sum);
+        return sum;
+    }
+
     function getMkCartTotal() {
         const obj = parseJson('mkCartItems', {});
         if (!obj || typeof obj !== 'object') return 0;
@@ -2787,7 +2813,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${thumbHtml}
                     <div class="mini-cart-info">
                         <span class="mini-cart-item-name">${name}</span>
-                        <span class="mini-cart-item-price">${displayPrice || ''}</span>
+                        <span class="mini-cart-item-price" data-unit="${unitPrice}">${displayPrice || ''}</span>
+                        <span class="mini-cart-item-subtotal">${currencyPrecise(lineTotal)}</span>
                     </div>
                     <div class="mini-cart-qty">
                         <button type="button" class="mc-btn minus" aria-label="طرح">−</button>
@@ -2841,8 +2868,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (any) {
-                if (totalEl) totalEl.textContent = currency(grandTotal);
-                if (waIcon) waIcon.disabled = false;
+                const totalNow = calculateCartTotal();
+                if (waIcon) waIcon.disabled = !(totalNow > 0);
             } else {
                 const li = document.createElement('li');
                 li.className = 'mini-cart-item mini-cart-empty';
@@ -2852,7 +2879,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     'السلة فارغة';
                 li.textContent = empty;
                 list.appendChild(li);
-                if (totalEl) totalEl.textContent = currency(0);
+                if (totalEl) totalEl.textContent = currencyPrecise(0);
                 if (waIcon) waIcon.disabled = true;
             }
         } else {
@@ -2934,6 +2961,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Bind cart button trigger and update badge
         bindTriggers();
         updateBadges();
+        calculateCartTotal();
 
         // Update on storage changes
         window.addEventListener('storage', (e) => {
