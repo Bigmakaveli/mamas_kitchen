@@ -2087,7 +2087,7 @@ function openWhatsappQrWithMessage(message) {
     window.location.href = url;
 }
 
-// Delegate click for an order button with exact Arabic label "اطلب"
+ // Delegate click for an order button with exact Arabic label "اطلب"
 document.addEventListener('click', (e) => {
     const btn = e.target && e.target.closest ? e.target.closest('button, a, [role="button"]') : null;
     if (!btn) return;
@@ -2097,4 +2097,159 @@ document.addEventListener('click', (e) => {
         const msg = buildArabicOrderMessage(btn);
         openWhatsappQrWithMessage(msg);
     }
+});
+
+/* Smart order modal for recommendation items */
+document.addEventListener('DOMContentLoaded', () => {
+    let backdrop, modal, titleEl, qtyInput, btnWhatsApp, btnCart, closeBtn;
+    let escHandlerBound = null;
+
+    function ensureModal() {
+        if (backdrop) return;
+
+        backdrop = document.createElement('div');
+        backdrop.className = 'smart-order-modal__backdrop';
+        backdrop.setAttribute('aria-hidden', 'true');
+
+        modal = document.createElement('div');
+        modal.className = 'smart-order-modal';
+        modal.setAttribute('role', 'dialog');
+        modal.setAttribute('aria-modal', 'true');
+        modal.setAttribute('aria-labelledby', 'smart-order-title');
+
+        modal.innerHTML = `
+            <button type="button" class="smart-order-modal__close" aria-label="Close">×</button>
+            <h3 id="smart-order-title" class="smart-order-modal__title"></h3>
+            <div class="smart-order-modal__field">
+                <label for="smart-order-qty" class="smart-order-modal__qty-label">الكمية</label>
+                <input id="smart-order-qty" class="smart-order-modal__qty-input" type="number" min="1" value="1" inputmode="numeric">
+            </div>
+            <div class="smart-order-modal__actions">
+                <button type="button" class="smart-order-modal__action smart-order-modal__action--whatsapp">طلب عبر واتساب</button>
+                <button type="button" class="smart-order-modal__action smart-order-modal__action--cart">إضافة إلى السلة</button>
+            </div>
+        `;
+
+        backdrop.appendChild(modal);
+        document.body.appendChild(backdrop);
+
+        titleEl = modal.querySelector('.smart-order-modal__title');
+        qtyInput = modal.querySelector('.smart-order-modal__qty-input');
+        btnWhatsApp = modal.querySelector('.smart-order-modal__action--whatsapp');
+        btnCart = modal.querySelector('.smart-order-modal__action--cart');
+        closeBtn = modal.querySelector('.smart-order-modal__close');
+
+        backdrop.addEventListener('click', (e) => {
+            if (e.target === backdrop) hideModal();
+        });
+        closeBtn.addEventListener('click', hideModal);
+    }
+
+    function sanitizeQty(v) {
+        const n = parseInt(v, 10);
+        return Number.isFinite(n) && n > 0 ? n : 1;
+    }
+
+    function openWhatsappQrNewTab(message) {
+        const base = 'https://wa.me/qr/WVTPHTOPJZT7B1';
+        const url = `${base}?text=${encodeURIComponent(message || '')}`;
+        // Prefer existing function by using its exact endpoint, but open in a new tab
+        try {
+            window.open(url, '_blank', 'noopener');
+        } catch {
+            // Fallback to same-tab navigation if popup blocked
+            window.location.href = url;
+        }
+    }
+
+    function getCartArray() {
+        try {
+            const raw = localStorage.getItem('cart');
+            const arr = raw ? JSON.parse(raw) : [];
+            return Array.isArray(arr) ? arr : [];
+        } catch {
+            return [];
+        }
+    }
+    function setCartArray(arr) {
+        try {
+            localStorage.setItem('cart', JSON.stringify(arr || []));
+        } catch {}
+    }
+    function addToCartFallback(name, qty) {
+        const arr = getCartArray();
+        const idx = arr.findIndex(it => it && it.name === name);
+        if (idx >= 0) {
+            arr[idx].qty = sanitizeQty((arr[idx].qty || 0) + qty);
+        } else {
+            arr.push({ name, qty: sanitizeQty(qty) });
+        }
+        setCartArray(arr);
+    }
+
+    function showModal(itemName) {
+        ensureModal();
+        titleEl.textContent = itemName || '';
+        qtyInput.value = '1';
+        backdrop.classList.add('is-open');
+        backdrop.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        // Respect page direction
+        const dir = document.documentElement.dir || 'rtl';
+        modal.setAttribute('dir', dir);
+
+        // Wire actions
+        btnWhatsApp.onclick = () => {
+            const qty = sanitizeQty(qtyInput.value);
+            const msg = `أريد طلب: ${itemName} — الكمية: ${qty}`;
+            openWhatsappQrNewTab(msg);
+            hideModal();
+        };
+        btnCart.onclick = () => {
+            const qty = sanitizeQty(qtyInput.value);
+            if (typeof window.addToCart === 'function') {
+                try { window.addToCart(itemName, qty); } catch {}
+            } else {
+                addToCartFallback(itemName, qty);
+            }
+            hideModal();
+        };
+
+        // Esc to close
+        escHandlerBound = (e) => {
+            if (e.key === 'Escape') hideModal();
+        };
+        document.addEventListener('keydown', escHandlerBound);
+
+        // Focus quantity
+        setTimeout(() => qtyInput && qtyInput.focus(), 0);
+    }
+
+    function hideModal() {
+        if (!backdrop) return;
+        backdrop.classList.remove('is-open');
+        backdrop.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        if (escHandlerBound) {
+            document.removeEventListener('keydown', escHandlerBound);
+            escHandlerBound = null;
+        }
+    }
+
+    // Delegate clicks on recommendation items
+    document.addEventListener('click', (e) => {
+        const trigger = e.target && e.target.closest
+            ? e.target.closest('.recommendation-item, [data-recommendation]')
+            : null;
+        if (!trigger) return;
+
+        e.preventDefault();
+        const name =
+            trigger.getAttribute('data-name') ||
+            trigger.dataset?.name ||
+            (trigger.innerText || trigger.textContent || '').trim() ||
+            'المنتج';
+
+        showModal(name);
+    }, true);
 });
