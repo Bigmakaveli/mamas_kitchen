@@ -2545,6 +2545,76 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Lightweight helpers for the mini-cart overlay
+    function getCartArray() {
+        const arr = parseJson('cart', []);
+        return Array.isArray(arr) ? arr : [];
+    }
+    function setCartArray(arr) {
+        try { localStorage.setItem('cart', JSON.stringify(Array.isArray(arr) ? arr : [])); } catch {}
+    }
+    function normalizeText(t) {
+        return (t || '').toString().trim();
+    }
+    function findStructuredItemNodeByName(name) {
+        const wanted = normalizeText(name);
+        if (!wanted) return null;
+        // Structured text menu
+        const nodes = document.querySelectorAll('.menu-section .menu-item');
+        for (const li of nodes) {
+            const nm = normalizeText(li.querySelector('.item-name')?.textContent);
+            if (nm === wanted) return li;
+        }
+        // Card/grid layout
+        const cards = document.querySelectorAll('.menu-item');
+        for (const card of cards) {
+            const nm = normalizeText(card.querySelector('.menu-content h3')?.textContent);
+            if (nm === wanted) return card;
+        }
+        return null;
+    }
+    function findThumbForName(name) {
+        const node = findStructuredItemNodeByName(name);
+        if (!node) return null;
+        // Prefer card image
+        const img = node.querySelector('.menu-image img') || node.querySelector('img');
+        const src = img && (img.getAttribute('src') || img.src);
+        return src || null;
+    }
+    function findPriceForName(name) {
+        const node = findStructuredItemNodeByName(name);
+        let text = '';
+        if (node) {
+            // Structured list price
+            const p1 = node.querySelector('.item-price');
+            if (p1) text = normalizeText(p1.textContent);
+            // Card price
+            if (!text) {
+                const p2 = node.querySelector('.price');
+                if (p2) text = normalizeText(p2.textContent);
+            }
+        }
+        // Fallback: try to find a sibling price by traversing DOM (best-effort)
+        if (!text) {
+            const all = document.querySelectorAll('.item-name, .menu-content h3');
+            for (const el of all) {
+                if (normalizeText(el.textContent) === normalizeText(name)) {
+                    const maybe = el.closest('.menu-item')?.querySelector('.item-price, .price');
+                    if (maybe) { text = normalizeText(maybe.textContent); break; }
+                }
+            }
+        }
+        // Extract numeric value
+        const num = parseInt((text || '').replace(/[^\d]/g, ''), 10);
+        const value = Number.isFinite(num) ? num : 0;
+        const display = value > 0 ? `₪${value}` : '';
+        return { value, display };
+    }
+    function currency(amount) {
+        const v = Math.max(0, parseInt(amount, 10) || 0);
+        return `₪${v}`;
+    }
+
     function getMkCartTotal() {
         const obj = parseJson('mkCartItems', {});
         if (!obj || typeof obj !== 'object') return 0;
@@ -2575,18 +2645,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function buildCartMessage(arr) {
         if (!Array.isArray(arr) || arr.length === 0) return '';
-        const lines = arr
-            .filter(it => it && it.name)
-            .map(it => {
-                const n = (it.name || '').toString();
-                const q = Math.max(1, parseInt(it.qty, 10) || 1);
-                return `• ${n} × ${q}`;
-            });
+        const lines = [];
+        let total = 0;
+        arr.filter(it => it && it.name).forEach(it => {
+            const n = (it.name || '').toString();
+            const q = Math.max(1, parseInt(it.qty, 10) || 1);
+            const { value: unitPrice } = findPriceForName(n);
+            total += (unitPrice || 0) * q;
+            lines.push(`• ${n} × ${q}`);
+        });
+        lines.push(`الإجمالي: ${currency(total)}`);
         return lines.join('\n');
     }
 
     function sendCartWhatsApp() {
-        const arr = parseJson('cart', []);
+        const arr = getCartArray();
         const msg = buildCartMessage(arr);
         if (!msg) return;
         openWaWithText(msg);
@@ -2596,7 +2669,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const n = (name || '').toString();
         const q = Math.max(1, parseInt(qty, 10) || 1);
         if (!n) return;
-        const msg = `• ${n} × ${q}`;
+        const msg = buildCartMessage([{ name: n, qty: q }]);
         openWaWithText(msg);
     }
 
@@ -2612,12 +2685,24 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h3 id="mini-cart-title" class="mini-cart-title">السلة</h3>
                     <button type="button" class="mini-cart-close" aria-label="إغلاق">×</button>
                 </div>
-                <div class="mini-cart-actions-top">
-                    <button type="button" class="mini-cart-wa-btn mini-cart-wa-top" disabled>طلب عبر واتساب</button>
-                </div>
-                <ul class="mini-cart-list"></ul>
+                <ul class="mini-cart-list" aria-live="polite"></ul>
                 <div class="mini-cart-footer">
-                    <button type="button" class="mini-cart-wa-btn mini-cart-wa-bottom" disabled>طلب عبر واتساب</button>
+                    <div class="mini-cart-total">الإجمالي: <span class="mini-cart-total-value">₪0</span></div>
+                    <button type="button" class="mini-cart-wa-icon" aria-label="إرسال عبر واتساب" disabled>
+                        <svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true" fill="currentColor">
+                            <path d="M19.11 17.56c-.3-.15-1.76-.86-2.03-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.95 1.16-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.47-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.61-.92-2.21-.24-.57-.49-.49-.67-.5l-.57-.01c-.2 0-.52.07-.8.37-.27.3-1.05 1.03-1.05 2.52 0 1.49 1.07 2.93 1.22 3.13.15.2 2.1 3.2 5.09 4.49.71.31 1.27.49 1.7.63.71.23 1.35.2 1.86.12.57-.09 1.76-.72 2.01-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35zM16.02 4C9.93 4 5 8.93 5 15.02c0 1.94.51 3.76 1.39 5.34L5 27l6.82-1.78c1.54.84 3.31 1.32 5.2 1.32 6.09 0 11.02-4.93 11.02-11.02S22.11 4 16.02 4zm0 20.08c-1.71 0-3.3-.5-4.64-1.35l-.33-.2-4.04 1.06 1.08-3.94-.22-.36A8.98 8.98 0 017.04 15c0-4.95 4.02-8.98 8.98-8.98 4.95 0 8.98 4.03 8.98 8.98 0 4.95-4.03 9.08-8.98 9.08z"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="mini-cart-confirm" aria-hidden="true">
+                    <div class="mini-cart-confirm-box" role="dialog" aria-modal="true" aria-labelledby="mini-cart-confirm-title">
+                        <h4 id="mini-cart-confirm-title" class="mini-cart-confirm-title">إرسال الطلب عبر واتساب؟</h4>
+                        <div class="mini-cart-confirm-summary"></div>
+                        <div class="mini-cart-confirm-actions">
+                            <button type="button" class="mini-cart-confirm-cancel">إلغاء</button>
+                            <button type="button" class="mini-cart-confirm-send">إرسال</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
@@ -2632,19 +2717,28 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         const closeBtn = overlay.querySelector('.mini-cart-close');
         closeBtn && closeBtn.addEventListener('click', hideOverlay);
-        const waTop = overlay.querySelector('.mini-cart-wa-top');
-        const waBottom = overlay.querySelector('.mini-cart-wa-bottom');
-        [waTop, waBottom].forEach(btn => {
-            if (!btn) return;
-            btn.addEventListener('click', (e) => {
+
+        // WhatsApp icon click -> open confirm
+        const waIcon = overlay.querySelector('.mini-cart-wa-icon');
+        if (waIcon) {
+            waIcon.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                sendCartWhatsApp();
+                openConfirm();
             });
-        });
+        }
 
+        // Esc to close whole overlay or close confirm if open
         document.addEventListener('keydown', (e) => {
-            if (overlay.classList.contains('active') && e.key === 'Escape') hideOverlay();
+            if (!overlay.classList.contains('active')) return;
+            if (e.key === 'Escape') {
+                const confirmEl = overlay.querySelector('.mini-cart-confirm');
+                if (confirmEl && confirmEl.classList.contains('active')) {
+                    closeConfirm();
+                } else {
+                    hideOverlay();
+                }
+            }
         });
 
         return overlay;
@@ -2656,53 +2750,105 @@ document.addEventListener('DOMContentLoaded', () => {
         if (modal) modal.setAttribute('dir', document.documentElement.dir || 'rtl');
 
         const list = overlay.querySelector('.mini-cart-list');
+        const totalEl = overlay.querySelector('.mini-cart-total-value');
+        const waIcon = overlay.querySelector('.mini-cart-wa-icon');
+        const confirmEl = overlay.querySelector('.mini-cart-confirm');
+        // If a confirm is open and user changes quantities, close it to avoid overlap
+        if (confirmEl && confirmEl.classList.contains('active')) {
+            closeConfirm();
+        }
+
         list.innerHTML = '';
 
-        const arr = parseJson('cart', []);
-        if (Array.isArray(arr) && arr.length) {
-            const waTopBtn = overlay.querySelector('.mini-cart-wa-top');
-            const waBottomBtn = overlay.querySelector('.mini-cart-wa-bottom');
-            [waTopBtn, waBottomBtn].forEach(btn => btn && (btn.disabled = false));
+        const arr = getCartArray();
+        let grandTotal = 0;
 
+        if (Array.isArray(arr) && arr.length) {
             arr.forEach(it => {
                 if (!it) return;
+                const name = normalizeText(it.name);
+                const qty = Math.max(1, parseInt(it.qty, 10) || 1);
+                const { value: unitPrice, display: displayPrice } = findPriceForName(name);
+                const lineTotal = unitPrice * qty;
+                grandTotal += lineTotal;
+
                 const li = document.createElement('li');
                 li.className = 'mini-cart-item';
-                const n = (it.name || '').toString();
-                const q = parseInt(it.qty, 10) || 0;
-                li.innerHTML = `
-                    <span class="mini-cart-item-name"></span>
-                    <span class="mini-cart-item-qty"></span>
-                `;
-                li.querySelector('.mini-cart-item-name').textContent = n;
-                li.querySelector('.mini-cart-item-qty').textContent = '× ' + q;
+                li.setAttribute('data-name', name);
 
-                // زر "اطلب التوصية عبر واتساب" لكل صنف
-                const recoBtn = document.createElement('button');
-                recoBtn.type = 'button';
-                recoBtn.className = 'mini-cart-reco-btn';
-                recoBtn.textContent = 'اطلب التوصية عبر واتساب';
-                recoBtn.addEventListener('click', (e) => {
+                const thumb = findThumbForName(name);
+                const thumbHtml = thumb ? `<img class="mini-cart-thumb" src="${thumb}" alt="" loading="lazy">` : `<div class="mini-cart-thumb mini-cart-thumb--placeholder" aria-hidden="true"></div>`;
+
+                li.innerHTML = `
+                    ${thumbHtml}
+                    <div class="mini-cart-info">
+                        <span class="mini-cart-item-name">${name}</span>
+                        <span class="mini-cart-item-price">${displayPrice || ''}</span>
+                    </div>
+                    <div class="mini-cart-qty">
+                        <button type="button" class="mc-btn minus" aria-label="طرح">−</button>
+                        <span class="mini-cart-qty-value">${qty}</span>
+                        <button type="button" class="mc-btn plus" aria-label="إضافة">+</button>
+                    </div>
+                    <button type="button" class="mini-cart-delete" aria-label="حذف">🗑️</button>
+                `;
+
+                // Wire qty controls
+                const minus = li.querySelector('.mc-btn.minus');
+                const plus = li.querySelector('.mc-btn.plus');
+                const del = li.querySelector('.mini-cart-delete');
+
+                const applyQty = (newQty) => {
+                    const cart = getCartArray();
+                    const idx = cart.findIndex(x => x && normalizeText(x.name) === name);
+                    if (idx >= 0) {
+                        if (newQty <= 0) {
+                            cart.splice(idx, 1);
+                        } else {
+                            cart[idx].qty = newQty;
+                        }
+                        setCartArray(cart);
+                        // Update badges across UI
+                        if (typeof window.mkUpdateAddedBadgeByName === 'function') {
+                            try { window.mkUpdateAddedBadgeByName(name, newQty); } catch {}
+                        }
+                        updateBadges();
+                        renderOverlay();
+                    }
+                };
+
+                minus.addEventListener('click', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    sendItemWhatsApp(n, Math.max(1, q));
+                    applyQty(qty - 1);
                 });
-                li.appendChild(recoBtn);
+                plus.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    applyQty(qty + 1);
+                });
+                del.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    applyQty(0);
+                });
 
                 list.appendChild(li);
             });
+
+            if (totalEl) totalEl.textContent = currency(grandTotal);
+            if (waIcon) waIcon.disabled = false;
         } else {
             const li = document.createElement('li');
-            li.className = 'mini-cart-item';
+            li.className = 'mini-cart-item mini-cart-empty';
             const lang = (typeof currentLanguage === 'string' && currentLanguage) || (document.documentElement.lang || 'he');
             const empty =
                 (translations && translations[lang] && translations[lang]['cart-empty']) ||
                 'السلة فارغة';
             li.textContent = empty;
-            const waTopBtn = overlay.querySelector('.mini-cart-wa-top');
-            const waBottomBtn = overlay.querySelector('.mini-cart-wa-bottom');
-            [waTopBtn, waBottomBtn].forEach(btn => btn && (btn.disabled = true));
             list.appendChild(li);
+            if (totalEl) totalEl.textContent = currency(0);
+            if (waIcon) waIcon.disabled = true;
         }
     }
 
@@ -2789,6 +2935,67 @@ document.addEventListener('DOMContentLoaded', () => {
             const ov = document.querySelector('.mini-cart-overlay');
             if (ov && ov.classList.contains('active')) renderOverlay();
         });
+    }
+
+    // Simple in-overlay confirmation flow for WhatsApp send
+    function openConfirm() {
+        const overlay = ensureOverlay();
+        const c = overlay.querySelector('.mini-cart-confirm');
+        if (!c) return;
+        // Build summary
+        const arr = getCartArray();
+        const box = overlay.querySelector('.mini-cart-confirm-summary');
+        let total = 0;
+        if (box) {
+            box.innerHTML = '';
+            const ul = document.createElement('ul');
+            ul.className = 'mini-cart-confirm-list';
+            arr.forEach(it => {
+                if (!it) return;
+                const name = normalizeText(it.name);
+                const qty = Math.max(1, parseInt(it.qty, 10) || 1);
+                const { value } = findPriceForName(name);
+                total += (value || 0) * qty;
+                const li = document.createElement('li');
+                li.textContent = `${name} × ${qty}`;
+                ul.appendChild(li);
+            });
+            const totalEl = document.createElement('div');
+            totalEl.className = 'mini-cart-confirm-total';
+            totalEl.textContent = `الإجمالي: ${currency(total)}`;
+            box.appendChild(ul);
+            box.appendChild(totalEl);
+        }
+        c.classList.add('active');
+        c.setAttribute('aria-hidden', 'false');
+
+        const btnSend = overlay.querySelector('.mini-cart-confirm-send');
+        const btnCancel = overlay.querySelector('.mini-cart-confirm-cancel');
+
+        const onCancel = (e) => {
+            e && e.preventDefault();
+            closeConfirm();
+        };
+        const onSend = (e) => {
+            e && e.preventDefault();
+            const msg = buildCartMessage(getCartArray());
+            if (msg) openWaWithText(msg);
+            closeConfirm();
+            hideOverlay();
+        };
+
+        btnCancel && btnCancel.addEventListener('click', onCancel, { once: true });
+        btnSend && btnSend.addEventListener('click', onSend, { once: true });
+    }
+    function closeConfirm() {
+        const overlay = document.querySelector('.mini-cart-overlay');
+        const c = overlay && overlay.querySelector('.mini-cart-confirm');
+        if (!c) return;
+        c.classList.remove('active');
+        c.setAttribute('aria-hidden', 'true');
+        // Clean summary
+        const box = c.querySelector('.mini-cart-confirm-summary');
+        if (box) box.innerHTML = '';
     }
 
     if (document.readyState === 'loading') {
