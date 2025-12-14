@@ -1446,3 +1446,118 @@ img {
         font-size: 11px;
     }
 }
+
+/* Inline mini cart icon inside FABs */
+.fab-mini-cart {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-inline-start: 8px;
+    position: relative;
+    color: #fff;
+}
+.fab-mini-cart .mini-cart-icon {
+    width: 20px;
+    height: 20px;
+    display: block;
+}
+.fab-mini-cart .mini-cart-count {
+    position: absolute;
+    top: -4px;
+    inset-inline-end: -6px;
+    background: #ff4757;
+    color: #fff;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 0 2px rgba(0,0,0,0.15);
+}
+
+/* Ensure white icon color on all FABs */
+.instagram-fab .fab-mini-cart,
+.waze-fab .fab-mini-cart,
+.call-fab .fab-mini-cart,
+.whatsapp-fab .fab-mini-cart {
+    color: #fff;
+}
+
+/* Mini cart overlay */
+.mini-cart-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1400;
+}
+.mini-cart-overlay.active {
+    display: flex;
+}
+.mini-cart-modal {
+    background: #fff;
+    color: #333;
+    width: 90vw;
+    max-width: 420px;
+    border-radius: 12px;
+    box-shadow: 0 18px 48px rgba(0,0,0,0.2);
+    padding: 1rem 1rem 1.1rem;
+}
+.mini-cart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.6rem;
+}
+.mini-cart-title {
+    font-weight: 800;
+    color: #d32f2f;
+    font-size: 1.1rem;
+    margin: 0;
+}
+.mini-cart-close {
+    border: none;
+    background: transparent;
+    color: #999;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+}
+.mini-cart-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 50vh;
+    overflow: auto;
+}
+.mini-cart-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+.mini-cart-item:last-child {
+    border-bottom: none;
+}
+.mini-cart-item-name {
+    font-weight: 600;
+}
+.mini-cart-item-qty {
+    font-weight: 700;
+    color: #d32f2f;
+}
+
+@media (max-width: 480px) {
+    .fab-mini-cart .mini-cart-icon {
+        width: 18px;
+        height: 18px;
+    }
+}

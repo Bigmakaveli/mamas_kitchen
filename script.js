@@ -2531,3 +2531,196 @@ document.addEventListener('DOMContentLoaded', () => {
         showModal(name);
     }, true);
 });
+
+/* Mini cart icon + badge on FABs and simple cart overlay */
+(function () {
+    'use strict';
+
+    function parseJson(key, fallback) {
+        try {
+            const raw = localStorage.getItem(key);
+            return raw ? JSON.parse(raw) : fallback;
+        } catch {
+            return fallback;
+        }
+    }
+
+    function getMkCartTotal() {
+        const obj = parseJson('mkCartItems', {});
+        if (!obj || typeof obj !== 'object') return 0;
+        return Object.values(obj).reduce((a, b) => a + (parseInt(b, 10) || 0), 0);
+    }
+
+    function getLegacyCartTotal() {
+        const arr = parseJson('cart', []);
+        if (!Array.isArray(arr)) return 0;
+        return arr.reduce((sum, it) => sum + (parseInt(it && it.qty, 10) || 0), 0);
+    }
+
+    function getTotalCount() {
+        const a = getMkCartTotal();
+        const b = getLegacyCartTotal();
+        return Math.max(a, b);
+    }
+
+    function ensureOverlay() {
+        let overlay = document.querySelector('.mini-cart-overlay');
+        if (overlay) return overlay;
+
+        overlay = document.createElement('div');
+        overlay.className = 'mini-cart-overlay';
+        overlay.innerHTML = `
+            <div class="mini-cart-modal" role="dialog" aria-modal="true" aria-labelledby="mini-cart-title">
+                <div class="mini-cart-header">
+                    <h3 id="mini-cart-title" class="mini-cart-title">السلة</h3>
+                    <button type="button" class="mini-cart-close" aria-label="إغلاق">×</button>
+                </div>
+                <ul class="mini-cart-list"></ul>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+
+        // Respect page direction
+        const modal = overlay.querySelector('.mini-cart-modal');
+        if (modal) modal.setAttribute('dir', document.documentElement.dir || 'rtl');
+
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) hideOverlay();
+        });
+        const closeBtn = overlay.querySelector('.mini-cart-close');
+        closeBtn && closeBtn.addEventListener('click', hideOverlay);
+
+        document.addEventListener('keydown', (e) => {
+            if (overlay.classList.contains('active') && e.key === 'Escape') hideOverlay();
+        });
+
+        return overlay;
+    }
+
+    function renderOverlay() {
+        const overlay = ensureOverlay();
+        const modal = overlay.querySelector('.mini-cart-modal');
+        if (modal) modal.setAttribute('dir', document.documentElement.dir || 'rtl');
+
+        const list = overlay.querySelector('.mini-cart-list');
+        list.innerHTML = '';
+
+        const arr = parseJson('cart', []);
+        if (Array.isArray(arr) && arr.length) {
+            arr.forEach(it => {
+                if (!it) return;
+                const li = document.createElement('li');
+                li.className = 'mini-cart-item';
+                const n = (it.name || '').toString();
+                const q = parseInt(it.qty, 10) || 0;
+                li.innerHTML = `
+                    <span class="mini-cart-item-name"></span>
+                    <span class="mini-cart-item-qty"></span>
+                `;
+                li.querySelector('.mini-cart-item-name').textContent = n;
+                li.querySelector('.mini-cart-item-qty').textContent = '× ' + q;
+                list.appendChild(li);
+            });
+        } else {
+            const li = document.createElement('li');
+            li.className = 'mini-cart-item';
+            const lang = (typeof currentLanguage === 'string' && currentLanguage) || (document.documentElement.lang || 'he');
+            const empty =
+                (translations && translations[lang] && translations[lang]['cart-empty']) ||
+                'السلة فارغة';
+            li.textContent = empty;
+            list.appendChild(li);
+        }
+    }
+
+    function showOverlay() {
+        const overlay = ensureOverlay();
+        overlay.classList.add('active');
+        overlay.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        renderOverlay();
+    }
+
+    function hideOverlay() {
+        const overlay = document.querySelector('.mini-cart-overlay');
+        if (!overlay) return;
+        overlay.classList.remove('active');
+        overlay.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+    }
+
+    function updateBadges() {
+        const c = getTotalCount();
+        document.querySelectorAll('.mini-cart-count').forEach(el => {
+            el.textContent = String(c);
+            // Always visible but you can toggle if needed
+            el.style.display = 'inline-flex';
+        });
+    }
+
+    function injectMiniInto(el) {
+        if (!el) return null;
+        let mini = el.querySelector('.fab-mini-cart');
+        if (mini) return mini;
+
+        mini = document.createElement('span');
+        mini.className = 'fab-mini-cart';
+        mini.setAttribute('role', 'button');
+        mini.setAttribute('aria-label', 'السلة');
+        mini.innerHTML = `
+            <svg class="mini-cart-icon" aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                <path d="M7 4h-2a1 1 0 100 2h1.28l1.6 8.03A2 2 0 0010.84 16h6.58a2 2 0 001.97-1.64l1.08-6A1 1 0 0019.5 7h-10l-.38-2A1 1 0 008.17 4H7zm3.5 17a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm7 0a1.5 1.5 0 110-3 1.5 1.5 0 010 3z"/>
+            </svg>
+            <span class="mini-cart-count">0</span>
+        `;
+        el.appendChild(mini);
+        return mini;
+    }
+
+    function bindTriggers() {
+        document.querySelectorAll('.fab-mini-cart').forEach(mini => {
+            mini.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                showOverlay();
+            });
+        });
+    }
+
+    function init() {
+        // Inject into additional FABs (Instagram, Waze, Call). Ensure WhatsApp has it too.
+        ['.instagram-fab', '.waze-fab', '.call-fab'].forEach(sel => {
+            const el = document.querySelector(sel);
+            if (el) injectMiniInto(el);
+        });
+        const wa = document.querySelector('.whatsapp-fab');
+        if (wa) injectMiniInto(wa);
+
+        bindTriggers();
+        updateBadges();
+
+        // Update on storage changes
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'cart' || e.key === 'mkCartItems') {
+                updateBadges();
+                const ov = document.querySelector('.mini-cart-overlay');
+                if (ov && ov.classList.contains('active')) renderOverlay();
+            }
+        });
+
+        // Periodic refresh as fallback
+        setInterval(updateBadges, 1200);
+
+        // Keep overlay content language-aware
+        document.addEventListener('languagechange', () => {
+            const ov = document.querySelector('.mini-cart-overlay');
+            if (ov && ov.classList.contains('active')) renderOverlay();
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
