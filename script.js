@@ -23,7 +23,7 @@ function typeWriter(element, text, speed = 100, token = languageChangeToken) {
 
 // Start or restart typing animations for key heading elements
 function startTypingAnimations(lang) {
-    const titleElement = document.querySelector('.section-title');
+    const titleElement = document.querySelector('#menu-title');
     const mottoElement = document.querySelector('.restaurant-motto');
 
     if (titleElement) {
