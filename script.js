@@ -2144,7 +2144,7 @@ document.addEventListener('click', (e) => {
             badge.setAttribute('role', 'button');
             badge.setAttribute('tabindex', '0');
             badge.setAttribute('aria-label', 'Added 0');
-            badge.textContent = '+0';
+            badge.textContent = '0';
             target.appendChild(badge);
         } else if (badge.parentElement !== target) {
             // Move badge to the end of the title text
@@ -2173,7 +2173,7 @@ document.addEventListener('click', (e) => {
         const added = n > 0;
         const badge = ensureBadgeElForItem(itemEl);
         if (badge) {
-            badge.textContent = `+${n}`;
+            badge.textContent = `${n}`;
             badge.setAttribute('aria-label', `Added ${n}`);
         }
         itemEl.classList.toggle('has-added', added);
