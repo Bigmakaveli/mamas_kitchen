@@ -1848,3 +1848,13 @@ img {
 .star-rating {
     display: none !important;
 }
+
+/* Globally hide menu UI if present on any page */
+.menu,
+.menu-section,
+.menu-grid,
+.menu-category,
+.menu-items,
+.category-btn {
+    display: none !important;
+}
