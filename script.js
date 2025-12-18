@@ -889,18 +889,7 @@ function applyMenuLanguage(lang) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize default menu language (Arabic), or restore saved
-    const saved = localStorage.getItem('menuLanguage') || 'ar';
-    applyMenuLanguage(saved);
-
-    // Wire up menu language buttons
-    document.querySelectorAll('.menu-lang-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const lang = btn.getAttribute('data-menu-lang') || 'ar';
-            applyMenuLanguage(lang);
-        });
-    });
+    // Language switching disabled: keep static HTML, do nothing here.
 });
 
 function isAndroid() {

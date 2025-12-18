@@ -1837,3 +1837,14 @@ img {
         height: 18px;
     }
 }
+
+/* Hide any leftover language or rating controls globally */
+.language-selector,
+.menu-lang-selector,
+.lang-btn,
+.menu-lang-btn,
+.rating,
+.rating-stars,
+.star-rating {
+    display: none !important;
+}
