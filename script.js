@@ -711,37 +711,7 @@ const menuTranslations = {
 };
 
 /* Image mapping for structured menu categories (by index) */
-const menuImages = {
-    // Category 0: مقبلات وسلطات (8 items)
-    0: [
-        'https://landing-ai-images.s3.amazonaws.com/images/img_k6wa5vnwicl_ok1gprcwpyd_1766078877692.jpeg',
-        'https://landing-ai-images.s3.amazonaws.com/images/img_3aila4jqm1i_9km8jaechgr_1766078879242.jpeg',
-        'https://landing-ai-images.s3.amazonaws.com/images/img_o73gazidtlh_zh6d3nflu6_1766078880309.jpeg',
-        'https://landing-ai-images.s3.amazonaws.com/images/img_jp8ch5f7t6h_8lvbembofff_1766078881068.jpeg',
-        'https://landing-ai-images.s3.amazonaws.com/images/img_68nzq2ll1au_385g3tqv6c_1766078882007.jpeg',
-        'https://landing-ai-images.s3.amazonaws.com/images/img_y5rephakhq_oaj46lvzz6i_1766078882988.jpeg',
-        'https://landing-ai-images.s3.amazonaws.com/images/img_ifbprvt9km_znxfpwa1xrc_1766078884130.jpeg',
-        'https://landing-ai-images.s3.amazonaws.com/images/img_44eu7sblrkr_03xlbo5f2i9u_1766078884886.jpeg'
-    ],
-    // Category 1: باجيت مع بطاطس (4 items)
-    1: [
-        'https://landing-ai-images.s3.amazonaws.com/images/img_walr0716rji_tur01488jtd_1766078885507.jpeg',
-        'https://landing-ai-images.s3.amazonaws.com/images/img_g7zyweqkgol_6fahzs7incv_1766078886088.jpeg',
-        'https://landing-ai-images.s3.amazonaws.com/images/img_6aps349xva_ahuqz97skws_1766078886846.jpeg',
-        'https://landing-ai-images.s3.amazonaws.com/images/img_40c82xbqdla_agul2nqthq_1766078887595.jpeg'
-    ],
-    // Category 2: توست مع سلطة مفرومة (3 items)
-    2: [
-        'https://landing-ai-images.s3.amazonaws.com/images/img_s3msg28furm_5ag443wfqr_1766078888233.jpeg',
-        'https://landing-ai-images.s3.amazonaws.com/images/img_16vsgsf87c3_qe2x2sz65m_1766078888918.jpeg',
-        'https://landing-ai-images.s3.amazonaws.com/images/img_i8u5yhmu8ea_zwlqsfy2y3e_1766078889775.jpeg'
-    ],
-    // Category 3: ساندويتش مغطّى بالكريمة (2 items)
-    3: [
-        'https://landing-ai-images.s3.amazonaws.com/images/img_pgoqi8zyw7_uhesfim3nxs_1766078890632.jpeg',
-        'https://landing-ai-images.s3.amazonaws.com/images/img_0awofjd1pxql_zyeg3blmvun_1766078891393.jpeg'
-    ]
-};
+const menuImages = {};
 
 /* Lightweight lightbox for full-size menu images */
 (function ensureLightboxStyles() {
@@ -856,13 +826,17 @@ function attachMenuThumbnails(menuRoot, categoryEls) {
 }
 
 function applyMenuLanguage(lang) {
-    const data = menuTranslations[lang] || menuTranslations.ar;
+    const raw = menuTranslations[lang] || menuTranslations.ar || {};
     const menuSection = document.getElementById('menu');
-    if (!menuSection || !data || !Array.isArray(data.categories)) return;
+    if (!menuSection) return;
+    // Force empty menu data
+    const data = { dir: raw.dir || ((lang === 'ar' || lang === 'he') ? 'rtl' : 'ltr'), categories: [] };
 
     // Set direction on the menu section only
     const dir = data.dir || ((lang === 'ar' || lang === 'he') ? 'rtl' : 'ltr');
     menuSection.setAttribute('dir', dir);
+    // Clear all existing menu items so nothing is shown
+    menuSection.querySelectorAll('.menu-items').forEach(list => { list.innerHTML = ''; });
 
     const categoryEls = menuSection.querySelectorAll('.menu-category');
     data.categories.forEach((cat, idx) => {
@@ -902,12 +876,8 @@ function applyMenuLanguage(lang) {
         }
     });
     
-    // Attach thumbnails for each menu item based on category/index
-    try {
-        attachMenuThumbnails(menuSection, categoryEls);
-    } catch (e) {
-        console.warn('attachMenuThumbnails failed', e);
-    }
+    // Thumbnails disabled (no images for menu items)
+    try {} catch (e) {}
     
     // Update active state on buttons
     document.querySelectorAll('.menu-lang-btn').forEach(btn => {
