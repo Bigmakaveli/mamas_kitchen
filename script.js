@@ -535,28 +535,28 @@ const menuTranslations = {
                 title: 'ראשונות וסלטים',
                 items: [
                     { name: 'סלט פתוש', price: '56₪' },
-                    { name: 'סלט טבולה', price: '50₪' },
+                    { name: 'סלט טאבולה', price: '50₪' },
                     { name: 'סלט יווני', price: '56₪' },
                     { name: 'סלט חזה עוף / שניצל', price: '67₪' },
                     { name: 'כנפיים ברוטב צ\'ילי (מתוק/חריף)', price: '50₪' },
                     { name: 'בטטה', price: '22₪' },
                     { name: 'צ\'יפס', price: '22₪' },
-                    { name: 'קוביות חלומי', price: '50₪' }
+                    { name: 'קוביות חלומי מטוגנות', price: '50₪' }
                 ]
             },
             {
                 title: 'בגטים עם צ\'יפס',
                 items: [
-                    { name: 'חזה עוף', price: '56₪' },
-                    { name: 'שניצל', price: '56₪' },
-                    { name: 'מעורב בשר', price: '67₪' },
-                    { name: 'קבב', price: '56₪' }
+                    { name: 'באגט חזה עוף', price: '56₪' },
+                    { name: 'באגט שניצל', price: '56₪' },
+                    { name: 'באגט מעורב בשר', price: '67₪' },
+                    { name: 'באגט קבב', price: '56₪' }
                 ]
             },
             {
                 title: 'טוסטים עם סלט קצוץ',
                 items: [
-                    { name: 'טוסט גבינה צהובה ושמנת גבינה', price: '50₪' },
+                    { name: 'טוסט גבינה צהובה עם שמנת גבינה', price: '50₪' },
                     { name: 'טוסט מיקס גבינות ופסטו', price: '50₪' },
                     { name: 'טוסט בהרכבה', price: '56₪' }
                 ]
@@ -597,20 +597,20 @@ const menuTranslations = {
                     { name: 'Салат Фатуш', price: '56₪' },
                     { name: 'Салат Табуле', price: '50₪' },
                     { name: 'Греческий салат', price: '56₪' },
-                    { name: 'Салат с куриной грудкой / шницелем', price: '67₪' },
-                    { name: 'Крылышки в соусе чили (сладкий/острый)', price: '50₪' },
+                    { name: 'Салат с куриной грудкой / шницель', price: '67₪' },
+                    { name: 'Крылышки в чили соусе (сладкие/острые)', price: '50₪' },
                     { name: 'Батат', price: '22₪' },
                     { name: 'Картофель фри', price: '22₪' },
-                    { name: 'Кубики халлуми', price: '50₪' }
+                    { name: 'Хрустящие кубики халлуми', price: '50₪' }
                 ]
             },
             {
                 title: 'Багет с картофелем',
                 items: [
-                    { name: 'Куриная грудка', price: '56₪' },
-                    { name: 'Шницель', price: '56₪' },
-                    { name: 'Мясной микс', price: '67₪' },
-                    { name: 'Кебаб', price: '56₪' }
+                    { name: 'Багет с куриной грудкой', price: '56₪' },
+                    { name: 'Багет со шницелем', price: '56₪' },
+                    { name: 'Багет с мясной смесью', price: '67₪' },
+                    { name: 'Багет с кебабом', price: '56₪' }
                 ]
             },
             {
@@ -624,7 +624,7 @@ const menuTranslations = {
             {
                 title: 'Сэндвич в кремовой заливке',
                 items: [
-                    { name: 'Куриный сэндвич в креме', price: '67₪' },
+                    { name: 'Куриная грудка в креме', price: '67₪' },
                     { name: 'Шницель в креме', price: '67₪' }
                 ]
             },
@@ -642,8 +642,8 @@ const menuTranslations = {
                 title: 'Домашнее',
                 items: [
                     { name: 'Долма (виноградные листья)', price: '25₪' },
-                    { name: 'Голубцы (фаршированная капуста)', price: '25₪' },
-                    { name: 'Куббе', price: '22₪' }
+                    { name: 'Фаршированная капуста', price: '25₪' },
+                    { name: 'Кубба', price: '22₪' }
                 ]
             }
         ]
@@ -658,7 +658,7 @@ const menuTranslations = {
                     { name: 'Tabbouleh Salad', price: '50₪' },
                     { name: 'Greek Salad', price: '56₪' },
                     { name: 'Chicken Breast / Schnitzel Salad', price: '67₪' },
-                    { name: 'Wings in Chili Sauce (Sweet/Spicy)', price: '50₪' },
+                    { name: 'Wings with Chili Sauce (Sweet/Spicy)', price: '50₪' },
                     { name: 'Sweet Potato', price: '22₪' },
                     { name: 'French Fries', price: '22₪' },
                     { name: 'Crispy Halloumi Cubes', price: '50₪' }
@@ -684,7 +684,7 @@ const menuTranslations = {
             {
                 title: 'Cream-Covered Sandwich',
                 items: [
-                    { name: 'Creamed Chicken Sandwich', price: '67₪' },
+                    { name: 'Creamed Chicken Breast Sandwich', price: '67₪' },
                     { name: 'Creamed Schnitzel Sandwich', price: '67₪' }
                 ]
             },
@@ -701,9 +701,9 @@ const menuTranslations = {
             {
                 title: 'From Home',
                 items: [
-                    { name: 'Stuffed Grape Leaves (Dolma)', price: '25₪' },
-                    { name: 'Stuffed Cabbage Rolls', price: '25₪' },
-                    { name: 'Kubeh', price: '22₪' }
+                    { name: 'Stuffed Grape Leaves', price: '25₪' },
+                    { name: 'Stuffed Cabbage', price: '25₪' },
+                    { name: 'Kibbeh', price: '22₪' }
                 ]
             }
         ]
@@ -848,8 +848,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
  
-// Current language (default Hebrew)
-let currentLanguage = 'he';
+ // Current language (default Arabic)
+let currentLanguage = 'ar';
 
 // Translation function
 function translatePage(language) {
@@ -909,7 +909,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (languageButtons.length > 0) {
         // Load saved language preference
-        const savedLanguage = localStorage.getItem('selectedLanguage') || 'he';
+        const savedLanguage = localStorage.getItem('selectedLanguage') || 'ar';
         
         // Set active button
         languageButtons.forEach(btn => {
