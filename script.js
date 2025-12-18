@@ -466,6 +466,321 @@ const translations = {
     }
 };
 
+// Menu text translations for the structured menu section
+const menuTranslations = {
+    ar: {
+        dir: 'rtl',
+        categories: [
+            {
+                title: 'مقبلات وسلطات',
+                items: [
+                    { name: 'سلطة فتّوش', price: '56₪' },
+                    { name: 'سلطة تبّولة', price: '50₪' },
+                    { name: 'سلطة يونانية', price: '56₪' },
+                    { name: 'سلطة صدر دجاج / شنِتزل', price: '67₪' },
+                    { name: 'أجنحة بصلصة تشيلي (حلو / حار)', price: '50₪' },
+                    { name: 'بطاطا حلوة', price: '22₪' },
+                    { name: 'بطاطس مقلية', price: '22₪' },
+                    { name: 'مكعبات حلومي مقرمشة', price: '50₪' }
+                ]
+            },
+            {
+                title: 'باجيت مع بطاطس',
+                items: [
+                    { name: 'باجيت صدر دجاج', price: '56₪' },
+                    { name: 'باجيت شنِتزل', price: '56₪' },
+                    { name: 'باجيت مشكل لحوم', price: '67₪' },
+                    { name: 'باجيت كباب', price: '56₪' }
+                ]
+            },
+            {
+                title: 'توست مع سلطة مفرومة',
+                items: [
+                    { name: 'توست جبنة صفراء مع قشدة جبن', price: '50₪' },
+                    { name: 'توست مكس جبن וبيستو', price: '50₪' },
+                    { name: 'توست بالتشكيل حسب الطلب', price: '56₪' }
+                ]
+            },
+            {
+                title: 'ساندويتش مغطّى بالكريمة',
+                items: [
+                    { name: 'ساندويتش صدر دجاج مكرّم', price: '67₪' },
+                    { name: 'ساندويتش شنِتزل مكرّم', price: '67₪' }
+                ]
+            },
+            {
+                title: 'طبق + بطاطس/سلطة',
+                items: [
+                    { name: 'شنِتزل', price: '65₪' },
+                    { name: 'صدر دجاج', price: '65₪' },
+                    { name: 'كباب', price: '65₪' },
+                    { name: 'شنِتزل مكرّم', price: '70₪' },
+                    { name: 'صدر دجاج مكرّم', price: '70₪' }
+                ]
+            },
+            {
+                title: 'من البيت',
+                items: [
+                    { name: 'ורق عنب'.replace('ו','و').replace('ר','ر').replace('ق','ق'), price: '25₪' }, // ensure Arabic text only
+                    { name: 'كرنب محشي', price: '25₪' },
+                    { name: 'كبة', price: '22₪' }
+                ]
+            }
+        ]
+    },
+    he: {
+        dir: 'rtl',
+        categories: [
+            {
+                title: 'ראשונות וסלטים',
+                items: [
+                    { name: 'סלט פתוש', price: '56₪' },
+                    { name: 'סלט טבולה', price: '50₪' },
+                    { name: 'סלט יווני', price: '56₪' },
+                    { name: 'סלט חזה עוף / שניצל', price: '67₪' },
+                    { name: 'כנפיים ברוטב צ\'ילי (מתוק/חריף)', price: '50₪' },
+                    { name: 'בטטה', price: '22₪' },
+                    { name: 'צ\'יפס', price: '22₪' },
+                    { name: 'קוביות חלומי', price: '50₪' }
+                ]
+            },
+            {
+                title: 'בגטים עם צ\'יפס',
+                items: [
+                    { name: 'חזה עוף', price: '56₪' },
+                    { name: 'שניצל', price: '56₪' },
+                    { name: 'מעורב בשר', price: '67₪' },
+                    { name: 'קבב', price: '56₪' }
+                ]
+            },
+            {
+                title: 'טוסטים עם סלט קצוץ',
+                items: [
+                    { name: 'טוסט גבינה צהובה ושמנת גבינה', price: '50₪' },
+                    { name: 'טוסט מיקס גבינות ופסטו', price: '50₪' },
+                    { name: 'טוסט בהרכבה', price: '56₪' }
+                ]
+            },
+            {
+                title: 'כריך גביטה מוקרם',
+                items: [
+                    { name: 'חזה עוף מוקרם', price: '67₪' },
+                    { name: 'שניצל מוקרם', price: '67₪' }
+                ]
+            },
+            {
+                title: 'צלחת + צ\'יפס/סלט',
+                items: [
+                    { name: 'שניצל', price: '65₪' },
+                    { name: 'חזה עוף', price: '65₪' },
+                    { name: 'קבב', price: '65₪' },
+                    { name: 'שניצל מוקרם', price: '70₪' },
+                    { name: 'חזה עוף מוקרם', price: '70₪' }
+                ]
+            },
+            {
+                title: 'מהבית',
+                items: [
+                    { name: 'עלי גפן', price: '25₪' },
+                    { name: 'כרוב ממולא', price: '25₪' },
+                    { name: 'קובה', price: '22₪' }
+                ]
+            }
+        ]
+    },
+    ru: {
+        dir: 'ltr',
+        categories: [
+            {
+                title: 'Закуски и салаты',
+                items: [
+                    { name: 'Салат Фатуш', price: '56₪' },
+                    { name: 'Салат Табуле', price: '50₪' },
+                    { name: 'Греческий салат', price: '56₪' },
+                    { name: 'Салат с куриной грудкой / шницелем', price: '67₪' },
+                    { name: 'Крылышки в соусе чили (сладкий/острый)', price: '50₪' },
+                    { name: 'Батат', price: '22₪' },
+                    { name: 'Картофель фри', price: '22₪' },
+                    { name: 'Кубики халлуми', price: '50₪' }
+                ]
+            },
+            {
+                title: 'Багет с картофелем',
+                items: [
+                    { name: 'Куриная грудка', price: '56₪' },
+                    { name: 'Шницель', price: '56₪' },
+                    { name: 'Мясной микс', price: '67₪' },
+                    { name: 'Кебаб', price: '56₪' }
+                ]
+            },
+            {
+                title: 'Тосты с рубленым салатом',
+                items: [
+                    { name: 'Тост с желтым сыром и сливочным сыром', price: '50₪' },
+                    { name: 'Тост с миксом сыров и песто', price: '50₪' },
+                    { name: 'Тост на заказ', price: '56₪' }
+                ]
+            },
+            {
+                title: 'Сэндвич в кремовой заливке',
+                items: [
+                    { name: 'Куриный сэндвич в креме', price: '67₪' },
+                    { name: 'Шницель в креме', price: '67₪' }
+                ]
+            },
+            {
+                title: 'Тарелка + фри/салат',
+                items: [
+                    { name: 'Шницель', price: '65₪' },
+                    { name: 'Куриная грудка', price: '65₪' },
+                    { name: 'Кебаб', price: '65₪' },
+                    { name: 'Шницель в креме', price: '70₪' },
+                    { name: 'Куриная грудка в креме', price: '70₪' }
+                ]
+            },
+            {
+                title: 'Домашнее',
+                items: [
+                    { name: 'Долма (виноградные листья)', price: '25₪' },
+                    { name: 'Голубцы (фаршированная капуста)', price: '25₪' },
+                    { name: 'Куббе', price: '22₪' }
+                ]
+            }
+        ]
+    },
+    en: {
+        dir: 'ltr',
+        categories: [
+            {
+                title: 'Starters & Salads',
+                items: [
+                    { name: 'Fattoush Salad', price: '56₪' },
+                    { name: 'Tabbouleh Salad', price: '50₪' },
+                    { name: 'Greek Salad', price: '56₪' },
+                    { name: 'Chicken Breast / Schnitzel Salad', price: '67₪' },
+                    { name: 'Wings in Chili Sauce (Sweet/Spicy)', price: '50₪' },
+                    { name: 'Sweet Potato', price: '22₪' },
+                    { name: 'French Fries', price: '22₪' },
+                    { name: 'Crispy Halloumi Cubes', price: '50₪' }
+                ]
+            },
+            {
+                title: 'Baguette with Fries',
+                items: [
+                    { name: 'Chicken Breast Baguette', price: '56₪' },
+                    { name: 'Schnitzel Baguette', price: '56₪' },
+                    { name: 'Mixed Meat Baguette', price: '67₪' },
+                    { name: 'Kebab Baguette', price: '56₪' }
+                ]
+            },
+            {
+                title: 'Toasts with Chopped Salad',
+                items: [
+                    { name: 'Yellow Cheese Toast with Cream Cheese', price: '50₪' },
+                    { name: 'Mixed Cheese & Pesto Toast', price: '50₪' },
+                    { name: 'Build-Your-Own Toast', price: '56₪' }
+                ]
+            },
+            {
+                title: 'Cream-Covered Sandwich',
+                items: [
+                    { name: 'Creamed Chicken Sandwich', price: '67₪' },
+                    { name: 'Creamed Schnitzel Sandwich', price: '67₪' }
+                ]
+            },
+            {
+                title: 'Plate + Fries/Salad',
+                items: [
+                    { name: 'Schnitzel', price: '65₪' },
+                    { name: 'Chicken Breast', price: '65₪' },
+                    { name: 'Kebab', price: '65₪' },
+                    { name: 'Creamed Schnitzel', price: '70₪' },
+                    { name: 'Creamed Chicken Breast', price: '70₪' }
+                ]
+            },
+            {
+                title: 'From Home',
+                items: [
+                    { name: 'Stuffed Grape Leaves (Dolma)', price: '25₪' },
+                    { name: 'Stuffed Cabbage Rolls', price: '25₪' },
+                    { name: 'Kubeh', price: '22₪' }
+                ]
+            }
+        ]
+    }
+};
+
+function applyMenuLanguage(lang) {
+    const data = menuTranslations[lang] || menuTranslations.ar;
+    const menuSection = document.getElementById('menu');
+    if (!menuSection || !data || !Array.isArray(data.categories)) return;
+
+    // Set direction on the menu section only
+    const dir = data.dir || ((lang === 'ar' || lang === 'he') ? 'rtl' : 'ltr');
+    menuSection.setAttribute('dir', dir);
+
+    const categoryEls = menuSection.querySelectorAll('.menu-category');
+    data.categories.forEach((cat, idx) => {
+        const catEl = categoryEls[idx];
+        if (!catEl) return;
+        const titleEl = catEl.querySelector('h3');
+        if (titleEl) titleEl.textContent = cat.title;
+
+        const list = catEl.querySelector('.menu-items');
+        if (!list) return;
+
+        const existingLis = Array.from(list.querySelectorAll('li.menu-item'));
+        // If count differs, rebuild this list
+        if (existingLis.length !== cat.items.length) {
+            list.innerHTML = '';
+            cat.items.forEach(it => {
+                const li = document.createElement('li');
+                li.className = 'menu-item';
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'item-name';
+                nameSpan.textContent = it.name;
+                const priceSpan = document.createElement('span');
+                priceSpan.className = 'item-price';
+                priceSpan.textContent = it.price;
+                li.appendChild(nameSpan);
+                li.appendChild(priceSpan);
+                list.appendChild(li);
+            });
+        } else {
+            cat.items.forEach((it, j) => {
+                const li = existingLis[j];
+                const nameSpan = li.querySelector('.item-name');
+                const priceSpan = li.querySelector('.item-price');
+                if (nameSpan) nameSpan.textContent = it.name;
+                if (priceSpan) priceSpan.textContent = it.price;
+            });
+        }
+    });
+
+    // Update active state on buttons
+    document.querySelectorAll('.menu-lang-btn').forEach(btn => {
+        if (btn.getAttribute('data-menu-lang') === lang) btn.classList.add('active');
+        else btn.classList.remove('active');
+    });
+
+    try { localStorage.setItem('menuLanguage', lang); } catch (e) {}
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize default menu language (Arabic), or restore saved
+    const saved = localStorage.getItem('menuLanguage') || 'ar';
+    applyMenuLanguage(saved);
+
+    // Wire up menu language buttons
+    document.querySelectorAll('.menu-lang-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const lang = btn.getAttribute('data-menu-lang') || 'ar';
+            applyMenuLanguage(lang);
+        });
+    });
+});
+
 function isAndroid() {
     const ua = navigator.userAgent || '';
     return /Android/i.test(ua);
