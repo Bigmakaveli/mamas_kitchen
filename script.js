@@ -749,9 +749,10 @@ const menuImages = {
     const s = document.createElement('style');
     s.id = 'mk-lightbox-style';
     s.textContent = `
-        .mk-lightbox{position:fixed;inset:0;background:rgba(0,0,0,0.8);display:none;align-items:center;justify-content:center;z-index:1600}
-        .mk-lightbox.is-open{display:flex}
-        .mk-lightbox img{max-width:90vw;max-height:90vh;border-radius:12px;box-shadow:0 18px 48px rgba(0,0,0,0.45)}
+        .mk-lightbox{position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:2000;opacity:0;pointer-events:none;transition:opacity .2s ease}
+        .mk-lightbox.is-open{opacity:1;pointer-events:auto}
+        .mk-lightbox img{max-width:95vw;max-height:95vh;border-radius:12px;box-shadow:0 18px 48px rgba(0,0,0,0.45);opacity:0;transform:scale(.98);transition:opacity .25s ease,transform .25s ease}
+        .mk-lightbox.is-open img{opacity:1;transform:scale(1)}
     `;
     document.head.appendChild(s);
 })();
@@ -787,6 +788,31 @@ function openLightbox(url, alt='') {
     box.classList.add('is-open');
     document.body.style.overflow = 'hidden';
 }
+
+// Bind lightbox to all images site-wide (opt-out with data-no-zoom)
+function bindLightboxToImages(root = document) {
+    const imgs = root.querySelectorAll('img:not([data-no-zoom])');
+    imgs.forEach((img) => {
+        if (img.dataset.mkZoomBound === '1') return;
+        img.dataset.mkZoomBound = '1';
+        img.addEventListener('click', (e) => {
+            // Allow opt-out via attribute on the element at runtime
+            if (img.hasAttribute('data-no-zoom')) return;
+            const src = img.currentSrc || img.src;
+            if (!src) return;
+            e.preventDefault();
+            openLightbox(src, img.alt || '');
+        });
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        bindLightboxToImages();
+    } catch (e) {
+        console.warn('Lightbox binding failed', e);
+    }
+});
 
 function attachMenuThumbnails(menuRoot, categoryEls) {
     if (!menuRoot || !categoryEls) return;
