@@ -710,6 +710,125 @@ const menuTranslations = {
     }
 };
 
+/* Image mapping for structured menu categories (by index) */
+const menuImages = {
+    // Category 0: مقبلات وسلطات (8 items)
+    0: [
+        'https://landing-ai-images.s3.amazonaws.com/images/img_k6wa5vnwicl_ok1gprcwpyd_1766078877692.jpeg',
+        'https://landing-ai-images.s3.amazonaws.com/images/img_3aila4jqm1i_9km8jaechgr_1766078879242.jpeg',
+        'https://landing-ai-images.s3.amazonaws.com/images/img_o73gazidtlh_zh6d3nflu6_1766078880309.jpeg',
+        'https://landing-ai-images.s3.amazonaws.com/images/img_jp8ch5f7t6h_8lvbembofff_1766078881068.jpeg',
+        'https://landing-ai-images.s3.amazonaws.com/images/img_68nzq2ll1au_385g3tqv6c_1766078882007.jpeg',
+        'https://landing-ai-images.s3.amazonaws.com/images/img_y5rephakhq_oaj46lvzz6i_1766078882988.jpeg',
+        'https://landing-ai-images.s3.amazonaws.com/images/img_ifbprvt9km_znxfpwa1xrc_1766078884130.jpeg',
+        'https://landing-ai-images.s3.amazonaws.com/images/img_44eu7sblrkr_03xlbo5f2i9u_1766078884886.jpeg'
+    ],
+    // Category 1: باجيت مع بطاطس (4 items)
+    1: [
+        'https://landing-ai-images.s3.amazonaws.com/images/img_walr0716rji_tur01488jtd_1766078885507.jpeg',
+        'https://landing-ai-images.s3.amazonaws.com/images/img_g7zyweqkgol_6fahzs7incv_1766078886088.jpeg',
+        'https://landing-ai-images.s3.amazonaws.com/images/img_6aps349xva_ahuqz97skws_1766078886846.jpeg',
+        'https://landing-ai-images.s3.amazonaws.com/images/img_40c82xbqdla_agul2nqthq_1766078887595.jpeg'
+    ],
+    // Category 2: توست مع سلطة مفرومة (3 items)
+    2: [
+        'https://landing-ai-images.s3.amazonaws.com/images/img_s3msg28furm_5ag443wfqr_1766078888233.jpeg',
+        'https://landing-ai-images.s3.amazonaws.com/images/img_16vsgsf87c3_qe2x2sz65m_1766078888918.jpeg',
+        'https://landing-ai-images.s3.amazonaws.com/images/img_i8u5yhmu8ea_zwlqsfy2y3e_1766078889775.jpeg'
+    ],
+    // Category 3: ساندويتش مغطّى بالكريمة (2 items)
+    3: [
+        'https://landing-ai-images.s3.amazonaws.com/images/img_pgoqi8zyw7_uhesfim3nxs_1766078890632.jpeg',
+        'https://landing-ai-images.s3.amazonaws.com/images/img_0awofjd1pxql_zyeg3blmvun_1766078891393.jpeg'
+    ]
+};
+
+/* Lightweight lightbox for full-size menu images */
+(function ensureLightboxStyles() {
+    if (document.getElementById('mk-lightbox-style')) return;
+    const s = document.createElement('style');
+    s.id = 'mk-lightbox-style';
+    s.textContent = `
+        .mk-lightbox{position:fixed;inset:0;background:rgba(0,0,0,0.8);display:none;align-items:center;justify-content:center;z-index:1600}
+        .mk-lightbox.is-open{display:flex}
+        .mk-lightbox img{max-width:90vw;max-height:90vh;border-radius:12px;box-shadow:0 18px 48px rgba(0,0,0,0.45)}
+    `;
+    document.head.appendChild(s);
+})();
+function getLightbox() {
+    let box = document.querySelector('.mk-lightbox');
+    if (box) return box;
+    box = document.createElement('div');
+    box.className = 'mk-lightbox';
+    const img = document.createElement('img');
+    img.alt = '';
+    img.decoding = 'async';
+    img.loading = 'eager';
+    box.appendChild(img);
+    box.addEventListener('click', () => {
+        box.classList.remove('is-open');
+        img.src = '';
+        img.alt = '';
+        document.body.style.overflow = '';
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && box.classList.contains('is-open')) {
+            box.click();
+        }
+    });
+    document.body.appendChild(box);
+    return box;
+}
+function openLightbox(url, alt='') {
+    const box = getLightbox();
+    const img = box.querySelector('img');
+    img.src = url;
+    img.alt = alt || '';
+    box.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+}
+
+function attachMenuThumbnails(menuRoot, categoryEls) {
+    if (!menuRoot || !categoryEls) return;
+    Object.keys(menuImages).forEach((catIdxStr) => {
+        const ci = parseInt(catIdxStr, 10);
+        const urls = menuImages[ci] || [];
+        const catEl = categoryEls[ci];
+        if (!catEl || !urls.length) return;
+        const list = catEl.querySelector('.menu-items');
+        if (!list) return;
+        const lis = Array.from(list.querySelectorAll('li.menu-item'));
+        lis.forEach((li, j) => {
+            const url = urls[j];
+            const nameSpan = li.querySelector('.item-name');
+            if (!nameSpan) return;
+            // Remove previous thumb if exists
+            const prev = nameSpan.querySelector('img.mk-thumb');
+            if (prev) prev.remove();
+            if (!url) return;
+            const img = document.createElement('img');
+            img.className = 'mk-thumb';
+            img.src = url;
+            img.alt = nameSpan.textContent.trim();
+            img.loading = 'lazy';
+            img.decoding = 'async';
+            img.referrerPolicy = 'no-referrer';
+            img.style.width = '48px';
+            img.style.height = '48px';
+            img.style.objectFit = 'cover';
+            img.style.borderRadius = '8px';
+            img.style.marginInlineEnd = '8px';
+            img.style.background = '#f3f4f6';
+            img.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                openLightbox(url, img.alt);
+            });
+            nameSpan.prepend(img);
+        });
+    });
+}
+
 function applyMenuLanguage(lang) {
     const data = menuTranslations[lang] || menuTranslations.ar;
     const menuSection = document.getElementById('menu');
@@ -756,7 +875,14 @@ function applyMenuLanguage(lang) {
             });
         }
     });
-
+    
+    // Attach thumbnails for each menu item based on category/index
+    try {
+        attachMenuThumbnails(menuSection, categoryEls);
+    } catch (e) {
+        console.warn('attachMenuThumbnails failed', e);
+    }
+    
     // Update active state on buttons
     document.querySelectorAll('.menu-lang-btn').forEach(btn => {
         if (btn.getAttribute('data-menu-lang') === lang) btn.classList.add('active');
