@@ -2649,7 +2649,7 @@ document.addEventListener('DOMContentLoaded', () => {
             title: 'ראשונות וסלטים',
             items: [
                 { name: 'סלט פתוש', desc: 'סלט רענן עם ירקות טריים, סומאק ופיתה קלויה', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_z33lerwp85_gv7nfmokv5k_1766173670366.jpeg' },
-                { name: 'טאבולה', desc: 'בורגול דק, פטרוזיליה, עגבניה ולימון', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_siwff3p7f9_9gw9zaf23xr_1766174685369.jpeg' },
+                { name: 'טאבולה', desc: 'בורגול דק, פטרוזיליה, עגבניה ולימון', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_3f4ho6n4hi6_krxttpouijs_1766174829735.jpeg' },
                 { name: 'סלט יווני', desc: 'עגבניות, מלפפון, זיתים וגבינה בולגרית', price: '₪—' },
                 { name: 'קוביות חלומי', desc: 'חלומי פריך עם נגיעת דבש ושומשום', price: '₪—' },
                 { name: 'צ׳יפס ביתי', desc: 'תפוח אדמה מטוגן פריך', price: '₪—' }
