@@ -815,6 +815,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Expose for external navigation
+    window.__showCardsSection = showSection;
+
     // Initial state: show starters/salads
     showSection('#starters-salads');
 });
@@ -1141,8 +1144,19 @@ navLinks.forEach(link => {
     link.addEventListener('click', (e) => {
         e.preventDefault();
         const targetId = link.getAttribute('href');
+
+        // If linking to cards sections, ensure the correct tab is shown before scrolling
+        if (targetId === '#starters-salads' || targetId === '#baguettes-fries') {
+            try {
+                if (window.__showCardsSection) {
+                    window.__showCardsSection(targetId);
+                }
+            } catch (err) {
+                console.warn('Failed to switch cards section', err);
+            }
+        }
+
         const targetSection = document.querySelector(targetId);
-        
         if (targetSection) {
             const offsetTop = targetSection.offsetTop;
             window.scrollTo({
