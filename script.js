@@ -711,7 +711,18 @@ const menuTranslations = {
 };
 
 /* Image mapping for structured menu categories (by index) */
-const menuImages = {};
+const menuImages = {
+    0: [
+        '', // סלט פתוש
+        '', // סלט טאבולה
+        '', // סלט יווני
+        '', // סלט חזה עוף / שניצל
+        '', // כנפיים ברוטב צ'ילי (מתוק/חריף)
+        '', // בטטה
+        '', // צ'יפס
+        'https://landing-ai-images.s3.amazonaws.com/images/img_4e4vfsyf8x3_rth36f7l8sf_1766175502991.jpeg' // קוביות חלומי (מטוגנות)
+    ]
+};
 
 /* Lightweight lightbox for full-size menu images */
 (function ensureLightboxStyles() {
@@ -2651,7 +2662,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 { name: 'סלט פתוש', desc: 'סלט רענן עם ירקות טריים, סומאק ופיתה קלויה', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_z33lerwp85_gv7nfmokv5k_1766173670366.jpeg' },
                 { name: 'טאבולה', desc: 'בורגול דק, פטרוזיליה, עגבניה ולימון', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_3f4ho6n4hi6_krxttpouijs_1766174829735.jpeg' },
                 { name: 'סלט יווני', desc: 'עגבניות, מלפפון, זיתים וגבינה בולגרית', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_dpzxn1rjgts_skb302wnm9q_1766175016742.jpeg' },
-                { name: 'קוביות חלומי', desc: 'חלומי פריך עם נגיעת דבש ושומשום', price: '₪—' },
+                { name: 'קוביות חלומי', desc: 'חלומי פריך עם נגיעת דבש ושומשום', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_4e4vfsyf8x3_rth36f7l8sf_1766175502991.jpeg' },
                 { name: 'צ׳יפס ביתי', desc: 'תפוח אדמה מטוגן פריך', price: '₪—' }
             ]
         },
