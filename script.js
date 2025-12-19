@@ -556,7 +556,7 @@ const menuTranslations = {
             {
                 title: 'טוסטים עם סלט קצוץ',
                 items: [
-                    { name: 'טוסט גבינה צהובה עם שמנת גבינה', price: '50₪' },
+                    { name: 'טוסט גבינה צהובה ושמנת גבינה', price: '50₪' },
                     { name: 'טוסט מיקס גבינות ופסטו', price: '50₪' },
                     { name: 'טוסט בהרכבה', price: '56₪' }
                 ]
@@ -565,7 +565,7 @@ const menuTranslations = {
                 title: 'כריך גביטה מוקרם',
                 items: [
                     { name: 'חזה עוף מוקרם', price: '67₪' },
-                    { name: 'שניצל מוקרם', price: '67₪' }
+                    { name: 'שנצל מוקרם', price: '67₪' }
                 ]
             },
             {
