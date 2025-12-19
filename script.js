@@ -2663,7 +2663,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 { name: 'טאבולה', desc: 'בורגול דק, פטרוזיליה, עגבניה ולימון', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_3f4ho6n4hi6_krxttpouijs_1766174829735.jpeg' },
                 { name: 'סלט יווני', desc: 'עגבניות, מלפפון, זיתים וגבינה בולגרית', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_dpzxn1rjgts_skb302wnm9q_1766175016742.jpeg' },
                 { name: 'קוביות חלומי', desc: 'חלומי פריך עם נגיעת דבש ושומשום', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_4e4vfsyf8x3_rth36f7l8sf_1766175502991.jpeg' },
-                { name: 'צ׳יפס ביתי', desc: 'תפוח אדמה מטוגן פריך', price: '₪—' }
+                { name: 'צ׳יפס ביתי', desc: 'צ׳יפס ביתי - بطاطا مقلية منزلية', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_ckfgvq5d7p4_mbno6hw1eks_1766175685547.jpeg', alt: 'بطاطا مقلية منزلية' }
             ]
         },
         baguettes: {
@@ -2782,9 +2782,10 @@ document.addEventListener('DOMContentLoaded', () => {
             imgWrap.className = 'menu-image';
             const img = document.createElement('img');
             img.src = item.img;
-            img.alt = item.name || '';
+            img.alt = item.alt || item.name || '';
             img.loading = 'lazy';
             img.decoding = 'async';
+            img.sizes = '(max-width: 480px) 100vw, (max-width: 768px) 50vw, 33vw';
             imgWrap.appendChild(img);
             card.appendChild(imgWrap);
         }
