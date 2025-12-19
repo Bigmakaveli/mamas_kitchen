@@ -1,3 +1,5 @@
 Updated files:
 - script.js
 - style.css
+
+- Added image to the 'באגט קבב' card.
