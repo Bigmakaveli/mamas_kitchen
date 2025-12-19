@@ -724,7 +724,7 @@ const menuImages = {
     ],
     1: [
         'https://landing-ai-images.s3.amazonaws.com/images/img_8983bmio6fu_3vnrxnenb9q_1766177204840.jpeg', // באגט חזה עוף
-        '', // באגט שניצל
+        'images/1759008482241_up2zivlj64.jpg', // באגט שניצל
         '', // באגט קבב
         ''  // באגט מעורב
     ]
