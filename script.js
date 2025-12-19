@@ -2501,6 +2501,139 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 })();
 
+/* Menus cards modal: simple category items with back/close */
+(function () {
+    'use strict';
+
+    const MENUS_DATA = {
+        starters: {
+            title: 'ראשונות וסלטים',
+            items: [
+                "סלט פתוש",
+                "סלט טאבולה",
+                "סלט יווני",
+                "קוביות חלומי מטוגנות",
+                "כנפיים ברוטב צ׳ילי"
+            ]
+        },
+        baguettes: {
+            title: 'בגיטים עם ציפס',
+            items: [
+                "באגט חזה עוף",
+                "באגט שניצל",
+                "באגט קבב",
+                "באגט מעורב בשרים",
+                "באגט טבעוני"
+            ]
+        },
+        toasts: {
+            title: 'טוסטים עם סלט קצוץ',
+            items: [
+                "טוסט גבינה צהובה ושמנת גבינה",
+                "טוסט מיקס גבינות ופסטו",
+                "טוסט בהרכבה",
+                "טוסט טונה"
+            ]
+        },
+        gavita: {
+            title: 'כריך גביטה מוקרם',
+            items: [
+                "חזה עוף מוקרם",
+                "שניצל מוקרם",
+                "קבב מוקרם",
+                "טבעוני מוקרם"
+            ]
+        },
+        plate: {
+            title: 'צלחת + ציפס/סלט',
+            items: [
+                "שניצל",
+                "חזה עוף",
+                "קבב",
+                "שניצל מוקרם",
+                "חזה עוף מוקרם"
+            ]
+        },
+        fromhome: {
+            title: 'מהבית הבית',
+            items: [
+                "עלי גפן",
+                "כרוב ממולא",
+                "קובה",
+                "מג׳דרה",
+                "גולש"
+            ]
+        }
+    };
+
+    let backdrop, modal, titleEl, listEl, closeBtn;
+
+    function ensureModal() {
+        if (backdrop) return;
+        backdrop = document.createElement('div');
+        backdrop.className = 'menus-modal-backdrop';
+        modal = document.createElement('div');
+        modal.className = 'menus-modal';
+        modal.innerHTML = `
+            <div class="menus-modal-header">
+                <h3 class="menus-modal-title"></h3>
+                <button type="button" class="menus-modal-close" aria-label="סגור">×</button>
+            </div>
+            <ul class="menus-modal-list"></ul>
+        `;
+        backdrop.appendChild(modal);
+        document.body.appendChild(backdrop);
+
+        titleEl = modal.querySelector('.menus-modal-title');
+        listEl = modal.querySelector('.menus-modal-list');
+        closeBtn = modal.querySelector('.menus-modal-close');
+
+        backdrop.addEventListener('click', (e) => {
+            if (e.target === backdrop) closeMenusModal();
+        });
+        closeBtn.addEventListener('click', closeMenusModal);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && backdrop.classList.contains('is-open')) closeMenusModal();
+        });
+    }
+
+    function openMenusModal(catKey) {
+        ensureModal();
+        const data = MENUS_DATA[catKey];
+        if (!data) return;
+
+        modal.setAttribute('dir', document.documentElement.dir || 'rtl');
+        titleEl.textContent = data.title;
+        listEl.innerHTML = '';
+        data.items.forEach((txt) => {
+            const li = document.createElement('li');
+            li.textContent = txt;
+            listEl.appendChild(li);
+        });
+
+        backdrop.classList.add('is-open');
+        backdrop.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeMenusModal() {
+        if (!backdrop) return;
+        backdrop.classList.remove('is-open');
+        backdrop.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.menus-card').forEach((btn) => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const key = btn.getAttribute('data-menu-cat');
+                openMenusModal(key);
+            });
+        });
+    });
+})();
+
 // Build Arabic WhatsApp order message from page fields or nearest product card
 function buildArabicOrderMessage(contextEl) {
     const closestCard = (contextEl && contextEl.closest) ? contextEl.closest('.menu-item') : null;

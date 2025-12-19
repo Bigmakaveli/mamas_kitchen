@@ -1900,3 +1900,112 @@ img {
 .category-btn {
     display: none !important;
 }
+
+/* Menus cards (azara-style) */
+.menus {
+    padding: 2rem 0;
+    background: #fff;
+}
+.menus-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+}
+.menus-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 120px;
+    background: #ffffff;
+    color: #333;
+    border-radius: 16px;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    text-align: center;
+    padding: 1rem;
+    font-weight: 700;
+    font-size: 1.05rem;
+}
+.menus-card:hover,
+.menus-card:focus {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 36px rgba(0,0,0,0.12);
+    outline: none;
+    border-color: rgba(211, 47, 47, 0.35);
+}
+.menus-card-title {
+    color: #d32f2f;
+    line-height: 1.35;
+}
+
+/* Menus modal */
+.menus-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1600;
+}
+.menus-modal-backdrop.is-open {
+    display: flex;
+}
+.menus-modal {
+    background: #fff;
+    color: #333;
+    width: 92vw;
+    max-width: 460px;
+    border-radius: 12px;
+    box-shadow: 0 18px 48px rgba(0,0,0,0.2);
+    padding: 1rem;
+}
+.menus-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+.menus-modal-title {
+    margin: 0;
+    font-weight: 800;
+    color: #d32f2f;
+    font-size: 1.15rem;
+}
+.menus-modal-close {
+    border: none;
+    background: transparent;
+    color: #999;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+}
+.menus-modal-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.menus-modal-list li {
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+.menus-modal-list li:last-child {
+    border-bottom: none;
+}
+
+@media (max-width: 480px) {
+    .menus-card {
+        min-height: 104px;
+        font-size: 0.95rem;
+    }
+    .menus-modal {
+        width: calc(100vw - 24px);
+        padding: 0.9rem;
+    }
+    .menus-modal-title {
+        font-size: 1.05rem;
+    }
+}
