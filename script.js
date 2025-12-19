@@ -721,6 +721,12 @@ const menuImages = {
         'https://landing-ai-images.s3.amazonaws.com/images/img_qz36i2hiuvm_en56xxwec8l_1766176192254.jpeg', // בטטה
         '', // צ'יפס
         'https://landing-ai-images.s3.amazonaws.com/images/img_4e4vfsyf8x3_rth36f7l8sf_1766175502991.jpeg' // קוביות חלומי (מטוגנות)
+    ],
+    1: [
+        'https://landing-ai-images.s3.amazonaws.com/images/img_8983bmio6fu_3vnrxnenb9q_1766177204840.jpeg', // באגט חזה עוף
+        '', // באגט שניצל
+        '', // באגט קבב
+        ''  // באגט מעורב
     ]
 };
 
@@ -873,6 +879,19 @@ function attachMenuThumbnails(menuRoot, categoryEls) {
         });
     });
 }
+
+// Attach thumbnails on load if the structured text menu is present
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        const menuRoot = document.getElementById('menu');
+        const categoryEls = menuRoot ? menuRoot.querySelectorAll('.menu-category') : null;
+        if (menuRoot && categoryEls && categoryEls.length) {
+            attachMenuThumbnails(menuRoot, categoryEls);
+        }
+    } catch (e) {
+        console.warn('Thumbnail attachment failed', e);
+    }
+});
 
 function applyMenuLanguage(lang) {
     const raw = menuTranslations[lang] || menuTranslations.ar || {};
@@ -2671,7 +2690,7 @@ document.addEventListener('DOMContentLoaded', () => {
         baguettes: {
             title: 'בגטים עם צ׳יפס',
             items: [
-                { name: 'באגט חזה עוף', desc: 'חזה עוף מתובל, ירקות טריים ורוטב הבית', price: '₪—' },
+                { name: 'באגט חזה עוף', desc: 'חזה עוף מתובל, ירקות טריים ורוטב הבית', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_8983bmio6fu_3vnrxnenb9q_1766177204840.jpeg', altHe: 'באגט חזה עוף עם צ׳יפס', altAr: 'באגת صدر دجاج مع بطاطا مقلية' },
                 { name: 'באגט שניצל', desc: 'שניצל פריך, חסה, עגבניה ומיונז', price: '₪—' },
                 { name: 'באגט קבב', desc: 'קבב עסיסי, טחינה וסלט קצוץ', price: '₪—' },
                 { name: 'באגט מעורב', desc: 'תערובת בשרים עם תבלינים מזרחיים', price: '₪—' }
@@ -2784,7 +2803,21 @@ document.addEventListener('DOMContentLoaded', () => {
             imgWrap.className = 'menu-image';
             const img = document.createElement('img');
             img.src = item.img;
-            img.alt = item.alt || item.name || '';
+            // Localized alt text: prefer per-language alt if provided
+            (function () {
+                try {
+                    const lang = (typeof currentLanguage === 'string' && currentLanguage) || (document.documentElement.lang || 'he');
+                    const altHe = item.altHe || null;
+                    const altAr = item.altAr || null;
+                    let computed = '';
+                    if (lang === 'he') computed = altHe || item.alt || item.name || '';
+                    else if (lang === 'ar') computed = altAr || item.alt || item.name || '';
+                    else computed = item.alt || altHe || altAr || item.name || '';
+                    img.alt = computed;
+                } catch {
+                    img.alt = item.alt || item.name || '';
+                }
+            })();
             img.loading = 'lazy';
             img.decoding = 'async';
             img.sizes = '(max-width: 480px) 100vw, (max-width: 768px) 50vw, 33vw';
