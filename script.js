@@ -2674,8 +2674,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 { name: 'באגט חזה עוף', desc: 'חזה עוף מתובל, ירקות טריים ורוטב הבית', price: '₪—' },
                 { name: 'באגט שניצל', desc: 'שניצל פריך, חסה, עגבניה ומיונז', price: '₪—' },
                 { name: 'באגט קבב', desc: 'קבב עסיסי, טחינה וסלט קצוץ', price: '₪—' },
-                { name: 'באגט מעורב', desc: 'תערובת בשרים עם תבלינים מזרחיים', price: '₪—' },
-                { name: 'باجيت صدر دجاج', desc: 'باجيت صدر دجاج مع بطاطس', price: '₪56', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_g50m39lypoc_zxd01y5k9xd_1766176594315.jpeg', alt: 'باجيت صدر دجاج', imgStyle: 'max-width:100%; height:auto;' }
+                { name: 'באגט מעורב', desc: 'תערובת בשרים עם תבלינים מזרחיים', price: '₪—' }
             ]
         },
         toasts: {
