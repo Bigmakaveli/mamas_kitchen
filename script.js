@@ -784,6 +784,41 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// Simple tabs to toggle between the two cards sections
+document.addEventListener('DOMContentLoaded', () => {
+    const tabButtons = document.querySelectorAll('.cards-tab-btn');
+    if (!tabButtons || tabButtons.length === 0) return;
+
+    const sections = {
+        '#starters-salads': document.getElementById('starters-salads'),
+        '#baguettes-fries': document.getElementById('baguettes-fries')
+    };
+
+    function showSection(targetId) {
+        Object.values(sections).forEach(sec => {
+            if (!sec) return;
+            sec.style.display = 'none';
+        });
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+
+        const sec = sections[targetId];
+        if (sec) sec.style.display = '';
+        const btn = Array.from(tabButtons).find(b => b.getAttribute('data-cards-target') === targetId);
+        if (btn) btn.classList.add('active');
+    }
+
+    tabButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const target = btn.getAttribute('data-cards-target');
+            if (target) showSection(target);
+        });
+    });
+
+    // Initial state: show starters/salads
+    showSection('#starters-salads');
+});
+
 function attachMenuThumbnails(menuRoot, categoryEls) {
     if (!menuRoot || !categoryEls) return;
     Object.keys(menuImages).forEach((catIdxStr) => {

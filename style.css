@@ -947,6 +947,48 @@ img {
     }
 }
 
+/* Cards sections tabs (pill buttons) */
+.cards-tabs {
+    background: transparent;
+    padding: 0.5rem 0 0;
+    margin-top: 0.25rem;
+}
+.cards-tabs .cards-tabs-inner {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    padding: 0 1rem;
+}
+.cards-tab-btn {
+    background: #fff;
+    border: 2px solid #d32f2f;
+    color: #d32f2f;
+    padding: 0.6rem 1rem;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    touch-action: manipulation;
+}
+.cards-tab-btn:hover,
+.cards-tab-btn:focus,
+.cards-tab-btn.active {
+    background: #d32f2f;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(211, 47, 47, 0.3);
+    outline: none;
+}
+@media (max-width: 480px) {
+    .cards-tab-btn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+    }
+}
+
 /* Discount promo card */
 .promo {
     background: transparent;
