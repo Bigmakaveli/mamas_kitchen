@@ -2628,10 +2628,207 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 const key = btn.getAttribute('data-menu-cat');
-                openMenusModal(key);
+                // Prefer the full-screen catalog view; fallback to simple list if unavailable
+                if (window.openMenusCatalog) {
+                    window.openMenusCatalog(key);
+                } else {
+                    openMenusModal(key);
+                }
             });
         });
     });
+})();
+
+/* Menus Catalog (full-screen) — item cards with name, description, price, and optional thumbnail */
+(function () {
+    'use strict';
+
+    // Sample catalog data (Hebrew names + short Hebrew descriptions)
+    const SAMPLE_MENUS = {
+        starters: {
+            title: 'ראשונות וסלטים',
+            items: [
+                { name: 'סלט פתוש', desc: 'סלט רענן עם ירקות טריים, סומאק ופיתה קלויה', price: '₪—', img: 'images/chopped_salad.jpg' },
+                { name: 'טאבולה', desc: 'בורגול דק, פטרוזיליה, עגבניה ולימון', price: '₪—', img: 'images/tabbouleh.jpg' },
+                { name: 'סלט יווני', desc: 'עגבניות, מלפפון, זיתים וגבינה בולגרית', price: '₪—' },
+                { name: 'קוביות חלומי', desc: 'חלומי פריך עם נגיעת דבש ושומשום', price: '₪—' },
+                { name: 'צ׳יפס ביתי', desc: 'תפוח אדמה מטוגן פריך', price: '₪—' }
+            ]
+        },
+        baguettes: {
+            title: 'בגטים עם צ׳יפס',
+            items: [
+                { name: 'באגט חזה עוף', desc: 'חזה עוף מתובל, ירקות טריים ורוטב הבית', price: '₪—' },
+                { name: 'באגט שניצל', desc: 'שניצל פריך, חסה, עגבניה ומיונז', price: '₪—' },
+                { name: 'באגט קבב', desc: 'קבב עסיסי, טחינה וסלט קצוץ', price: '₪—' },
+                { name: 'באגט מעורב', desc: 'תערובת בשרים עם תבלינים מזרחיים', price: '₪—' }
+            ]
+        },
+        toasts: {
+            title: 'טוסטים עם סלט קצוץ',
+            items: [
+                { name: 'טוסט גבינה צהובה', desc: 'גבינה נמסה ורוטב עדין', price: '₪—' },
+                { name: 'טוסט מיקס גבינות', desc: 'תערובת גבינות עם רוטב פסטו', price: '₪—' },
+                { name: 'טוסט בהרכבה', desc: 'בחרו תוספות לפי הטעם האישי', price: '₪—' },
+                { name: 'טוסט טונה', desc: 'טונה, תירס ומיונז עדין', price: '₪—' }
+            ]
+        },
+        gavita: {
+            title: 'כריך גביטה מוקרם',
+            items: [
+                { name: 'חזה עוף מוקרם', desc: 'חזה עוף ברוטב שמנת עדין', price: '₪—' },
+                { name: 'שניצל מוקרם', desc: 'שניצל פריך ברוטב שמנת', price: '₪—' },
+                { name: 'קבב מוקרם', desc: 'קבב עסיסי עם שמנת ותבלינים', price: '₪—' },
+                { name: 'טבעוני מוקרם', desc: 'ירקות מוקפצים עם רוטב קרמי', price: '₪—' }
+            ]
+        },
+        plate: {
+            title: 'צלחת + צ׳יפס/סלט',
+            items: [
+                { name: 'שניצל', desc: 'שניצל פריך עם תוספת לבחירה', price: '₪—' },
+                { name: 'חזה עוף', desc: 'נתחי חזה עוף עסיסיים על הפלנצ׳ה', price: '₪—' },
+                { name: 'קבב', desc: 'קבב בקר מתובל בעדינות', price: '₪—' },
+                { name: 'שניצל מוקרם', desc: 'שניצל ברוטב שמנת מפנק', price: '₪—' },
+                { name: 'חזה עוף מוקרם', desc: 'חזה עוף ברוטב שמנת עדין', price: '₪—' }
+            ]
+        },
+        fromhome: {
+            title: 'מהבית',
+            items: [
+                { name: 'עלי גפן', desc: 'עלי גפן ממולאים באורז ועשבי תיבול', price: '₪—', img: 'images/stuffed_cabbage_8.jpg' },
+                { name: 'כרוב ממולא', desc: 'כרוב עדין ממולא באורז', price: '₪—', img: 'images/stuffed_cabbage_8.jpg' },
+                { name: 'קובה', desc: 'קובה במילוי בשר תבליני', price: '₪—', img: 'images/kubbeh_2_units.jpg' },
+                { name: 'מג׳דרה', desc: 'אורז ועדשים עם בצל מטוגן', price: '₪—', img: 'images/mujadara_150g.jpg' },
+                { name: 'גולש', desc: 'תבשיל בשר עשיר ומחמם', price: '₪—', img: 'images/gulash_150g.jpg' }
+            ]
+        }
+    };
+
+    let backdrop, modal, titleEl, closeBtn, gridEl;
+
+    function ensureCatalogElements() {
+        if (backdrop) return;
+
+        // Backdrop
+        backdrop = document.createElement('div');
+        backdrop.className = 'menus-catalog-backdrop';
+        backdrop.setAttribute('aria-hidden', 'true');
+
+        // Modal container
+        modal = document.createElement('div');
+        modal.className = 'menus-catalog';
+        modal.setAttribute('role', 'dialog');
+        modal.setAttribute('aria-modal', 'true');
+
+        // Header with close/back button
+        const header = document.createElement('div');
+        header.className = 'menus-catalog-header';
+        header.innerHTML = `
+            <h3 class="menus-catalog-title"></h3>
+            <button type="button" class="menus-catalog-close" aria-label="סגור">×</button>
+        `;
+
+        // Body + grid
+        const body = document.createElement('div');
+        body.className = 'menus-catalog-body';
+        const grid = document.createElement('div');
+        grid.className = 'menus-catalog-grid';
+        body.appendChild(grid);
+
+        modal.appendChild(header);
+        modal.appendChild(body);
+        backdrop.appendChild(modal);
+        document.body.appendChild(backdrop);
+
+        titleEl = header.querySelector('.menus-catalog-title');
+        closeBtn = header.querySelector('.menus-catalog-close');
+        gridEl = grid;
+
+        // Close interactions
+        closeBtn.addEventListener('click', closeCatalog);
+        document.addEventListener('keydown', (e) => {
+            if (backdrop && backdrop.classList.contains('is-open') && e.key === 'Escape') {
+                closeCatalog();
+            }
+        });
+    }
+
+    function closeCatalog() {
+        if (!backdrop) return;
+        backdrop.classList.remove('is-open');
+        backdrop.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        if (gridEl) gridEl.innerHTML = ''; // cleanup
+    }
+
+    // Build a single card using existing menu card classes for consistent styling
+    function buildItemCard(item) {
+        const card = document.createElement('div');
+        card.className = 'menu-item';
+
+        if (item.img) {
+            const imgWrap = document.createElement('div');
+            imgWrap.className = 'menu-image';
+            const img = document.createElement('img');
+            img.src = item.img;
+            img.alt = item.name || '';
+            img.loading = 'lazy';
+            img.decoding = 'async';
+            imgWrap.appendChild(img);
+            card.appendChild(imgWrap);
+        }
+
+        const content = document.createElement('div');
+        content.className = 'menu-content';
+
+        const h3 = document.createElement('h3');
+        h3.textContent = item.name || '';
+        content.appendChild(h3);
+
+        if (item.desc) {
+            const p = document.createElement('p');
+            p.textContent = item.desc;
+            content.appendChild(p);
+        }
+
+        const price = document.createElement('div');
+        price.className = 'price';
+        price.textContent = item.price || '₪—';
+        content.appendChild(price);
+
+        card.appendChild(content);
+        return card;
+    }
+
+    function renderCatalog(catKey) {
+        if (!gridEl) return;
+        gridEl.innerHTML = '';
+        const data = SAMPLE_MENUS[catKey];
+        if (!data || !Array.isArray(data.items)) return;
+
+        // Respect document direction
+        const dir = document.documentElement.dir || 'rtl';
+        modal.setAttribute('dir', dir);
+
+        data.items.forEach((item) => {
+            const card = buildItemCard(item);
+            gridEl.appendChild(card);
+        });
+    }
+
+    function openMenusCatalog(catKey) {
+        ensureCatalogElements();
+        const data = SAMPLE_MENUS[catKey] || { title: '', items: [] };
+        if (titleEl) titleEl.textContent = data.title || '';
+        renderCatalog(catKey);
+
+        backdrop.classList.add('is-open');
+        backdrop.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+    }
+
+    // Expose a minimal API for the menus buttons to use
+    window.openMenusCatalog = openMenusCatalog;
 })();
 
 // Build Arabic WhatsApp order message from page fields or nearest product card

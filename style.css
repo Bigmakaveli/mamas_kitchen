@@ -2009,3 +2009,78 @@ img {
         font-size: 1.05rem;
     }
 }
+
+/* Menus Catalog (full-screen) */
+.menus-catalog-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: none;
+    align-items: stretch;
+    justify-content: center;
+    z-index: 1700;
+}
+.menus-catalog-backdrop.is-open {
+    display: flex;
+}
+.menus-catalog {
+    background: #fff;
+    color: #333;
+    width: 100vw;
+    height: 100vh;
+    max-width: 100%;
+    border-radius: 0;
+    box-shadow: 0 18px 48px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+}
+.menus-catalog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #e9ecef;
+    position: sticky;
+    top: 0;
+    background: #fff;
+    z-index: 1;
+}
+.menus-catalog-title {
+    margin: 0;
+    font-weight: 800;
+    color: #d32f2f;
+    font-size: 1.15rem;
+}
+.menus-catalog-close {
+    border: none;
+    background: transparent;
+    color: #999;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+}
+.menus-catalog-body {
+    padding: 1rem;
+    overflow: auto;
+    flex: 1 1 auto;
+}
+.menus-catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+}
+/* Make sure cards inside the catalog use existing styles nicely */
+.menus-catalog .menu-item {
+    margin: 0;
+}
+.menus-catalog .menu-content {
+    padding-bottom: 1.25rem; /* lighter padding inside catalog */
+}
+
+/* Smaller devices */
+@media (max-width: 768px) {
+    .menus-catalog-title { font-size: 1.05rem; }
+    .menus-catalog-body { padding: 0.75rem; }
+    .menus-catalog-grid { grid-template-columns: 1fr; gap: 0.75rem; }
+}
