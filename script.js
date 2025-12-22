@@ -2690,8 +2690,7 @@ document.addEventListener('DOMContentLoaded', () => {
             items: [
                 { name: 'באגט חזה עוף', desc: 'חזה עוף מתובל, ירקות טריים ורוטב הבית', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_8983bmio6fu_3vnrxnenb9q_1766177204840.jpeg', altHe: 'באגט חזה עוף עם צ׳יפס', altAr: 'באגת صدر דجاج مع بطاطا مقلية' },
                 { name: 'באגט שניצל', desc: 'שניצל פריך, חסה, עגבניה ומיונז', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_0gyimpjsk8ld_u9xidqokhaf_1766178016443.jpeg', altHe: 'באגט שניצל - שניצל פריך, חסה, עגבניה ומיונז' },
-                { name: 'באגט קבב', desc: 'קבב עסיסי, טחינה וסלט קצוץ', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_cg4lled8npb_xztvkue5hli_1766178306431.jpeg', altHe: 'באגט קבב - קבב עסיסי, טחינה וסלט קצוץ' },
-                { name: 'באגט מעורב', desc: 'תערובת בשרים עם תבלינים מזרחיים', price: '₪—' }
+                { name: 'באגט קבב', desc: 'קבב עסיסי, טחינה וסלט קצוץ', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_cg4lled8npb_xztvkue5hli_1766178306431.jpeg', altHe: 'באגט קבב - קבב עסיסי, טחינה וסלט קצוץ' }
             ]
         },
         toasts: {
