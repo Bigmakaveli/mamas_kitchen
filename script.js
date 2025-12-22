@@ -564,7 +564,6 @@ const menuTranslations = {
             {
                 title: 'כריך גביטה מוקרם',
                 items: [
-                    { name: 'חזה עוף מוקרם', price: '67₪' },
                     { name: 'שנצל מוקרם', price: '67₪' }
                 ]
             },
@@ -2565,7 +2564,6 @@ document.addEventListener('DOMContentLoaded', () => {
         gavita: {
             title: 'כריך גביטה מוקרם',
             items: [
-                "חזה עוף מוקרם",
                 "שניצל מוקרם",
                 "קבב מוקרם"
             ]
