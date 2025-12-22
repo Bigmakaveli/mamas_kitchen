@@ -2590,9 +2590,7 @@ document.addEventListener('DOMContentLoaded', () => {
             items: [
                 "עלי גפן",
                 "כרוב ממולא",
-                "קובה",
-                "מג׳דרה",
-                "גולש"
+                "קובה"
             ]
         }
     };
@@ -2730,8 +2728,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 { name: 'עלי גפן', desc: 'עלי גפן ממולאים באורז ועשבי תיבול', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_8c4s6jjsbel_i3tl4lbbwr8_1766410776821.jpeg' },
                 { name: 'כרוב ממולא', desc: 'כרוב עדין ממולא באורז', price: '₪—', img: 'images/stuffed_cabbage_8.jpg' },
                 { name: 'קובה', desc: 'קובה במילוי בשר תבליני', price: '₪—', img: 'images/kubbeh_2_units.jpg' },
-                { name: 'מג׳דרה', desc: 'אורז ועדשים עם בצל מטוגן', price: '₪—', img: 'images/mujadara_150g.jpg' },
-                { name: 'גולש', desc: 'תבשיל בשר עשיר ומחמם', price: '₪—', img: 'images/gulash_150g.jpg' }
             ]
         }
     };
