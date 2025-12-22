@@ -2703,7 +2703,7 @@ document.addEventListener('DOMContentLoaded', () => {
         gavita: {
             title: 'כריך גביטה מוקרם',
             items: [
-                { name: 'חזה עוף מוקרם', desc: 'חזה עוף ברוטב שמנת עדין', price: '₪—' },
+                { name: 'חזה עוף מוקרם', desc: 'חזה עוף ברוטב שמנת עדין', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_97rysbjrgl_yqcnbr02z6_1766412725522.jpeg', altHe: 'חזה עוף מוקרם - חזה עוף ברוטב שמנת עדין', altAr: 'حـَزِه עوف מـوكَرَم - حـَזِه עوف برוטב شـמـנת עדין' },
                 { name: 'שניצל מוקרם', desc: 'שניצל פריך ברוטב שמנת', price: '₪—' },
                 { name: 'קבב מוקרם', desc: 'קבב עסיסי עם שמנת ותבלינים', price: '₪—' },
                 { name: 'טבעוני מוקרם', desc: 'ירקות מוקפצים עם רוטב קרמי', price: '₪—' }
@@ -2716,7 +2716,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 { name: 'חזה עוף', desc: 'נתחי חזה עוף עסיסיים על הפלנצ׳ה', price: '₪—' },
                 { name: 'קבב', desc: 'קבב בקר מתובל בעדינות', price: '₪—' },
                 { name: 'שניצל מוקרם', desc: 'שניצל ברוטב שמנת מפנק', price: '₪—' },
-                { name: 'חזה עוף מוקרם', desc: 'חזה עוף ברוטב שמנת עדין', price: '₪—' }
+                { name: 'חזה עוף מוקרם', desc: 'חזה עוף ברוטב שמנת עדין', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_97rysbjrgl_yqcnbr02z6_1766412725522.jpeg', altHe: 'חזה עוף מוקרם - חזה עוף ברוטב שמנת עדין', altAr: 'حـَזِه עوف מـوكَرَم - حـَזِه עوف برוטב شـמـנת עדין' }
             ]
         },
         fromhome: {
