@@ -2704,7 +2704,7 @@ document.addEventListener('DOMContentLoaded', () => {
         plate: {
             title: 'צלחת + צ׳יפס/סלט',
             items: [
-                { name: 'שניצל', desc: 'שניצל פריך עם תוספת לבחירה', price: '₪—' },
+                { name: 'שניצל', desc: 'שניצל פריך עם תוספת לבחירה', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_df9lzq4brz_ruzbqlmmqg_1766422249124.jpeg', altHe: 'שניצל - צלחת + צ׳יפס/סלט' },
                 { name: 'חזה עוף', desc: 'נתחי חזה עוף עסיסיים על הפלנצ׳ה', price: '₪—' },
                 { name: 'קבב', desc: 'קבב בקר מתובל בעדינות', price: '₪—' },
                 { name: 'שניצל מוקרם', desc: 'שניצל ברוטב שמנת מפנק', price: '₪—' },
