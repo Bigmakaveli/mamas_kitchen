@@ -2727,7 +2727,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fromhome: {
             title: 'מהבית',
             items: [
-                { name: 'עלי גפן', desc: 'עלי גפן ממולאים באורז ועשבי תיבול', price: '₪—', img: 'images/stuffed_cabbage_8.jpg' },
+                { name: 'עלי גפן', desc: 'עלי גפן ממולאים באורז ועשבי תיבול', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_8c4s6jjsbel_i3tl4lbbwr8_1766410776821.jpeg' },
                 { name: 'כרוב ממולא', desc: 'כרוב עדין ממולא באורז', price: '₪—', img: 'images/stuffed_cabbage_8.jpg' },
                 { name: 'קובה', desc: 'קובה במילוי בשר תבליני', price: '₪—', img: 'images/kubbeh_2_units.jpg' },
                 { name: 'מג׳דרה', desc: 'אורז ועדשים עם בצל מטוגן', price: '₪—', img: 'images/mujadara_150g.jpg' },
