@@ -575,7 +575,6 @@ const menuTranslations = {
                     { name: 'חזה עוף', price: '65₪' },
                     { name: 'קבב', price: '65₪' },
                     { name: 'שניצל מוקרם', price: '70₪' },
-                    { name: 'חזה עוף מוקרם', price: '70₪' }
                 ]
             },
             {
@@ -635,7 +634,6 @@ const menuTranslations = {
                     { name: 'Куриная грудка', price: '65₪' },
                     { name: 'Кебаб', price: '65₪' },
                     { name: 'Шницель в креме', price: '70₪' },
-                    { name: 'Куриная грудка в креме', price: '70₪' }
                 ]
             },
             {
@@ -695,7 +693,6 @@ const menuTranslations = {
                     { name: 'Chicken Breast', price: '65₪' },
                     { name: 'Kebab', price: '65₪' },
                     { name: 'Creamed Schnitzel', price: '70₪' },
-                    { name: 'Creamed Chicken Breast', price: '70₪' }
                 ]
             },
             {
@@ -2579,8 +2576,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 "שניצל",
                 "חזה עוף",
                 "קבב",
-                "שניצל מוקרם",
-                "חזה עוף מוקרם"
+                "שניצל מוקרם"
             ]
         },
         fromhome: {
