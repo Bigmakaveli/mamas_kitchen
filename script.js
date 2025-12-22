@@ -2704,7 +2704,7 @@ document.addEventListener('DOMContentLoaded', () => {
             title: 'כריך גביטה מוקרם',
             items: [
                 { name: 'חזה עוף מוקרם', desc: 'חזה עוף ברוטב שמנת עדין', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_97rysbjrgl_yqcnbr02z6_1766412725522.jpeg', altHe: 'חזה עוף מוקרם - חזה עוף ברוטב שמנת עדין', altAr: 'حـَزِه עوف מـوكَرَم - حـَזِه עوف برוטב شـמـנת עדין' },
-                { name: 'שניצל מוקרם', desc: 'שניצל פריך ברוטב שמנת', price: '₪—' },
+                { name: 'שניצל מוקרם', desc: 'שניצל פריך ברוטב שמנת', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_gpxzdl9wz6q_qgcuiob4hoj_1766413158668.jpeg', altHe: 'שניצל מוקרם - שניצל ברוטב שמנת עדין', altAr: 'שניצל מוקרם - שניצל بصلصة كريמית' },
                 { name: 'קבב מוקרם', desc: 'קבב עסיסי עם שמנת ותבלינים', price: '₪—' },
                 { name: 'טבעוני מוקרם', desc: 'ירקות מוקפצים עם רוטב קרמי', price: '₪—' }
             ]
