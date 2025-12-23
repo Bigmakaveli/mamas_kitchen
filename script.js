@@ -728,7 +728,7 @@ const menuImages = {
         '', // שניצל
         'https://landing-ai-images.s3.amazonaws.com/images/img_yblkz6hzuzc_ok6dy2p2c1_1766487130493.jpeg', // חזה עוף
         '', // קבב
-        ''  // שניצל מוקרם
+        'https://landing-ai-images.s3.amazonaws.com/images/img_05i20kd1s8v_2tex7ow6acv_1766490073980.jpeg'  // שניצל מוקרם
     ]
 };
 
@@ -2713,7 +2713,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 { name: 'שניצל', desc: 'שניצל פריך עם תוספת לבחירה', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_df9lzq4brz_ruzbqlmmqg_1766422249124.jpeg', altHe: 'שניצל - צלחת + צ׳יפס/סלט' },
                 { name: 'חזה עוף', desc: 'נתחי חזה עוף עסיסיים על הפלנצ׳ה', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_yblkz6hzuzc_ok6dy2p2c1_1766487130493.jpeg' },
                 { name: 'קבב', desc: 'קבב בקר מתובל בעדינות', price: '₪—' },
-                { name: 'שניצל מוקרם', desc: 'שניצל ברוטב שמנת מפנק', price: '₪—' },
+                { name: 'שניצל מוקרם', desc: 'שניצל ברוטב שמנת מפנק', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_05i20kd1s8v_2tex7ow6acv_1766490073980.jpeg' },
                 { name: 'חזה עוף מוקרם', desc: 'חזה עוף ברוטב שמנת עדין', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_97rysbjrgl_yqcnbr02z6_1766412725522.jpeg', altHe: 'חזה עוף מוקרם - חזה עוף ברוטב שמנת עדין', altAr: 'حـَזِه עوف מـوكَرَم - حـَזِه עوف برוטב شـמـנת עדין' }
             ]
         },
