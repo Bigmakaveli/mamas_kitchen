@@ -2675,10 +2675,10 @@ document.addEventListener('DOMContentLoaded', () => {
         starters: {
             title: 'ראשונות וסלטים',
             items: [
-                { name: 'סלט פתוש', desc: 'סלט רענן עם ירקות טריים, סומאק ופיתה קלויה', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_z33lerwp85_gv7nfmokv5k_1766173670366.jpeg' },
-                { name: 'טאבולה', desc: 'בורגול דק, פטרוזיליה, עגבניה ולימון', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_3f4ho6n4hi6_krxttpouijs_1766174829735.jpeg' },
-                { name: 'סלט יווני', desc: 'עגבניות, מלפפון, זיתים וגבינה בולגרית', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_dpzxn1rjgts_skb302wnm9q_1766175016742.jpeg' },
-                { name: 'קוביות חלומי', desc: 'חלומי פריך עם נגיעת דבש ושומשום', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_4e4vfsyf8x3_rth36f7l8sf_1766175502991.jpeg' },
+                { name: 'סלט פתוש', desc: 'סלט רענן עם ירקות טריים, סומאק ופיתה קלויה', price: '56₪', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_z33lerwp85_gv7nfmokv5k_1766173670366.jpeg' },
+                { name: 'טאבולה', desc: 'בורגול דק, פטרוזיליה, עגבניה ולימון', price: '50₪', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_3f4ho6n4hi6_krxttpouijs_1766174829735.jpeg' },
+                { name: 'סלט יווני', desc: 'עגבניות, מלפפון, זיתים וגבינה בולגרית', price: '56₪', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_dpzxn1rjgts_skb302wnm9q_1766175016742.jpeg' },
+                { name: 'קוביות חלומי', desc: 'חלומי פריך עם נגיעת דבש ושומשום', price: '50₪', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_4e4vfsyf8x3_rth36f7l8sf_1766175502991.jpeg' },
                 { name: 'צ׳יפס ביתי', desc: 'צ׳יפס ביתי - بطاطا مقلية منزلية', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_ckfgvq5d7p4_mbno6hw1eks_1766175685547.jpeg', alt: 'بطاطا مقلية منزلية' },
                 { name: 'בטטה', desc: 'بطاطا حلوة مقلية ومقرمشة', price: '₪28', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_qz36i2hiuvm_en56xxwec8l_1766176192254.jpeg', alt: 'بطاطا حلوة مقلية ومقرمشة' }
             ]
@@ -2686,17 +2686,17 @@ document.addEventListener('DOMContentLoaded', () => {
         baguettes: {
             title: 'בגטים עם צ׳יפס',
             items: [
-                { name: 'באגט חזה עוף', desc: 'חזה עוף מתובל, ירקות טריים ורוטב הבית', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_8983bmio6fu_3vnrxnenb9q_1766177204840.jpeg', altHe: 'באגט חזה עוף עם צ׳יפס', altAr: 'באגת صدر דجاج مع بطاطا مقلية' },
-                { name: 'באגט שניצל', desc: 'שניצל פריך, חסה, עגבניה ומיונז', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_0gyimpjsk8ld_u9xidqokhaf_1766178016443.jpeg', altHe: 'באגט שניצל - שניצל פריך, חסה, עגבניה ומיונז' },
-                { name: 'באגט קבב', desc: 'קבב עסיסי, טחינה וסלט קצוץ', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_cg4lled8npb_xztvkue5hli_1766178306431.jpeg', altHe: 'באגט קבב - קבב עסיסי, טחינה וסלט קצוץ' }
+                { name: 'באגט חזה עוף', desc: 'חזה עוף מתובל, ירקות טריים ורוטב הבית', price: '56₪', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_8983bmio6fu_3vnrxnenb9q_1766177204840.jpeg', altHe: 'באגט חזה עוף עם צ׳יפס', altAr: 'באגת صدر דجاج مع بطاطا مقلية' },
+                { name: 'באגט שניצל', desc: 'שניצל פריך, חסה, עגבניה ומיונז', price: '56₪', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_0gyimpjsk8ld_u9xidqokhaf_1766178016443.jpeg', altHe: 'באגט שניצל - שניצל פריך, חסה, עגבניה ומיונז' },
+                { name: 'באגט קבב', desc: 'קבב עסיסי, טחינה וסלט קצוץ', price: '56₪', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_cg4lled8npb_xztvkue5hli_1766178306431.jpeg', altHe: 'באגט קבב - קבב עסיסי, טחינה וסלט קצוץ' }
             ]
         },
         toasts: {
             title: 'טוסטים עם סלט קצוץ',
             items: [
-                { name: 'טוסט גבינה צהובה', desc: 'גבינה נמסה ורוטב עדין', price: '₪—' },
-                { name: 'טוסט מיקס גבינות', desc: 'תערובת גבינות עם רוטב פסטו', price: '₪—' },
-                { name: 'טוסט בהרכבה', desc: 'בחרו תוספות לפי הטעם האישי', price: '₪—' }
+                { name: 'טוסט גבינה צהובה', desc: 'גבינה נמסה ורוטב עדין', price: '50₪' },
+                { name: 'טוסט מיקס גבינות', desc: 'תערובת גבינות עם רוטב פסטו', price: '50₪' },
+                { name: 'טוסט בהרכבה', desc: 'בחרו תוספות לפי הטעם האישי', price: '56₪' }
             ]
         },
         gavita: {
