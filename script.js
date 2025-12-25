@@ -2710,19 +2710,19 @@ document.addEventListener('DOMContentLoaded', () => {
         plate: {
             title: 'צלחת + צ׳יפס/סלט',
             items: [
-                { name: 'שניצל', desc: 'שניצל פריך עם תוספת לבחירה', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_df9lzq4brz_ruzbqlmmqg_1766422249124.jpeg', altHe: 'שניצל - צלחת + צ׳יפס/סלט' },
-                { name: 'חזה עוף', desc: 'נתחי חזה עוף עסיסיים על הפלנצ׳ה', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_yblkz6hzuzc_ok6dy2p2c1_1766487130493.jpeg' },
-                { name: 'קבב', desc: 'קבב בקר מתובל בעדינות', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_9mca79jgd7u_sobxq7c16ud_1766508317803.jpeg' },
-                { name: 'שניצל מוקרם', desc: 'שניצל ברוטב שמנת מפנק', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_05i20kd1s8v_2tex7ow6acv_1766490073980.jpeg' },
+                { name: 'שניצל', desc: 'שניצל פריך עם תוספת לבחירה', price: '65₪', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_df9lzq4brz_ruzbqlmmqg_1766422249124.jpeg', altHe: 'שניצל - צלחת + צ׳יפס/סלט' },
+                { name: 'חזה עוף', desc: 'נתחי חזה עוף עסיסיים על הפלנצ׳ה', price: '65₪', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_yblkz6hzuzc_ok6dy2p2c1_1766487130493.jpeg' },
+                { name: 'קבב', desc: 'קבב בקר מתובל בעדינות', price: '65₪', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_9mca79jgd7u_sobxq7c16ud_1766508317803.jpeg' },
+                { name: 'שניצל מוקרם', desc: 'שניצל ברוטב שמנת מפנק', price: '70₪', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_05i20kd1s8v_2tex7ow6acv_1766490073980.jpeg' },
                 { name: 'חזה עוף מוקרם', desc: 'חזה עוף ברוטב שמנת עדין', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_97rysbjrgl_yqcnbr02z6_1766412725522.jpeg', altHe: 'חזה עוף מוקרם - חזה עוף ברוטב שמנת עדין', altAr: 'حـَזِه עوف מـوكَرَم - حـَזِه עوف برוטב شـמـנת עדין' }
             ]
         },
         fromhome: {
             title: 'מהבית',
             items: [
-                { name: 'עלי גפן', desc: 'עלי גפן ממולאים באורז ועשבי תיבול', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_8c4s6jjsbel_i3tl4lbbwr8_1766410776821.jpeg' },
-                { name: 'כרוב ממולא', desc: 'כרוב עדין ממולא באורז', price: '₪—', img: 'images/stuffed_cabbage_8.jpg' },
-                { name: 'קובה', desc: 'קובה במילוי בשר תבליני', price: '₪—', img: 'images/kubbeh_2_units.jpg' },
+                { name: 'עלי גפן', desc: 'עלי גפן ממולאים באורז ועשבי תיבול', price: '25₪', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_8c4s6jjsbel_i3tl4lbbwr8_1766410776821.jpeg' },
+                { name: 'כרוב ממולא', desc: 'כרוב עדין ממולא באורז', price: '25₪', img: 'images/stuffed_cabbage_8.jpg' },
+                { name: 'קובה', desc: 'קובה במילוי בשר תבליני', price: '22₪', img: 'images/kubbeh_2_units.jpg' },
             ]
         }
     };
