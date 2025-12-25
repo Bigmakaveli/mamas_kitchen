@@ -2679,7 +2679,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 { name: 'טאבולה', desc: 'בורגול דק, פטרוזיליה, עגבניה ולימון', price: '50₪', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_3f4ho6n4hi6_krxttpouijs_1766174829735.jpeg' },
                 { name: 'סלט יווני', desc: 'עגבניות, מלפפון, זיתים וגבינה בולגרית', price: '56₪', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_dpzxn1rjgts_skb302wnm9q_1766175016742.jpeg' },
                 { name: 'קוביות חלומי', desc: 'חלומי פריך עם נגיעת דבש ושומשום', price: '50₪', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_4e4vfsyf8x3_rth36f7l8sf_1766175502991.jpeg' },
-                { name: 'צ׳יפס ביתי', desc: 'צ׳יפס ביתי - بطاطا مقلية منزلية', price: '₪—', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_ckfgvq5d7p4_mbno6hw1eks_1766175685547.jpeg', alt: 'بطاطا مقلية منزلية' },
+                { name: 'צ׳יפס ביתי', desc: 'צ׳יפס ביתי - بطاطا מقلية منزلية', price: '22₪', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_ckfgvq5d7p4_mbno6hw1eks_1766175685547.jpeg', alt: 'بطاطا מقلية منزلية' },
                 { name: 'בטטה', desc: 'بطاطا حلوة مقلية ومقرمشة', price: '₪28', img: 'https://landing-ai-images.s3.amazonaws.com/images/img_qz36i2hiuvm_en56xxwec8l_1766176192254.jpeg', alt: 'بطاطا حلوة مقلية ومقرمشة' }
             ]
         },
